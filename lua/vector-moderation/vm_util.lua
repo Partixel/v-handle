@@ -22,6 +22,8 @@ function vm.IncludeFolder(folder)
 	end
 end
 
+vm.IncludeFolder("vm_util/vm_external")
+
 function vm.StringMatches(a, b)
 	return (a:lower()) == (b:lower()) or (a:lower():find(b:lower))
 end
