@@ -3,7 +3,7 @@
 
 vm.ConsoleMessage("Loading dependancies")
 
-include(vm_util.lua)
+include("vm_util.lua")
 vm.IncludeFolder("vm_util")
 
 -- Handle variables --
