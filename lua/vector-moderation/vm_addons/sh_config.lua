@@ -8,8 +8,6 @@ if vm.Config == {} then
     vm.ConsoleMessage("No config found, creating defaults")
 end
 
-vm.DefaultConfig()
-
 function vm.ForceDefaultConfig()
     for a, b in pairs(vm.ConfigDefaults) do
         vm.Config[a] = vm.ConfigDefaults[a]
@@ -30,5 +28,7 @@ end
 function vm:GetConfig( Key )
     return vm.Config[Key] or vm.ConsoleMessage("Attempted to find config value " .. key .. " but found none, please report this error to the developers")
 end
+
+vm.DefaultConfig()
 
 vm.RegisterAddon(addon)
