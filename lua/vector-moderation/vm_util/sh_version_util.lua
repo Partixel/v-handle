@@ -9,8 +9,14 @@ end
 -- Compares the two versions passed
 -- Returns true if the first version passed is newer
 function version_util.isNewer(Ver, CVer)
-	return Ver.Major > Cver.Major ? true : (Ver.Minor > Cver.Minor ? true
-			: (Ver.Patch > Cver.Patch ? true : false));
+	if (Ver.Major > Cver.Major) then
+		return true
+	elseif (Ver.Minor > Cver.Minor) then
+		return true
+	elseif (Ver.Patch > Cver.Patch) then
+		return true
+	end
+	return false
 end
 
 -- Converst the version to a string
