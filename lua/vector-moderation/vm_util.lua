@@ -17,7 +17,7 @@ function vm.Include(fileName)
 end
 
 function vm.IncludeFolder(folder)
-	for k, v in pairs(file.Find("vm/"..folder.."/*.lua", "LUA")) do
+	for k, v in pairs(file.Find("vector-moderation/"..folder.."/*.lua", "LUA")) do
 		vm.Include(folder.."/"..v)
 	end
 end
