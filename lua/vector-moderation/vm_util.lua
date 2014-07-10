@@ -22,14 +22,6 @@ function vm:IncludeFolder(folder)
 	end
 end
 
-function vm:SeperateWords(a)
-	local words = {}
-	for b in a:sub(2):gmatch("%S+") do
-	    table.insert(words, b)
-	end
-	return words
-end
-
 function vm.StringMatches(a, b)
 	if (a == b) then return true end
 	if (a:find(b, nil, true)) then return true end
