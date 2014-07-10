@@ -83,6 +83,7 @@ function vm.HandleCommands( Player, Args )
 	end
 	if (not ValidCommands[1]) then return end
 	ValidCommands[1].Run(Player, table.remove(Args, 1))
+	return ""
 end
 
 vm.IncludeFolder("vm_addons")
