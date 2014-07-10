@@ -3,7 +3,6 @@ addon.Name = "Default"
 addon.Description = "Default addon"
 addon.Commands = {}
 addon.Commands.DefaultCommand = {
-  Name = "DefaultCommand",
   Aliases = {"AnotherCommand"},
   Prefix = "!",
   Description = "Does default stuff"
