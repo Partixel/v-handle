@@ -1,8 +1,6 @@
 local addon = {}
 addon.Name = "Config"
 addon.Description = "Adds a config file"
-addon.Commands = {}
-addon.ConCommands = {}
 
 vm.Config = vm.GetData("Config") or {}
 
