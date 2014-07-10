@@ -35,9 +35,9 @@ function TextChanged( str )
 	if ( string.Left( str, 1 ) == "!" ) then
 		local com = string.sub( str, 2, ( string.find( str, " " ) or ( #str + 1 ) ) - 1 )
 		
-		for b in ipairs(vm.Addons) do
+		for b in vm.Addons do
 			if (!b["Commands"]) then continue end
-				for c, d in ipairs(b.Commands) do
+				for c, d in pairs(b.Commands) do
 					if ( string.sub(c:lower(), 0, #com) == string.lower(com)) then
 						table.insert( suggestions, {
 							name = string.sub(str, 1, 1) .. c:lower(),
