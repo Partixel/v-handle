@@ -7,7 +7,7 @@ addon.Description = "Default addon"
 addon.Commands = {}
 addon.Commands.DefaultCommand = {
   Name = "DefaultCommand",
-  Aliases = {"DefaultCommand", "AnotherCommand"},
+  Aliases = {"AnotherCommand"},
   Description = "Does default stuff"
   Usage = "<Player>"
 }
@@ -26,9 +26,7 @@ function addon.Commands.DefaultCommand.Vars(ArgNumber)
 end
 
 addon.ConCommands - {}
-addon.ConCommands.DefaultConCommand = {
-  Alias = "defaultconcommand"
-}
+addon.ConCommands.DefaultConCommand = {}
 
 function addon.ConCommands.DefaultConCommand.Run(Player, Args)
   vm.ConsoleMessage("Ran default con command")
