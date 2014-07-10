@@ -22,8 +22,6 @@ function vm.IncludeFolder(folder)
 	end
 end
 
-vm.IncludeFolder("libs/external")
-
 function vm.StringMatches(a, b)
 	if (a == b) then return true end
 	if (a:find(b, nil, true)) then return true end
