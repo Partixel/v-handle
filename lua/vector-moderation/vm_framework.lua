@@ -16,3 +16,8 @@ vm.ConfigDefaults["AutoUpdate"] = false
 -- Handle addons --
 vm.Addons = {}
 vm.IncludeFolder("vm_addons")
+
+function vm.RegisterAddon( Addon )
+	table.insert(vm.Addons, Addon)
+	vm.ConsoleMessage("Loaded " .. Addon.Name .. " as an addon")
+end
