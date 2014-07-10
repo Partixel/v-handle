@@ -47,7 +47,7 @@ end)
 
 function vm.RegisterAddon( Addon )
 	table.insert(vm.Addons, Addon)
-	if (Addon["ConCommands"] then
+	if (Addon["ConCommands"]) then
 		for a, b in pairs(Addon.ConCommands) do
 			concommand.Add(a, b.Run)
 		end
