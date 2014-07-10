@@ -24,7 +24,7 @@ concommand.Add("vm", function(Player, Command, Args)
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
 			if (Command:lower == d.Name:lower()) then
-				ValidCommands:insert(d)
+				table.insert(ValidCommands, d)
 			elseif (d["Aliases"]) then
 				for e in d["Aliases"] do
 					if (Command:lower() == e:lower() then
@@ -42,11 +42,16 @@ concommand.Add("vm", function(Player, Command, Args)
 		return ""
 	end
 	
-	ValidCommands[1]:Run(Player, Args)
+	ValidCommands[1].Run(Player, Args)
 end
 
 function vm.RegisterAddon( Addon )
 	table.insert(vm.Addons, Addon)
+	if (Addon["ConCommands"] then
+		for a, b in pairs(Addon.ConCommands) do
+			concommand.Add(a, b.Run)
+		end
+	end
 	vm.ConsoleMessage("Loaded " .. Addon.Name .. " as an addon")
 end
 
@@ -58,7 +63,7 @@ function vm.HandleCommands( Player, Args )
 		for c, d in pairs(b.Commands) do
 			if (Args[1]:sub(1, 1):lower() == d.Prefix:lower()) then
 				if (Args[1]:sub(2):lower == d.Name:lower()) then
-					ValidCommands:insert(d)
+					table.insert(ValidCommands, d)
 				elseif (d["Aliases"]) then
 					for e in d["Aliases"] do
 						if (Args[1]:sub(2):lower() == e:lower() then
@@ -77,5 +82,5 @@ function vm.HandleCommands( Player, Args )
 		return ""
 	end
 	
-	ValidCommands[1]:Run(Player, table.remove(Args, 1))
+	ValidCommands[1].Run(Player, table.remove(Args, 1))
 end
