@@ -43,7 +43,7 @@ concommand.Add("vm", function(Player, Command, Args)
 	end
 	
 	ValidCommands[1].Run(Player, Args)
-end
+end)
 
 function vm.RegisterAddon( Addon )
 	table.insert(vm.Addons, Addon)
