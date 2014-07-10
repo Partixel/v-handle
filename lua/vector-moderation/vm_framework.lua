@@ -25,7 +25,7 @@ concommand.Add("vm", function(Player, Command, Args)
 			if (Command:lower() == c:lower()) then
 				table.insert(ValidCommands, d)
 			elseif (d["Aliases"]) then
-				for e in d["Aliases"] do
+				for _, e in pairs(d["Aliases"]) do
 					if (Command:lower() == e:lower()) then
 						table.insert(ValidCommands, d)
 					end
@@ -65,7 +65,7 @@ function vm.HandleCommands( Player, Args )
 				if (Args[1]:sub(2):lower() == c:lower()) then
 					table.insert(ValidCommands, d)
 				elseif (d["Aliases"]) then
-					for e in d["Aliases"] do
+					for _, e in pairs(d["Aliases"]) do
 						if (Args[1]:sub(2):lower() == e:lower()) then
 							table.insert(ValidCommands, d)
 						end
@@ -81,7 +81,7 @@ function vm.HandleCommands( Player, Args )
 		Player:PrintMessage( HUD_PRINTTALK, "Multiple commands found using that alias" )
 		return ""
 	end
-	
+	if (not ValidCommands[1]) then return end
 	ValidCommands[1].Run(Player, table.remove(Args, 1))
 end
 
