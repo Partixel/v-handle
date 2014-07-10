@@ -27,7 +27,7 @@ concommand.Add("vm", function(Player, Command, Args)
 				table.insert(ValidCommands, d)
 			elseif (d["Aliases"]) then
 				for e in d["Aliases"] do
-					if (Command:lower() == e:lower() then
+					if (Command:lower() == e:lower()) then
 						table.insert(ValidCommands, d)
 					end
 				end
@@ -67,7 +67,7 @@ function vm.HandleCommands( Player, Args )
 					table.insert(ValidCommands, d)
 				elseif (d["Aliases"]) then
 					for e in d["Aliases"] do
-						if (Args[1]:sub(2):lower() == e:lower() then
+						if (Args[1]:sub(2):lower() == e:lower()) then
 							table.insert(ValidCommands, d)
 						end
 					end
