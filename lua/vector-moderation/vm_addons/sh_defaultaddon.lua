@@ -28,7 +28,7 @@ end
 addon.ConCommands - {}
 addon.ConCommands.DefaultConCommand = {}
 
-function addon.ConCommands.DefaultConCommand:Run(Player, Args)
+function addon.ConCommands.DefaultConCommand:Run(Player, Command, Args)
   vm:ConsoleMessage("Ran default con command")
 end
 
