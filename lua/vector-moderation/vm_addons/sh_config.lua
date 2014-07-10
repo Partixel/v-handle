@@ -72,3 +72,5 @@ end
 function vm:GetConfig( Key )
     return vm.Config[Key] or vm.ConsoleMessage("Attempted to find config value " .. key .. " but found none, please report this error to the developers")
 end
+
+vm.RegisterAddon(addon)
