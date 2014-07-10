@@ -24,10 +24,9 @@ end
 
 function vm.HandleCommands( Player, Message )
 	local ValidCommands = {}
-	local Args = {}
-	for a in Message:sub(2):gmatch("%S+") do
-	    table.insert(Args, a)
-	end
+	local Args = vm:SeperateWords(Message:sub(2))
+	if (#Args == 0) then return end
+	
 	for a, b in pairs(vm.Addons) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
