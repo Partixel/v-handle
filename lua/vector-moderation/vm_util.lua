@@ -23,16 +23,7 @@ function vm.IncludeFolder(folder)
 end
 
 function vm.StringMatches(a, b)
-	if (a == b) then return true end
-	if (a:find(b, nil, true)) then return true end
-
-	a = a:lower()
-	b = b:lower()
-
-	if (a == b) then return true end
-	if (a:find(b, nil, true)) then return true end
-
-	return false
+	return (a:lower()) == (b:lower()) or (a:lower():find(b:lower))
 end
 
 function vm.FindPlayerByName(name, onlyTableReturns, limit)
