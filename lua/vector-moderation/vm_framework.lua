@@ -1,10 +1,10 @@
 
 -- Handle dependancies --
 
-vm.ConsoleMessage("Loading dependancies")
-
 include("vm_util.lua")
 vm.IncludeFolder("vm_util")
+
+vm.ConsoleMessage("Loading dependancies")
 
 -- Handle variables --
 vm.Version = version_util.Version( 0, 0, 1 )
