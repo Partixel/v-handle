@@ -35,21 +35,21 @@ function TextChanged( str )
 	if ( string.Left( str, 1 ) == "!" ) then
 		local com = string.sub( str, 2, ( string.find( str, " " ) or ( #str + 1 ) ) - 1 )
 		
-		for a, b in pairs(vm.Addons) do
-			if (!b["Commands"]) then continue end
-			for c, d in pairs(b.Commands) do
-				if ( string.sub(c:lower(), 0, #com) == string.lower(com)) then
+		for _, a in pairs(vm.Addons) do
+			if (!a["Commands"]) then continue end
+			for b, c in pairs(a.Commands) do
+				if ( string.sub(b:lower(), 0, #com) == string.lower(com)) then
 					table.insert( suggestions, {
-						name = string.sub(str, 1, 1) .. c:lower(),
-						usage = d.Usage or ""
+						name = string.sub(str, 1, 1) .. b:lower(),
+						usage = c.Usage or ""
 					})
 				end
-				if (d["Aliases"]) then
-					for e, f in pairs(d["Aliases"]) do
-						if ( string.sub(f:lower(), 0, #com) == string.lower(com)) then
+				if (c["Aliases"]) then
+					for _, d in pairs(c["Aliases"]) do
+						if ( string.sub(d:lower(), 0, #com) == string.lower(com)) then
 							table.insert( suggestions, {
-								name = string.sub(str, 1, 1) .. f:lower(),
-								usage = d.Usage or ""
+								name = string.sub(str, 1, 1) .. d:lower(),
+								usage = c.Usage or ""
 							})
 						end
 					end
