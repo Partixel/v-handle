@@ -22,7 +22,7 @@ concommand.Add("vm", function(Player, Command, Args)
 	for a, b in pairs(vm.Addons) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
-			if (Command:lower() == d.Name:lower()) then
+			if (Command:lower() == c:lower()) then
 				table.insert(ValidCommands, d)
 			elseif (d["Aliases"]) then
 				for e in d["Aliases"] do
@@ -64,7 +64,7 @@ function vm.HandleCommands( Player, Args )
 		for c, d in pairs(b.Commands) do
 			if (d.Prefix == "") then continue end
 			if (Args[1]:sub(1, 1):lower() == d.Prefix:lower()) then
-				if (Args[1]:sub(2):lower() == d.Name:lower()) then
+				if (Args[1]:sub(2):lower() == c:lower()) then
 					table.insert(ValidCommands, d)
 				elseif (d["Aliases"]) then
 					for e in d["Aliases"] do
