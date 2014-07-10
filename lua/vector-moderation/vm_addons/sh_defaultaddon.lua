@@ -5,7 +5,7 @@ addon.Commands = {}
 addon.Commands.DefaultCommand = {
   Aliases = {"AnotherCommand"},
   Prefix = "!",
-  Description = "Does default stuff"
+  Description = "Does default stuff",
   Usage = "<Player>"
 }
 
