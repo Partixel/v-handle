@@ -198,7 +198,7 @@ function vm.SplitStringByLength(value, length)
 end
 
 function vm.ConsoleMessage( Message )
-	print("Vextor-Moderation -- " .. Message)
+	print("Vector-Moderation -- " .. Message)
 end
 
 vm.data = vm.data or {}
