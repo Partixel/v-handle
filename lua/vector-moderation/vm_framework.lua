@@ -34,12 +34,14 @@ concommand.Add("vm", function(Player, Command, Args)
 		end
 	end
 	
-	if (ValidCommands == {}) then
+	if (#ValidCommands < 1) then
 		return
 	elseif (#ValidCommands > 1) then
 		Player:PrintMessage( HUD_PRINTTALK, "Multiple commands found using that alias" )
 		return ""
 	end
+	
+	print("Fuck yeah")
 	
 	ValidCommands[1].Run(Player, Args)
 end)
