@@ -41,7 +41,7 @@ concommand.Add("vm", function(Player, Command, Args)
 		return ""
 	end
 	
-	print("Fuck yeah")
+	print(Args[1])
 	
 	ValidCommands[1].Run(Player, Args)
 end)
