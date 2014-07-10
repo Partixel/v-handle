@@ -25,7 +25,7 @@ end
 vm.IncludeFolder("vm_util/vm_external")
 
 function vm.StringMatches(a, b)
-	return (a:lower()) == (b:lower()) or (a:lower():find(b:lower))
+	return a:lower() == b:lower() or a:lower():find(b:lower())
 end
 
 function vm.FindPlayerByName(name, onlyTableReturns, limit)
