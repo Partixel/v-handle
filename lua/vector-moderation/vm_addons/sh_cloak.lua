@@ -14,7 +14,7 @@ function addon.Commands.Cloak.Run(Player, Args)
 	local Players = vm.FindPlayers(Arg, Player)
 	local Success = false
 	local Toggle = false
-	if (#Players == 0 ) then return "No players found." end
+	if (not Players or #Players == 0) then return "No players found." end
 	
 	for _, ply in ipairs(Players) do
 		ply:SetNoDraw(true)
