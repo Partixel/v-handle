@@ -1,6 +1,7 @@
 
 -- Handle dependancies --
 include("vector-moderation/vm_util.lua")
+
 vm.IncludeFolder("vm_util")
 
 vm.ConsoleMessage("Loading dependancies")
@@ -14,7 +15,6 @@ vm.ConfigDefaults["AutoUpdate"] = false
 
 -- Handle addons --
 vm.Addons = {}
-vm.IncludeFolder("vm_addons")
 concommand.Add("vm", function(Player, Command, Args)
 	
 	local ValidCommands = {}
@@ -84,3 +84,5 @@ function vm.HandleCommands( Player, Args )
 	
 	ValidCommands[1].Run(Player, table.remove(Args, 1))
 end
+
+vm.IncludeFolder("vm_addons")
