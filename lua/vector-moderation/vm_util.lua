@@ -182,17 +182,6 @@ function vm.TableToList(info, word, hasNoTarget)
 	return output
 end
 
-vm.data = vm.data or {}
-
-function vm.SetData(key, value, noSave)
-	vm.data[key] = value
-
-	if (!noSave) then
-		file.CreateDir("vm")
-		file.Write("vm/"..key..".txt", util.Compress(von.serialize(vm.data)))
-	end
-end
-
 function vm.SplitStringByLength(value, length)
 	local output = {}
 
@@ -206,6 +195,21 @@ function vm.SplitStringByLength(value, length)
 	end
 
 	return output
+end
+
+function vm.ConsoleMessage( Message )
+	print("Vextor-Moderation -- " .. Message)
+end
+
+vm.data = vm.data or {}
+
+function vm.SetData(key, value, noSave)
+	vm.data[key] = value
+
+	if (!noSave) then
+		file.CreateDir("vm")
+		file.Write("vm/"..key..".txt", util.Compress(von.serialize(vm.data)))
+	end
 end
 
 function vm.GetData(key, default, noCache)
