@@ -19,7 +19,7 @@ concommand.Add("vm", function(Player, Command, Args)
 	
 	local ValidCommands = {}
 	
-	for a in pairs(vm.Addons) do
+	for a in vm.Addons do
 		if (!a["Commands"]) then continue end
 		for b, c in pairs(a.Commands) do
 			if (Command:lower() == b:lower()) then
@@ -57,7 +57,7 @@ end
 function vm.HandleCommands( Player, Args )
 	local ValidCommands = {}
 	
-	for a in pairs(vm.Addons) do
+	for a in vm.Addons do
 		if (!a["Commands"]) then continue end
 		for b, c in pairs(a.Commands) do
 			if (a.Prefix == "") then continue end
