@@ -19,15 +19,15 @@ concommand.Add("vm", function(Player, Command, Args)
 	
 	local ValidCommands = {}
 	
-	for a in vm.Addons do
-		if (!a["Commands"]) then continue end
-		for b, c in pairs(a.Commands) do
-			if (Command:lower() == b:lower()) then
-				table.insert(ValidCommands, c)
-			elseif (c["Aliases"]) then
-				for d in c["Aliases"] do
-					if (Command:lower() == d:lower()) then
-						table.insert(ValidCommands, c)
+	for a, b  in pairs(vm.Addons) do
+		if (!b["Commands"]) then continue end
+		for c, d in pairs(b.Commands) do
+			if (Command:lower() == c:lower()) then
+				table.insert(ValidCommands, d)
+			elseif (d["Aliases"]) then
+				for e in d["Aliases"] do
+					if (Command:lower() == e:lower()) then
+						table.insert(ValidCommands, d)
 					end
 				end
 			end
@@ -57,17 +57,17 @@ end
 function vm.HandleCommands( Player, Args )
 	local ValidCommands = {}
 	
-	for a in vm.Addons do
-		if (!a["Commands"]) then continue end
-		for b, c in pairs(a.Commands) do
-			if (a.Prefix == "") then continue end
-			if (Args[1]:sub(1, 1):lower() == c.Prefix:lower()) then
-				if (Args[1]:sub(2):lower() == b:lower()) then
-					table.insert(ValidCommands, c)
-				elseif (c["Aliases"]) then
-					for d in c["Aliases"] do
-						if (Args[1]:sub(2):lower() == d:lower()) then
-							table.insert(ValidCommands, c)
+	for a, b in pairs(vm.Addons) do
+		if (!b["Commands"]) then continue end
+		for c, d in pairs(b.Commands) do
+			if (b.Prefix == "") then continue end
+			if (Args[1]:sub(1, 1):lower() == d.Prefix:lower()) then
+				if (Args[1]:sub(2):lower() == c:lower()) then
+					table.insert(ValidCommands, d)
+				elseif (d["Aliases"]) then
+					for e in d["Aliases"] do
+						if (Args[1]:sub(2):lower() == e:lower()) then
+							table.insert(ValidCommands, d)
 						end
 					end
 				end
