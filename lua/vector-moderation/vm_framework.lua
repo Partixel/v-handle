@@ -14,7 +14,7 @@ vm.ConfigDefaults["AutoUpdate"] = false
 
 -- Handle addons --
 vm.Addons = {}
-vm.IncludeFolder("vector-moderation/vm_addons")
+vm.IncludeFolder("vm_addons")
 concommand.Add("vm", function(Player, Command, Args)
 	
 	local ValidCommands = {}
@@ -40,8 +40,6 @@ concommand.Add("vm", function(Player, Command, Args)
 		Player:PrintMessage( HUD_PRINTTALK, "Multiple commands found using that alias" )
 		return ""
 	end
-	
-	print(Args[1])
 	
 	ValidCommands[1].Run(Player, Args)
 end)
