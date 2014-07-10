@@ -1,5 +1,6 @@
 
 -- Handle dependancies --
+include("vector-moderation/vm_util.lua")
 vm.IncludeFolder("vm_util")
 
 vm.ConsoleMessage("Loading dependancies")
