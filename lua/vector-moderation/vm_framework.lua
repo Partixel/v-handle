@@ -61,6 +61,7 @@ function vm.HandleCommands( Player, Args )
 	for a, b in pairs(vm.Addons) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
+			if (d.Prefix == "") then continue end
 			if (Args[1]:sub(1, 1):lower() == d.Prefix:lower()) then
 				if (Args[1]:sub(2):lower == d.Name:lower()) then
 					table.insert(ValidCommands, d)
