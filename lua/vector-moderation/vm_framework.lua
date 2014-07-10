@@ -19,9 +19,9 @@ concommand.Add("vm", function(Player, Command, Args)
 	
 	local ValidCommands = {}
 	
-	for a in ipairs(vm.Addons) do
+	for a in pairs(vm.Addons) do
 		if (!a["Commands"]) then continue end
-		for b, c in ipairs(a.Commands) do
+		for b, c in pairs(a.Commands) do
 			if (Command:lower() == b:lower()) then
 				table.insert(ValidCommands, c)
 			elseif (c["Aliases"]) then
@@ -47,7 +47,7 @@ end)
 function vm.RegisterAddon( Addon )
 	table.insert(vm.Addons, Addon)
 	if (Addon["ConCommands"]) then
-		for a, b in ipairs(Addon.ConCommands) do
+		for a, b in pairs(Addon.ConCommands) do
 			concommand.Add(a, b.Run)
 		end
 	end
@@ -57,9 +57,9 @@ end
 function vm.HandleCommands( Player, Args )
 	local ValidCommands = {}
 	
-	for a in ipairs(vm.Addons) do
+	for a in pairs(vm.Addons) do
 		if (!a["Commands"]) then continue end
-		for b, c in ipairs(a.Commands) do
+		for b, c in pairs(a.Commands) do
 			if (a.Prefix == "") then continue end
 			if (Args[1]:sub(1, 1):lower() == c.Prefix:lower()) then
 				if (Args[1]:sub(2):lower() == b:lower()) then
