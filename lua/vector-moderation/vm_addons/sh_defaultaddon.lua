@@ -22,7 +22,7 @@ function addon.Commands.DefaultCommand.Vars(ArgNumber)
   return
 end
 
-addon.ConCommands - {}
+addon.ConCommands = {}
 addon.ConCommands.DefaultConCommand = {}
 
 function addon.ConCommands.DefaultConCommand.Run(Player, Command, Args)
