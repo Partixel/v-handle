@@ -35,35 +35,24 @@ function TextChanged( str )
 	if ( string.Left( str, 1 ) == "!" ) then
 		local com = string.sub( str, 2, ( string.find( str, " " ) or ( #str + 1 ) ) - 1 )
 		
-		for b in vm.Addons do
+		for a, b in pairs(vm.Addons) do
 			if (!b["Commands"]) then continue end
-				for c, d in pairs(b.Commands) do
-					if ( string.sub(c:lower(), 0, #com) == string.lower(com)) then
-						table.insert( suggestions, {
-							name = string.sub(str, 1, 1) .. c:lower(),
-							usage = d.Usage or ""
-						})
-					end
-					if (d["Aliases"]) then
-						for e in d["Aliases"] do
-							if ( string.sub(e:lower(), 0, #com) == string.lower(com)) then
-								table.insert( suggestions, {
-									name = string.sub(str, 1, 1) .. e:lower(),
-									usage = e.Usage or ""
-								})
-							end
+			for c, d in pairs(b.Commands) do
+				if ( string.sub(c:lower(), 0, #com) == string.lower(com)) then
+					table.insert( suggestions, {
+						name = string.sub(str, 1, 1) .. c:lower(),
+						usage = d.Usage or ""
+					})
+				end
+				if (d["Aliases"]) then
+					for e, f in pairs(d["Aliases"]) do
+						if ( string.sub(f:lower(), 0, #com) == string.lower(com)) then
+							table.insert( suggestions, {
+								name = string.sub(str, 1, 1) .. f:lower(),
+								usage = d.Usage or ""
+							})
 						end
 					end
-				end
-			end
-		end
-		for _, v in pairs( azure.Commands ) do
-			for x, y in pairs( v.Aliases ) do
-				if ( string.sub( y, 0, #com ) == string.lower( com )) then
-					table.insert( suggestions, {
-						name = string.sub( str, 1, 1 ) .. y,
-						usage = v.Usage or ""
-					} )
 				end
 			end
 		end
