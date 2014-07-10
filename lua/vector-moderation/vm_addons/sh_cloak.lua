@@ -10,7 +10,17 @@ addon.Commands.Cloak = {
 }
 
 function addon.Commands.Cloak.Run(Player, Args)
-  vm.ConsoleMessage("Ran cloak, todo.")
+	vm.ConsoleMessage("Ran cloak, todo.")
+	local Players = vm.FindPlayers(Arg, Player)
+	local Success = false
+	local Toggle = false
+	if (#Players == 0 ) then return "No players found." end
+	
+	for _, ply in ipairs(Players) do
+		ply:SetNoDraw(true)
+	end
+	
+	return "You cloaked "..vm:CreatePlayerList(Players)
 end
 
 function addon.Commands.Cloak.Vars(ArgNumber)

@@ -10,16 +10,16 @@ addon.Commands.DefaultCommand = {
 }
 
 function addon.Commands.DefaultCommand.Run(Player, Args)
-  vm.ConsoleMessage("Ran default command")
+	vm.ConsoleMessage("Ran default command")
 end
 
 function addon.Commands.DefaultCommand.Vars(ArgNumber)
-  if (ArgNumber == 1) then
-    return {"1", "2"}
-  elseif (ArgNumber == 2) then
-    return {"NotNow", "Okay"}
-  end
-  return
+	if (ArgNumber == 1) then
+		return {"1", "2"}
+	elseif (ArgNumber == 2) then
+		return {"NotNow", "Okay"}
+	end
+	return
 end
 
 addon.ConCommands = {}

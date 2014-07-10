@@ -50,7 +50,7 @@ function vm.FindPlayerByName(name, onlyTableReturns, limit)
 	end
 end
 
-function vm.FindPlayers(names, client, strict, nocheck)
+function vm.FindPlayers(names, client)
 	local found = {}
 
 	if ( (type(names) != "string") and (type(names) != "table") ) then return end
@@ -65,9 +65,7 @@ function vm.FindPlayers(names, client, strict, nocheck)
 		for _, player1 in pairs( player.GetAll() ) do
 			for _, player2 in ipairs( names ) do
 				if ( vm.IsNameMatch(player1, player2) and !table.HasValue( found, player1 ) ) then
-					if ( !nocheck and vm.HasInfluence(client, player2, strict or false) ) then
-						table.insert(found, player1)
-					end
+					table.insert(found, player1)
 				end
 			end
 		end
