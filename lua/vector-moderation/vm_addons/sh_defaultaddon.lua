@@ -10,7 +10,7 @@ addon.Commands.DefaultCommand = {
 }
 
 function addon.Commands.DefaultCommand.Run(Player, Args)
-	vm.ConsoleMessage("Ran default command")
+	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
 end
 
 function addon.Commands.DefaultCommand.Vars(ArgNumber)
@@ -26,7 +26,7 @@ addon.ConCommands = {}
 addon.ConCommands.DefaultConCommand = {}
 
 function addon.ConCommands.DefaultConCommand.Run(Player, Command, Args)
-  vm.ConsoleMessage("Ran default con command")
+	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
 end
 
 vm.RegisterAddon(addon)
