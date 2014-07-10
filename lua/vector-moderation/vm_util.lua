@@ -1,4 +1,4 @@
-function vm.Include(fileName)
+function vm:Include(fileName)
 	if (fileName:find("sv_") and SERVER) then
 		include(fileName)
 	elseif (fileName:find("cl_")) then
@@ -16,10 +16,18 @@ function vm.Include(fileName)
 	end
 end
 
-function vm.IncludeFolder(folder)
+function vm:IncludeFolder(folder)
 	for k, v in pairs(file.Find("vm/"..folder.."/*.lua", "LUA")) do
-		vm.Include(folder.."/"..v)
+		vm:Include(folder.."/"..v)
 	end
+end
+
+function vm:SeperateWords(a)
+	local words = {}
+	for b in a:sub(2):gmatch("%S+") do
+	    table.insert(words, b)
+	end
+	return words
 end
 
 function vm.StringMatches(a, b)
