@@ -46,6 +46,12 @@ concommand.Add("vm", function(Player, Command, Args)
 end)
 
 function vm.RegisterAddon( Addon )
+	for a, b in pairs (vm.Addons) do
+		if b.Name == Addon.Name then
+			vm.ConsoleMessage("Already loaded " .. Addon.Name .. "!")
+			return
+		end
+	end
 	table.insert(vm.Addons, Addon)
 	if (Addon["ConCommands"]) then
 		for a, b in pairs(Addon.ConCommands) do
