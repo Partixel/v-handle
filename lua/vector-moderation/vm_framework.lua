@@ -1,6 +1,9 @@
 
 -- Handle dependancies --
-include("vector-moderation/vm_util.lua")
+if (SERVER) then
+	AddCSLuaFile("vector-moderation/sh_util.lua")
+end
+include("vector-moderation/sh_util.lua")
 
 vm.IncludeFolder("vm_util")
 
