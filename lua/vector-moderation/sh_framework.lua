@@ -1,28 +1,28 @@
 
 -- Handle dependancies --
 if (SERVER) then
-	AddCSLuaFile("vector-moderation/sh_util.lua")
+	AddCSLuaFile("v-handle/sh_util.lua")
 end
-include("vector-moderation/sh_util.lua")
+include("v-handle/sh_util.lua")
 
-vm.IncludeFolder("vm_util")
+vh.IncludeFolder("vh_util")
 
-vm.ConsoleMessage("Loading dependancies")
+vh.ConsoleMessage("Loading dependancies")
 
 -- Handle variables --
-vm.Version = version_util.Version( 0, 0, 1 )
+vh.Version = version_util.Version( 0, 0, 1 )
 
 -- Handle config defaults --
-vm.ConfigDefaults = {}
-vm.ConfigDefaults["AutoUpdate"] = false
+vh.ConfigDefaults = {}
+vh.ConfigDefaults["AutoUpdate"] = false
 
 -- Handle addons --
-vm.Addons = {}
-concommand.Add("vm", function(Player, Command, Args)
+vh.Addons = {}
+concommand.Add("vh", function(Player, Command, Args)
 	
 	local ValidCommands = {}
 	
-	for a, b in pairs(vm.Addons) do
+	for a, b in pairs(vh.Addons) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
 			if (Args[1]:lower() == c:lower()) then
@@ -48,26 +48,26 @@ concommand.Add("vm", function(Player, Command, Args)
 	ValidCommands[1].Run(Player, Args)
 end)
 
-function vm.RegisterAddon( Addon )
-	for a, b in pairs (vm.Addons) do
+function vh.RegisterAddon( Addon )
+	for a, b in pairs (vh.Addons) do
 		if b.Name == Addon.Name then
-			vm.ConsoleMessage("Already loaded " .. Addon.Name .. "!")
+			vh.ConsoleMessage("Already loaded " .. Addon.Name .. "!")
 			return
 		end
 	end
-	table.insert(vm.Addons, Addon)
+	table.insert(vh.Addons, Addon)
 	if (Addon["ConCommands"]) then
 		for a, b in pairs(Addon.ConCommands) do
 			concommand.Add(a, b.Run)
 		end
 	end
-	vm.ConsoleMessage("Loaded " .. Addon.Name .. " as an addon")
+	vh.ConsoleMessage("Loaded " .. Addon.Name .. " as an addon")
 end
 
-function vm.HandleCommands( Player, Args )
+function vh.HandleCommands( Player, Args )
 	local ValidCommands = {}
 	
-	for a, b in pairs(vm.Addons) do
+	for a, b in pairs(vh.Addons) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
 			if (b.Prefix == "") then continue end
@@ -97,4 +97,4 @@ function vm.HandleCommands( Player, Args )
 	return ""
 end
 
-vm.IncludeFolder("vm_addons")
+vh.IncludeFolder("vh_addons")
