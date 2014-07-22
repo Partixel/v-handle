@@ -1,4 +1,4 @@
-function vm.Include(fileName)
+function vh.Include(fileName)
 	if (fileName:find("sv_") and SERVER) then
 		include(fileName)
 	elseif (fileName:find("cl_")) then
@@ -16,19 +16,19 @@ function vm.Include(fileName)
 	end
 end
 
-function vm.IncludeFolder(folder)
-	for k, v in pairs(file.Find("vector-moderation/"..folder.."/*.lua", "LUA")) do
-		vm.Include(folder.."/"..v)
+function vh.IncludeFolder(folder)
+	for k, v in pairs(file.Find("v-handle/"..folder.."/*.lua", "LUA")) do
+		vh.Include(folder.."/"..v)
 	end
 end
 
-vm.IncludeFolder("vm_util/external")
+vh.IncludeFolder("vh_util/external")
 
-function vm.StringMatches(a, b)
+function vh.StringMatches(a, b)
 	return a:lower() == b:lower() or a:lower():find(b:lower())
 end
 
-function vm.FindPlayerByName(name, onlyTableReturns, limit)
+function vh.FindPlayerByName(name, onlyTableReturns, limit)
 	local found = {}
 	local i = 0
 
@@ -37,7 +37,7 @@ function vm.FindPlayerByName(name, onlyTableReturns, limit)
 			break
 		end
 
-		if (vm.StringMatches(v:Name(), name)) then
+		if (vh.StringMatches(v:Name(), name)) then
 			found[#found + 1] = v
 			i = i + 1
 		end
@@ -50,7 +50,7 @@ function vm.FindPlayerByName(name, onlyTableReturns, limit)
 	end
 end
 
-function vm.FindPlayers(names, client)
+function vh.FindPlayers(names, client)
 	local found = {}
 
 	if ( (type(names) != "string") and (type(names) != "table") ) then return end
@@ -64,7 +64,7 @@ function vm.FindPlayers(names, client)
 	else
 		for _, player1 in pairs( player.GetAll() ) do
 			for _, player2 in ipairs( names ) do
-				if ( vm.IsNameMatch(player1, player2) and !table.HasValue( found, player1 ) ) then
+				if ( vh.IsNameMatch(player1, player2) and !table.HasValue( found, player1 ) ) then
 					table.insert(found, player1)
 				end
 			end
@@ -74,7 +74,7 @@ function vm.FindPlayers(names, client)
 	return found
 end
 
-function vm.IsNameMatch( ply, str )
+function vh.IsNameMatch( ply, str )
 	if (type(str) != "string") then return end
 	if ( str == "*" ) then
 		return true
@@ -91,7 +91,7 @@ function vm.IsNameMatch( ply, str )
 	end
 end
 
-function vm.CreatePlayerList( tbl, notall )
+function vh.CreatePlayerList( tbl, notall )
 	local lst = ""
 	local lword = "and"
 	if ( notall ) then
@@ -116,7 +116,7 @@ function vm.CreatePlayerList( tbl, notall )
 	return lst
 end
 
-function vm.TableToList(info, word, hasNoTarget)
+function vh.TableToList(info, word, hasNoTarget)
 	word = word or "and"
 
 	local output = {}
@@ -171,7 +171,7 @@ function vm.TableToList(info, word, hasNoTarget)
 	return output
 end
 
-function vm.SplitStringByLength(value, length)
+function vh.SplitStringByLength(value, length)
 	local output = {}
 
 	while (#value > length) do
@@ -186,36 +186,36 @@ function vm.SplitStringByLength(value, length)
 	return output
 end
 
-function vm.ConsoleMessage( Message )
-	print("Vector-Moderation -- " .. Message)
+function vh.ConsoleMessage( Message )
+	print("V-Handle -- " .. Message)
 end
 
-vm.data = vm.data or {}
+vh.data = vh.data or {}
 
-function vm.SetData(key, value, noSave)
-	vm.data[key] = value
+function vh.SetData(key, value, noSave)
+	vh.data[key] = value
 
 	if (!noSave) then
-		file.CreateDir("vm")
-		file.Write("vm/"..key..".txt", util.Compress(von.serialize(vm.data)))
+		file.CreateDir("vh")
+		file.Write("vh/"..key..".txt", util.Compress(von.serialize(vh.data)))
 	end
 end
 
-function vm.GetData(key, default, noCache)
-	if (noCache or vm.data[key] == nil) then
-		local contents = file.Read("vm/"..key..".txt", "DATA")
+function vh.GetData(key, default, noCache)
+	if (noCache or vh.data[key] == nil) then
+		local contents = file.Read("vh/"..key..".txt", "DATA")
 
 		if (contents and contents != "") then
 			local deserialized = von.deserialize(util.Decompress(contents))
 
 			if (deserialized[key] != nil) then
-				vm.data[key] = deserialized[key]
+				vh.data[key] = deserialized[key]
 
 				return deserialized[key]
 			end
 		end
-	elseif (vm.data[key] != nil) then
-		return vm.data[key]
+	elseif (vh.data[key] != nil) then
+		return vh.data[key]
 	end
 
 	return default
