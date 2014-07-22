@@ -1,5 +1,5 @@
-hook.Add("PlayerSay", "vm_HandleCommands", function(Player, Message, TeamChat)
+hook.Add("PlayerSay", "vh_HandleCommands", function(Player, Message, TeamChat)
   if (TeamChat) then return end
   local Args = string.Explode(" ", Message)
-  return vm.HandleCommands(Player, Args)
+  return vh.HandleCommands(Player, Args)
 end)
