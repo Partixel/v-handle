@@ -1,15 +1,15 @@
-local addon = {}
-addon.Name = "Cloak"
-addon.Description = "Cloak or uncloak a player"
-addon.Commands = {}
-addon.Commands.Cloak = {
+local Module = {}
+Module.Name = "Cloak"
+Module.Description = "Cloak or uncloak a player"
+Module.Commands = {}
+Module.Commands.Cloak = {
   Aliases = {"uncloak"},
   Prefix = "!",
-  Description = addon.Description,
+  Description = Module.Description,
   Usage = "<Player>"
 }
 
-function addon.Commands.Cloak.Run(Player, Args)
+function Module.Commands.Cloak.Run(Player, Args)
 	vh.ConsoleMessage("Ran cloak, todo.")
 	local Players = vh.FindPlayers(Arg, Player)
 	local Success = false
@@ -23,7 +23,7 @@ function addon.Commands.Cloak.Run(Player, Args)
 	return "You cloaked "..vh:CreatePlayerList(Players)
 end
 
-function addon.Commands.Cloak.Vars(ArgNumber)
+function Module.Commands.Cloak.Vars(ArgNumber)
 	local playerList = {}
 	for _, v in pairs(player.GetAll()) do
 		table.insert(playerList, v:Nick())
@@ -34,4 +34,4 @@ function addon.Commands.Cloak.Vars(ArgNumber)
 	return
 end
 
-vh.RegisterAddon(addon)
+vh.RegisterModule(Module)

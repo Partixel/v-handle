@@ -5,20 +5,20 @@ if (SERVER) then
 end
 include("v-handle/sh_util.lua")
 
-vh.IncludeFolder("vh_util")
+vh.IncludeFolder("vh_lib")
 
-vh.ConsoleMessage("Loading dependancies")
+vh.ConsoleMessage("Loading libs")
 
 -- Handle variables --
 vh.Version = version_util.Version( 0, 0, 1 )
 
--- Handle addons --
-vh.Addons = {}
+-- Handle Modules --
+vh.Modules = {}
 concommand.Add("vh", function(Player, Command, Args)
 	
 	local ValidCommands = {}
 	
-	for a, b in pairs(vh.Addons) do
+	for a, b in pairs(vh.Modules) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
 			if (Args[1]:lower() == c:lower()) then
@@ -44,26 +44,26 @@ concommand.Add("vh", function(Player, Command, Args)
 	ValidCommands[1].Run(Player, Args)
 end)
 
-function vh.RegisterAddon( Addon )
-	for a, b in pairs (vh.Addons) do
-		if b.Name == Addon.Name then
-			vh.ConsoleMessage("Already loaded " .. Addon.Name .. "!")
+function vh.RegisterModule( Module )
+	for a, b in pairs (vh.Modules) do
+		if b.Name == Module.Name then
+			vh.ConsoleMessage("Already loaded " .. Module.Name .. "!")
 			return
 		end
 	end
-	table.insert(vh.Addons, Addon)
-	if (Addon["ConCommands"]) then
-		for a, b in pairs(Addon.ConCommands) do
+	table.insert(vh.Modules, Module)
+	if (Module["ConCommands"]) then
+		for a, b in pairs(Module.ConCommands) do
 			concommand.Add(a, b.Run)
 		end
 	end
-	vh.ConsoleMessage("Loaded " .. Addon.Name .. " as an addon")
+	vh.ConsoleMessage("Loaded " .. Module.Name .. " as an Module")
 end
 
 function vh.HandleCommands( Player, Args )
 	local ValidCommands = {}
 	
-	for a, b in pairs(vh.Addons) do
+	for a, b in pairs(vh.Modules) do
 		if (!b["Commands"]) then continue end
 		for c, d in pairs(b.Commands) do
 			if (b.Prefix == "") then continue end
@@ -93,4 +93,4 @@ function vh.HandleCommands( Player, Args )
 	return ""
 end
 
-vh.IncludeFolder("vh_addons")
+vh.IncludeFolder("vh_modules")

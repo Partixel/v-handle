@@ -19,9 +19,4 @@ function vh.GetConfigValue( Key )
     return vh.Config[Key] or vh.ConsoleMessage("Attempted to find config value " .. key .. " but found none, please report this error to the developers")
 end
 
-function vh.SetConfigValue( Key, Value )
-    vh.Config[Key] = Value
-    vh.SetData("Config", vh.Config)
-end
-
 vh.CheckConfig()

@@ -1,7 +1,6 @@
-local addon = {}
-addon.Name = "Autocomplete"
-addon.Description = "Description"
-vh.RegisterAddon(addon)
+local Module = {}
+Module.Name = "Autocomplete"
+Module.Description = "Description"
 
 local chatOpen = false
 local suggestions = {}
@@ -35,7 +34,7 @@ function TextChanged( str )
 	if ( string.Left( str, 1 ) == "!" ) then
 		local com = string.sub( str, 2, ( string.find( str, " " ) or ( #str + 1 ) ) - 1 )
 		
-		for _, a in pairs(vh.Addons) do
+		for _, a in pairs(vh.Modules) do
 			if (!a["Commands"]) then continue end
 			for b, c in pairs(a.Commands) do
 				if ( string.sub(b:lower(), 0, #com) == string.lower(com)) then
@@ -81,3 +80,5 @@ hook.Add("ChatTextChanged", "TextChanged", TextChanged);
 hook.Add("OnChatTab", "ChatTab", ChatTab);
 hook.Add("StartChat", "StartChat", ChatBegin);
 hook.Add("FinishChat", "FinishChat", ChatEnd);
+
+vh.RegisterModule(Module)
