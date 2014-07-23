@@ -29,4 +29,4 @@ function addon.ConCommands.DefaultConCommand.Run(Player, Command, Args)
 	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
 end
 
-vm.RegisterAddon(addon)
+vh.RegisterAddon(addon)

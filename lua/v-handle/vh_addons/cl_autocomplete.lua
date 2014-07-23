@@ -1,7 +1,7 @@
 local addon = {}
 addon.Name = "Autocomplete"
 addon.Description = "Description"
-vm.RegisterAddon(addon)
+vh.RegisterAddon(addon)
 
 local chatOpen = false
 local suggestions = {}
@@ -35,7 +35,7 @@ function TextChanged( str )
 	if ( string.Left( str, 1 ) == "!" ) then
 		local com = string.sub( str, 2, ( string.find( str, " " ) or ( #str + 1 ) ) - 1 )
 		
-		for _, a in pairs(vm.Addons) do
+		for _, a in pairs(vh.Addons) do
 			if (!a["Commands"]) then continue end
 			for b, c in pairs(a.Commands) do
 				if ( string.sub(b:lower(), 0, #com) == string.lower(com)) then
