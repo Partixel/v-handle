@@ -12,10 +12,6 @@ vh.ConsoleMessage("Loading dependancies")
 -- Handle variables --
 vh.Version = version_util.Version( 0, 0, 1 )
 
--- Handle config defaults --
-vh.ConfigDefaults = {}
-vh.ConfigDefaults["AutoUpdate"] = false
-
 -- Handle addons --
 vh.Addons = {}
 concommand.Add("vh", function(Player, Command, Args)
