@@ -5,9 +5,9 @@ if (SERVER) then
 end
 include("v-handle/sh_util.lua")
 
-vh.IncludeFolder("vh_lib")
+vh.IncludeFolder("vh_core")
 
-vh.ConsoleMessage("Loading libs")
+vh.ConsoleMessage("Loading core files")
 
 -- Handle variables --
 vh.Version = version_util.Version( 0, 0, 1 )

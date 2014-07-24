@@ -22,7 +22,7 @@ function vh.IncludeFolder(folder)
 	end
 end
 
-vh.IncludeFolder("vh_lib/external")
+vh.IncludeFolder("vh_core/external")
 
 function vh.StringMatches(a, b)
 	return a:lower() == b:lower() or a:lower():find(b:lower())
