@@ -13,6 +13,7 @@ vh.ConsoleMessage("Loading libs")
 vh.Version = version_util.Version( 0, 0, 1 )
 
 -- Handle Modules --
+vh.ModuleHooks = {}
 vh.Modules = {}
 concommand.Add("vh", function(Player, Command, Args)
 	
@@ -52,9 +53,18 @@ function vh.RegisterModule( Module )
 		end
 	end
 	table.insert(vh.Modules, Module)
-	if (Module["ConCommands"]) then
+	if Module["ConCommands"] then
 		for a, b in pairs(Module.ConCommands) do
 			concommand.Add(a, b.Run)
+		end
+	end
+	if Module["Hooks"] then
+		for a, b in pairs(Module.Hooks) do
+			if vh.ModuleHooks[b.Type] then
+				table.insert(vh.ModuleHooks[b.Type], b.Run)
+			else
+				vh.ModuleHooks[b.Type] = {b.Run}
+			end
 		end
 	end
 	vh.ConsoleMessage("Loaded " .. Module.Name .. " as an Module")
@@ -94,3 +104,13 @@ function vh.HandleCommands( Player, Args )
 end
 
 vh.IncludeFolder("vh_modules")
+
+-- Add module hooks
+for a, b in pairs(vh.ModuleHooks) do
+	local Hook = tostring(a)
+	hook.Add(Hook, "vh_" .. Hook, function(...)
+		for c, d in pairs(vh.ModuleHooks[Hook]) do
+			d(arg)
+		end
+	end);
+end
