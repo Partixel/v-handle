@@ -1,7 +1,3 @@
-local addon = {}
-addon.Name = "Config"
-addon.Description = "Adds a config file"
-
 vh.Config = vh.GetData("Config") or {}
 
 vh.ConfigDefaults = {}
@@ -40,5 +36,3 @@ if vh.Config == {} then
 else
     vh.DefaultConfig()
 end
-
-vh.RegisterAddon(addon)
