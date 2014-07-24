@@ -64,6 +64,12 @@ function vh.RegisterModule( Module )
 				table.insert(vh.ModuleHooks[b.Type], b.Run)
 			else
 				vh.ModuleHooks[b.Type] = {b.Run}
+				local Hook = b.Type
+				hook.Add(Hook, "vh_" .. Hook, function(...)
+					for c, d in pairs(vh.ModuleHooks[Hook]) do
+						d(arg)
+					end
+				end)
 			end
 		end
 	end
@@ -104,13 +110,3 @@ function vh.HandleCommands( Player, Args )
 end
 
 vh.IncludeFolder("vh_modules")
-
--- Add module hooks
-for a, b in pairs(vh.ModuleHooks) do
-	local Hook = tostring(a)
-	hook.Add(Hook, "vh_" .. Hook, function(...)
-		for c, d in pairs(vh.ModuleHooks[Hook]) do
-			d(arg)
-		end
-	end);
-end
