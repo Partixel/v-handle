@@ -4,9 +4,8 @@ addon.Description = "Adds a config file"
 
 vh.Config = vh.GetData("Config") or {}
 
-if vh.Config == {} then
-    vh.ConsoleMessage("No config found, creating defaults")
-end
+vh.ConfigDefaults = {}
+vh.ConfigDefaults["Test"] = false
 
 function vh.ForceDefaultConfig()
     for a, b in pairs(vh.ConfigDefaults) do
@@ -23,12 +22,23 @@ function vh.DefaultConfig()
             vh.Config[a] = vh.ConfigDefaults[a]
         end
     end
+    vh.SetData("Config", vh.Config)
 end
 
-function vh:GetConfig( Key )
+function vh.GetConfigValue( Key )
     return vh.Config[Key] or vh.ConsoleMessage("Attempted to find config value " .. key .. " but found none, please report this error to the developers")
 end
 
-vh.DefaultConfig()
+function vh.SetConfigValue( Key, Value )
+    vh.Config[Key] = Value
+    vh.SetData("Config", vh.Config)
+end
+
+if vh.Config == {} then
+    vh.ConsoleMessage("No config found, creating defaults")
+    vh.ForceDefaultConfig()
+else
+    vh.DefaultConfig()
+end
 
 vh.RegisterAddon(addon)
