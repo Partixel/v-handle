@@ -1,15 +1,9 @@
-vh.Config = vh.GetData("Config") or {}
-
 vh.ConfigDefaults = {}
 vh.ConfigDefaults["Test"] = false
 
-function vh.ForceDefaultConfig()
-    for a, b in pairs(vh.ConfigDefaults) do
-        vh.Config[a] = vh.ConfigDefaults[a]
-    end
-end
+vh.Config = vh.GetData("Config") or table.Copy(vh.ConfigDefaults)
 
-function vh.DefaultConfig()
+function vh.CheckConfig()
     for a, b in pairs(vh.ConfigDefaults) do
         if vh.Config[a] == nil then
             vh.Config[a] = vh.ConfigDefaults[a]
@@ -30,9 +24,4 @@ function vh.SetConfigValue( Key, Value )
     vh.SetData("Config", vh.Config)
 end
 
-if vh.Config == {} then
-    vh.ConsoleMessage("No config found, creating defaults")
-    vh.ForceDefaultConfig()
-else
-    vh.DefaultConfig()
-end
+vh.CheckConfig()
