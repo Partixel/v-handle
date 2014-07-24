@@ -75,10 +75,12 @@ function ChatEnd()
 	chatOpen = false
 end
 
-hook.Add("HUDPaint", "ChatPaint", ChatPaint);
-hook.Add("ChatTextChanged", "TextChanged", TextChanged);
-hook.Add("OnChatTab", "ChatTab", ChatTab);
-hook.Add("StartChat", "StartChat", ChatBegin);
-hook.Add("FinishChat", "FinishChat", ChatEnd);
+Module.Hooks = {
+	{Type = "HUDPaint", Run = ChatPaint},
+	{Type = "ChatTextChanged", Run = TextChanged},
+	{Type = "OnChatTab", Run = ChatTab},
+	{Type = "StartChat", Run = ChatBegin},
+	{Type = "FinishChat", Run = ChatEnd}
+}
 
 vh.RegisterModule(Module)
