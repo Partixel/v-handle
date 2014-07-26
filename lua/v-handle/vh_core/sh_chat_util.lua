@@ -60,13 +60,16 @@ if SERVER then
 					umsg.String(String)
 				umsg.End()
 			end
-		elseif Player then
-			if !Player:IsValid() then return end
+		elseif Player == true then
+			vh.ConsoleMessage(String, true)
+		elseif Player:IsValid() then
 			umsg.Start("vh_message", Player)
 				umsg.String(String)
 			umsg.End()
 		else
-			vh.ConsoleMessage(String, true)
+			umsg.Start("vh_message")
+				umsg.String(String)
+			umsg.End()
 		end
 	end
 else
