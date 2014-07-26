@@ -13,6 +13,7 @@ vh.ConsoleMessage("lcore")
 vh.ModuleHooks = {}
 vh.Modules = {}
 concommand.Add("vh", function(Player, Command, Args)
+	if #Args == 0 then return end
 	if CLIENT then
 		net.Start("VH_ClientCCmd")
 			net.WriteString(von.serialize({Player = Player, Args = Args}))

@@ -64,7 +64,8 @@ function vh.ConsoleMessage( Message, Log )
 		end
 		Msg = vh.ChatUtil.ParseColors(Message)
 	end
-	MsgC(unpack(Msg), "\n")
+	table.insert(Msg, "\n")
+	MsgC(unpack(Msg))
 end
 
 if SERVER then
