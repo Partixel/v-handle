@@ -1,25 +1,23 @@
 local Module = {}
-Module.Name = "Cloak"
-Module.Description = "Cloak or uncloak a player"
+Module.Name = "Kick"
+Module.Description = "Kick a player"
 Module.Commands = {}
-Module.Commands.Cloak = {
-  Aliases = {"uncloak"},
+Module.Commands.Kick = {
+  Aliases = {},
   Prefix = "!",
   Description = Module.Description,
-  Usage = "<Player>"
+  Usage = "<Player> <Reason>"
 }
 
 function Module.Commands.Cloak.Run(Player, Args)
 	local Players = vh.FindPlayers(Arg, Player)
-	local Success = false
-	local Toggle = false
 	if (not Players or #Players == 0) then return "No players found." end
 	
 	for _, ply in ipairs(Players) do
-		ply:SetNoDraw(true)
+		ply:Kick()
 	end
 	
-	return "You cloaked "..vh:CreatePlayerList(Players) -- Todo proper message
+	return "You kicked "..vh:CreatePlayerList(Players) -- Todo proper message
 end
 
 function Module.Commands.Cloak.Vars(ArgNumber)

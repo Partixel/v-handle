@@ -1,6 +1,6 @@
 local Module = {}
 Module.Name = "Autocomplete"
-Module.Description = "Description"
+Module.Description = "Shows a UI with viable auto-completions below chat box"
 
 local chatOpen = false
 local suggestions = {}
