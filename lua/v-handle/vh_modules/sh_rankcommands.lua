@@ -20,8 +20,7 @@ function Module.Commands.SetRank.Run(Player, Args, RankID, Perm)
 		local Invalid = {}
 		
 		for a, b in pairs(Targets) do
-			local TargetID = b:VH_GetRank()
-			if vh.RankTypeUtil.CanTarget(Perm, RankID, TargetID) then
+			if vh.RankTypeUtil.CanTarget(Perm, RankID, Rank) then
 				b:VH_SetRank(Rank)
 				table.insert(Complete, b)
 			else
@@ -34,7 +33,15 @@ function Module.Commands.SetRank.Run(Player, Args, RankID, Perm)
 			if Player:IsValid() then
 				Nick = Player:Nick()
 			end
-			vh.ChatUtil.SendMessage(Nick .. " has set the rank of " .. vh.CreatePlayerList(Complete) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name)
+			local Players = player.GetAll()
+			for a, b in pairs(Players) do
+				if b:Nick() == Nick then
+					table.remove(Players, a)
+				end
+			end
+			if #Players != 0 then
+				vh.ChatUtil.SendMessage(Nick .. " has set the rank of " .. vh.CreatePlayerList(Complete) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
+			end
 			return {"You set the rank of " .. vh.CreatePlayerList(Complete) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name, 1}
 		end
 		

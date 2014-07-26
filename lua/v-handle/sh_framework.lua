@@ -16,12 +16,29 @@ vh.Version = version_util.Version( 0, 0, 1 )
 vh.ModuleHooks = {}
 vh.Modules = {}
 concommand.Add("vh", function(Player, Command, Args)
-	local Outcome = vh.HandleCommands(Player, Args, {})
-	if Outcome and Outcome != "" then
-		local Msg = vh.ChatUtil.ParseColors(Outcome)
-		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+	if CLIENT then
+		net.Start("VH_ClientCCmd")
+			net.WriteString(von.serialize({Player = Player, Args = Args}))
+		net.SendToServer()
+	else
+		local Outcome = vh.HandleCommands(Player, Args, {})
+		if Outcome and Outcome != "" then
+			local Msg = vh.ChatUtil.ParseColors(Outcome)
+			MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+		end
 	end
 end)
+
+if SERVER then
+	usermessage.Hook("vh_clientccmd", function(Message)
+		local Vars = von.deserialise(Message:ReadString())
+
+		local Outcome = vh.HandleCommands(Vars.Player, Vars.Args, {})
+		if Outcome and Outcome != "" then
+			vh.ChatUtil.SendMessage(Outcome, Vars.Player)
+		end
+	end)
+end
 
 function vh.RegisterModule( Module )
 	if Module.Disabled then

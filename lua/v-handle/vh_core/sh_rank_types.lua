@@ -130,13 +130,13 @@ if SERVER then
 end
 
 function vh.RankTypeUtil.CanTarget( Perm, ID, TargetID)
-  if ID == 0 then return true end
-  if Perm != nil and Perm.Target != nil then
-    return table.HasValue(Perm.Target, TargetID)
-  else
-    local Rank = vh.RankTypeUtil.FromID( ID )
-    return table.HasValue(Rank.Target, TargetID)
-  end
+	if ID == 0 then return true end
+	if Perm != nil and Perm.Target != nil then
+		return table.HasValue(Perm.Target, TargetID)
+	else
+		local Rank = vh.RankTypeUtil.FromID( ID )
+		return table.HasValue(Rank.Target, TargetID)
+	end
 end
 
 function vh.RankTypeUtil.GetUsers( ID )
