@@ -26,6 +26,8 @@ function vh.ChatUtil.ParseColors( Message )
 	for a, b in pairs(Msg) do
 		if vh.ChatUtil.Colors[string.lower(b)] then
 			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
+		elseif string.lower(b) == "_random_" then
+			table.insert(Final, table.random(vh.ChatUtil.Colors))
 		elseif type(Final[#Final]) == "string" then
 			Final[#Final] = Final[#Final] .. " " .. b
 		else
