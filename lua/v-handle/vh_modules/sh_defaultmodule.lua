@@ -1,6 +1,12 @@
 local Module = {} -- A list containing the modules values and functions
 Module.Name = "Default" -- Name of the module
 Module.Description = "Default Module" -- Description of the module
+Module.PrecacheStrings = {
+	dstr = "_white_ Ran _red_ default _blue_ command" -- Adds the string to the cache under the key
+				-- These strings are parsed of the colors before hand to save time
+				-- To use a cached string simply replace the message with the key
+				-- NOTE: Only works with vh.ChatUtil functions
+}
 Module.Commands = {} -- List of commands this module adds
 Module.Commands.DefaultCommand = { -- A command
   Aliases = {"AnotherCommand"}, -- Names that can be used to run the command as well as the key
@@ -19,7 +25,7 @@ function Module.Commands.DefaultCommand.Run(Player, Args, Alias, RankID, Perm) -
 				-- Alias - The alias used to run the command
 				-- RankID - The ID of the rank the player used to run the command
 				-- Perm - The permission that was used to run the command
-	vh.ChatUtil.SendMessage("_white_ Ran _red_ default _blue_ command", Player) -- The function used to send a player a message
+	vh.ChatUtil.SendMessage("dstr", Player) -- The function used to send a player a message
 				-- Replace player with the player recieving the command OR a table 
 				-- of players OR blank for all players OR true for a log message
 				-- Replace the stirng with the message you want sent, a list of colors can be found in the chat
