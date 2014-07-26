@@ -11,7 +11,7 @@ Module.Commands.SetRank = {
   MinArgs = 2
 }
 
-function Module.Commands.SetRank.Run(Player, Args, RankID, Perm)
+function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 	local Rank = vh.RankTypeUtil.GetID(table.concat(Args, " ", 2))
 	if Rank then
 	
