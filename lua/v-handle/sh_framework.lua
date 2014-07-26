@@ -42,16 +42,26 @@ concommand.Add("vh", function(Player, Command, Args)
 	end
 	if (not ValidCommands[1]) then return end
 	table.remove(Args, 1)
-	ValidCommands[1].Run(Player, Args)
+	local Outcome = ValidCommands[1].Run(Player, Args)
+	if Outcome[2] == 0 then
+		local Msg = vh.ChatUtil.ParseColors("_RED_ " .. Outcome[1])
+		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+	elseif Outcome[2] == 1 then
+		local Msg = vh.ChatUtil.ParseColors("_GREEN_ " .. Outcome[1])
+		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+	else
+		local Msg = vh.ChatUtil.ParseColors("_RESET_ " .. Outcome[1])
+		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+	end
 end)
 
 function vh.RegisterModule( Module )
 	for a, b in pairs (vh.Modules) do
 		if b.Name == Module.Name then
-			vh.ConsoleMessage("Already loaded " .. Module.Name .. "!")
-			return
+			table.remove(vh.Modules, a)
 		end
 	end
+	vh.ConsoleMessage("Loading module " .. Module.Name)
 	table.insert(vh.Modules, Module)
 	if Module["ConCommands"] then
 		for a, b in pairs(Module.ConCommands) do
@@ -65,15 +75,15 @@ function vh.RegisterModule( Module )
 			else
 				vh.ModuleHooks[b.Type] = {b.Run}
 				local Hook = b.Type
-				hook.Add(Hook, "vh_" .. Hook, function(...)
+				hook.Add(Hook, "vh_" .. Hook, function(q, w, e, r, t)
 					for c, d in pairs(vh.ModuleHooks[Hook]) do
-						d(arg)
+						d(q, w, e, r, t)
 					end
 				end)
 			end
 		end
 	end
-	vh.ConsoleMessage("Loaded " .. Module.Name .. " as an Module")
+	vh.ConsoleMessage("Loaded " .. Module.Name .. " as a Module")
 end
 
 function vh.HandleCommands( Player, Args )
@@ -105,7 +115,14 @@ function vh.HandleCommands( Player, Args )
 	end
 	if (not ValidCommands[1]) then return end
 	table.remove(Args, 1)
-	ValidCommands[1].Run(Player, Args)
+	local Outcome = ValidCommands[1].Run(Player, Args)
+	if Outcome[2] == 0 then
+		vh.ChatUtil.SendMessage("_RED_ " .. Outcome[1], Player)
+	elseif Outcome[2] == 1 then
+		vh.ChatUtil.SendMessage("_GREEN_ " .. Outcome[1], Player)
+	else
+		vh.ChatUtil.SendMessage("_RESET_ " .. Outcome[1], Player)
+	end
 	return ""
 end
 

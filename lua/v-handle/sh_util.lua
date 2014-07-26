@@ -7,7 +7,7 @@ function vh.Include(fileName)
 		else
 			include(fileName)
 		end
-	elseif (fileName:find("sh_")) then
+	else
 		if (SERVER) then
 			AddCSLuaFile(fileName)
 		end
@@ -187,7 +187,8 @@ function vh.SplitStringByLength(value, length)
 end
 
 function vh.ConsoleMessage( Message )
-	print("V-Handle -- " .. Message)
+	local Msg = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_  -- " .. Message)
+	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
 end
 
 vh.data = vh.data or {}
