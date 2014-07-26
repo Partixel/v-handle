@@ -28,17 +28,6 @@ concommand.Add("vh", function(Player, Command, Args)
 	end
 end)
 
-if SERVER then
-	usermessage.Hook("vh_clientccmd", function(Message)
-		local Vars = von.deserialise(Message:ReadString())
-
-		local Outcome = vh.HandleCommands(Vars.Player, Vars.Args, {})
-		if Outcome and Outcome != "" then
-			vh.ChatUtil.SendMessage(Outcome, Vars.Player)
-		end
-	end)
-end
-
 function vh.RegisterModule( Module )
 	if Module.Disabled then
 		vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled")
