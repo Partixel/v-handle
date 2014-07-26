@@ -7,10 +7,7 @@ include("v-handle/sh_util.lua")
 
 vh.IncludeFolder("vh_core")
 
-vh.ConsoleMessage("Loading core files")
-
--- Handle variables --
-vh.Version = version_util.Version( 0, 0, 1 )
+vh.ConsoleMessage("Loaded _lime_ Core _white_ files")
 
 -- Handle Modules --
 vh.ModuleHooks = {}
@@ -24,7 +21,7 @@ concommand.Add("vh", function(Player, Command, Args)
 		local Outcome = vh.HandleCommands(Player, Args, {})
 		if Outcome and Outcome != "" then
 			local Msg = vh.ChatUtil.ParseColors(Outcome)
-			MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+			MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12], Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20], "\n")
 		end
 	end
 end)
@@ -42,7 +39,7 @@ end
 
 function vh.RegisterModule( Module )
 	if Module.Disabled then
-		vh.ConsoleMessage("Module " .. Module.Name .. " is disabled")
+		vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled")
 		return
 	end
 	for a, b in pairs (vh.Modules) do
@@ -50,7 +47,6 @@ function vh.RegisterModule( Module )
 			table.remove(vh.Modules, a)
 		end
 	end
-	vh.ConsoleMessage("Loading module " .. Module.Name)
 	table.insert(vh.Modules, Module)
 	if Module["ConCommands"] then
 		for a, b in pairs(Module.ConCommands) do
@@ -77,7 +73,7 @@ function vh.RegisterModule( Module )
 			end
 		end
 	end
-	vh.ConsoleMessage("Loaded " .. Module.Name .. " as a Module")
+	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
 end
 
 function vh.HandleCommands( Player, Args, Commands )
@@ -105,7 +101,15 @@ function vh.HandleCommands( Player, Args, Commands )
 	end
 	
 	if (#ValidCommands > 1) then
-		return "_RED_ Multiple commands found using that alias"
+		for a, b in pairs(ValidCommands) do
+			if string.lower(Args[1]) == string.lower(a) then
+				ValidCommands = {a = b}
+				break
+			end
+		end
+		if (#ValidCommands > 1) then
+			return "_red_ Multiple commands found using that alias"
+		end
 	elseif (#ValidCommands == 0) then
 		return
 	end
@@ -120,18 +124,12 @@ function vh.HandleCommands( Player, Args, Commands )
 		table.remove(Args, 1)
 
 		if #Args < ValidCommands[1].MinArgs then
-			return "_RESET_ Incorrect usage - " .. ValidCommands[1].Usage
+			return "_reset_ Incorrect usage - " .. ValidCommands[1].Usage
 		end
-		local Outcome = ValidCommands[1].Run(Player, Args, RankID, Perm)
-		if Outcome[2] == 0 then
-			return "_RED_ " .. Outcome[1]
-		elseif Outcome[2] == 1 then
-			return "_GREEN_ " .. Outcome[1]
-		else
-			return "_RESET_ " .. Outcome[1]
-		end
+		ValidCommands[1].Run(Player, Args, RankID, Perm)
+		return ""
 	else
-		return "_RED_ You do not have permission to use this"
+		return "_red_ You do not have permission to use this"
 	end
 end
 

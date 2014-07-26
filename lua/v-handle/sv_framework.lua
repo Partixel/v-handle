@@ -14,7 +14,9 @@ hook.Add("PlayerSay", "vh_HandleCommands", function(Player, Message, TeamChat)
 	Args[1] = string.sub(Args[1], 2)
 	local Outcome = vh.HandleCommands(Player, Args, Commands)
 	if Outcome then
-		vh.ChatUtil.SendMessage(Outcome, Player)
+		if Outcome != "" then
+			vh.ChatUtil.SendMessage(Outcome, Player)
+		end
 		return ""
 	end
 end)
@@ -25,6 +27,6 @@ net.Receive( "VH_ClientCCmd", function( Length )
 	local Vars = von.deserialize(net.ReadString())
 	local Outcome = vh.HandleCommands(Vars.Player, Vars.Args, {})
 	if Outcome and Outcome != "" then
-		vh.ChatUtil.SendMessage(Outcome, Player)
+		vh.ChatUtil.SendMessage(Outcome, Vars.Player)
 	end
 end)

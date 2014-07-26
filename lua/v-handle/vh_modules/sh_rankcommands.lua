@@ -40,18 +40,25 @@ function Module.Commands.SetRank.Run(Player, Args, RankID, Perm)
 				end
 			end
 			if #Players != 0 then
-				vh.ChatUtil.SendMessage(Nick .. " has set the rank of " .. vh.CreatePlayerList(Complete) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
+				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
 			end
-			return {"You set the rank of " .. vh.CreatePlayerList(Complete) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name, 1}
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name)
+			if Player:IsValid() then
+				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+			end
+			return
 		end
 		
 		if #Invalid != 0 then
-			return {"You cannot set the rank of " .. vh.CreatePlayerList(Invalid) .. " to " .. vh.RankTypeUtil.FromID(Rank).Name, 0}
+			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+			return
 		end
 		
-		return {"No valid players found", 0}
+		vh.ChatUtil.SendMessage("_white_ No valid _red_ players _white_ found", Player)
+		return
 	else
-		return {"That is not a valid rank", 0}
+		vh.ChatUtil.SendMessage("_white_ That is not a valid _red_ rank", Player)
+		return
 	end
 end
 

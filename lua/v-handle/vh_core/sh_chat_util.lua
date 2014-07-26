@@ -29,31 +29,49 @@ function vh.ChatUtil.ParseColors( Message )
 		elseif type(Final[#Final]) == "string" then
 			Final[#Final] = Final[#Final] .. " " .. b
 		else
-			table.insert(Final, b)
+			if type(Final[#Final]) == "table" and #Final != 1 then
+				table.insert(Final, " " .. b)
+			else
+				table.insert(Final, b)
+			end
 		end
 	end
-	if #Final < 7 then
+	if #Final < 20 then
 		repeat
 			table.insert(Final, "")
-		until #Final == 7
+		until #Final == 20
 	end
 	return Final
 end
 
-function vh.ConsoleMessage( Message )
-	local Msg = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_  -- " .. Message)
-	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
+function vh.ConsoleMessage( Message, Log )
+	if !Log then
+		Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
+	end
+	local Msg = vh.ChatUtil.ParseColors(Message)
+	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12], Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20], "\n")
 end
 
 if SERVER then
 	function vh.ChatUtil.SendMessage(String, Player)
-		umsg.Start("vh_message", Player)
-			umsg.String(String)
-		umsg.End()
+		if type(Player) == "table" then
+			for a, b in pairs(Player) do
+				umsg.Start("vh_message", b)
+					umsg.String(String)
+				umsg.End()
+			end
+		elseif Player then
+			if !Player:IsValid() then return end
+			umsg.Start("vh_message", Player)
+				umsg.String(String)
+			umsg.End()
+		else
+			vh.ConsoleMessage(String, true)
+		end
 	end
 else
 	usermessage.Hook("vh_message", function(Message)
 		local Msg = vh.ChatUtil.ParseColors(Message:ReadString())
-		chat.AddText(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7])
+		chat.AddText(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12], Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20])
 	end)
 end
