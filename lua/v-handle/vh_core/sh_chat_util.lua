@@ -75,12 +75,6 @@ if SERVER then
 			umsg.Start("vh_message")
 				umsg.String(Message)
 			umsg.End()
-		elseif Player:IsValid() then
-			umsg.Start("vh_message", Player)
-				umsg.String(Message)
-			umsg.End()
-		elseif !Player:IsValid() then
-			vh.ConsoleMessage(Message, true)
 		elseif type(Player) == "table" then
 			for a, b in pairs(Player) do
 				umsg.Start("vh_message", b)
@@ -89,6 +83,13 @@ if SERVER then
 			end
 		elseif Player == true then
 			vh.ConsoleMessage(Message, true)
+		elseif Player:IsValid() then
+			umsg.Start("vh_message", Player)
+				umsg.String(Message)
+			umsg.End()
+		elseif !Player:IsValid() then
+			vh.ConsoleMessage(Message, true)
+
 		end
 	end
 else
