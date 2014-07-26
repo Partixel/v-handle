@@ -22,7 +22,7 @@ function Module.Commands.Kick.Run(Player, Args, Alias, RankID, Perm)
 		ply:Kick(table.concat(Args, " ", 2))
 	end
 	
-	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. vh.CreatePlayerList(Players) .. " _white_ because _red_ " .. table.concat(Args, " ", 2))
+	vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has kicked _reset_ " .. vh.CreatePlayerList(Players) .. " _white_ because _red_ " .. table.concat(Args, " ", 2))
 	return
 end
 

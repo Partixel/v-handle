@@ -40,9 +40,9 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 	end
 	
 	if Toggle then
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has toggled cloak on _reset_ " .. vh.CreatePlayerList(Players))
 	else
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.CreatePlayerList(Players))
 	end
 	return
 end
