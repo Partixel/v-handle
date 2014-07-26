@@ -12,7 +12,7 @@ Module.Commands.Cloak = {
 }
 
 function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
-	local Players = vh.FindPlayers(Arg, Player)
+	local Players = vh.FindPlayers(Args, Player)
 	local Success = false
 	local Toggle = false
 	if (not Players or #Players == 0) then
