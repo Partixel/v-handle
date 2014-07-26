@@ -121,12 +121,13 @@ function vh.HandleCommands( Player, Args, Commands )
 
 	local Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
 	if Perm != nil and Perm.Value then
+		local Alias = Args[1]
 		table.remove(Args, 1)
 
 		if #Args < ValidCommands[1].MinArgs then
 			return "_reset_ Incorrect usage - " .. ValidCommands[1].Usage
 		end
-		ValidCommands[1].Run(Player, Args, RankID, Perm)
+		ValidCommands[1].Run(Player, Args, Alias, RankID, Perm)
 		return ""
 	else
 		return "_red_ You do not have permission to use this"
