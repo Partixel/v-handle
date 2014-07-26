@@ -22,7 +22,7 @@ vh.ChatUtil.Colors = {
 
 function vh.ChatUtil.ParseColors( Message )
 	local Msg = string.Explode(" ", Message)
-	local Final = {}
+	local Final = {vh.ChatUtil.Colors["_white_"]}
 	for a, b in pairs(Msg) do
 		if vh.ChatUtil.Colors[string.lower(b)] then
 			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
@@ -59,11 +59,12 @@ function vh.ConsoleMessage( Message, Log )
 	if vh.ChatUtil.Precached[string.lower(Message)] then
 		Msg = vh.ChatUtil.Precached[string.lower(Message)]
 	else
-		if !Log then
+		if Log then
 			Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
 		end
 		Msg = vh.ChatUtil.ParseColors(Message)
 	end
+	Msg = table.Copy(Msg)
 	table.insert(Msg, "\n")
 	MsgC(unpack(Msg))
 end
@@ -83,7 +84,7 @@ if SERVER then
 				umsg.String(Message)
 			umsg.End()
 		elseif !Player:IsValid() then
-			return
+			vh.ConsoleMessage(Message)
 		else
 			umsg.Start("vh_message")
 				umsg.String(Message)

@@ -52,21 +52,19 @@ function vh.GetPlayerData(UID, Key)
 end
 
 function Registry.Player:VH_GetPlayerData(Key)
-	vh.GetPlayerData(self:UniqueID(), Key)
+	return vh.GetPlayerData(self:UniqueID(), Key)
 end
 
 hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )
 	if !Plr.FirstSpawn then
 		Plr.FirstSpawn = true
-		
-		timer.Simple(1, function()
-			for a, b in pairs(vh.PlayerData) do
-				net.Start("VH_PlayerData")
-					net.WriteString(a)
-					net.WriteString(von.serialize(b))
-				net.Send(Plr)
-			end
-		end)
+
+		for a, b in pairs(vh.PlayerData) do
+			net.Start("VH_PlayerData")
+				net.WriteString(a)
+				net.WriteString(von.serialize(b))
+			net.Send(Plr)
+		end
 	end
 end)
 

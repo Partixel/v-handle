@@ -277,12 +277,10 @@ end
 hook.Add("PlayerSpawn", "VH_RankTypes", function( Plr )
 	if !Plr.AFirstSpawn then
 		Plr.AFirstSpawn = true
-		
-		timer.Simple(1, function()
-			net.Start("VH_RankTypes")
-				net.WriteString(von.serialize(vh.RankTypes))
-			net.Send(Plr)
-		end)
+
+		net.Start("VH_RankTypes")
+			net.WriteString(von.serialize(vh.RankTypes))
+		net.Send(Plr)
 	end
 end)
 
