@@ -20,6 +20,11 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 		return
 	end
 	
+	local Nick = "Console"
+	if Player:IsValid() then
+		Nick = Player:Nick()
+	end
+	
 	if (string.lower(Alias) == "cloak") then
 		Success = true
 		for _, ply in ipairs(Players) do
@@ -40,9 +45,9 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 	end
 	
 	if Toggle then
-		vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has toggled cloak on _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.CreatePlayerList(Players))
 	else
-		vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.CreatePlayerList(Players))
 	end
 	return
 end

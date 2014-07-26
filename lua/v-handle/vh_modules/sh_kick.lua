@@ -18,11 +18,16 @@ function Module.Commands.Kick.Run(Player, Args, Alias, RankID, Perm)
 		return
 	end
 	
+	local Nick = "Console"
+	if Player:IsValid() then
+		Nick = Player:Nick()
+	end
+	
 	for _, ply in ipairs(Players) do
 		ply:Kick(table.concat(Args, " ", 2))
 	end
 	
-	vh.ChatUtil.SendMessage("_lime_ " .. Player:Nick .. " _white_ has kicked _reset_ " .. vh.CreatePlayerList(Players) .. " _white_ because _red_ " .. table.concat(Args, " ", 2))
+	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. vh.CreatePlayerList(Players) .. " _white_ because _red_ " .. table.concat(Args, " ", 2))
 	return
 end
 
