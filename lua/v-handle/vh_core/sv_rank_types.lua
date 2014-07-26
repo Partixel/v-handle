@@ -62,8 +62,25 @@ DefaultRankTypes = {
 	}
 }
 
-vh.RankTypes =  {}
+vh.RankTypes =  vh.GetData("RankTypes") or {}
 vh.RankTypeUtil = {}
+
+util.AddNetworkString("VH_RankTypes")
+
+function vh.RankTypeUtil.Save()
+	vh.SetData("RankTypes", vh.RankTypes)
+	net.Start("VH_RankTypes")
+		net.WriteString(von.serialize(vh.RankTypes))
+	net.Broadcast()
+end
+
+if #vh.RankTypes == 0 then
+	vh.RankTypes = table.Copy(DefaultRankTypes)
+end
+	
+timer.Simple(1, function()
+	vh.RankTypeUtil.Save()
+end)
 
 function vh.RankTypeUtil.CanTarget( Perm, ID, TargetID)
 	local Rank = vh.RankTypeUtil.FromID( ID )
@@ -176,115 +193,78 @@ function vh.RankTypeUtil.FromName( Name )
 	return nil
 end
 
-
-if SERVER then
-
-	vh.RankTypes = vh.GetData("RankTypes") or {}
-	util.AddNetworkString("VH_RankTypes")
-	
-	function vh.RankTypeUtil.Save()
-		vh.SetData("RankTypes", vh.RankTypes)
-		net.Start("VH_RankTypes")
-			net.WriteString(von.serialize(vh.RankTypes))
-		net.Broadcast()
+function vh.RankTypeUtil.Add( Name, InheritID )
+	local Rank = vh.RankTypeUtil.FromID( InheritID )
+	if Rank then
+		local NewRank = table.Copy(Rank)
+		NewRank.Name = Name
+		NewRank.UID = #vh.RankTypes + 1
+		table.insert(vh.RankTypes, NewRank, InheritID + 1)
 	end
-
-	if #vh.RankTypes == 0 then
-		vh.RankTypes = table.Copy(DefaultRankTypes)
-	end
-		
-	timer.Simple(1, function()
-		vh.RankTypeUtil.Save()
-	end)
-
-	function vh.RankTypeUtil.Add( Name, InheritID )
-		local Rank = vh.RankTypeUtil.FromID( InheritID )
-		if Rank then
-			local NewRank = table.Copy(Rank)
-			NewRank.Name = Name
-			NewRank.UID = #vh.RankTypes + 1
-			table.insert(vh.RankTypes, NewRank, InheritID + 1)
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.SetPerm( ID, PermName, Perm )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and Rank.UID > 1 then
-			Rank.Permissions[PermName] = Perm
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.SetTarget( ID, TargetID, Targetable )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank then
-			table.RemoveByValue(Rank.Target, TargetID)
-			if Targetable then
-				table.insert(Rank.Target, TargetID)
-			end
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.Inherits( ID, InheritID )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and Rank.UID > 1 then
-			Rank.Inherits = InheritID
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.Remove( ID )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and Rank.UID > 1 then
-			vh.RankTypes[ vh.RankTypeUtil.GetRanking(ID) ] = nil
-			local Users = vh.RankTypeUtil.GetUsers( ID )
-			for a, b in pairs(Users) do
-				vh.SetRank(b, 1)
-			end
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.UserGroup( ID, NewGroup )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and Rank.UID > 0 and table.HasValue({"user", "admin", "superadmin"}, string.lower(NewGroup)) then
-			Rank.UserGroup = NewGroup
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.Rename( ID, NewName )
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank then
-			Rank.Name = NewName
-		end
-		vh.RankTypeUtil.Save()
-	end
-
-	function vh.RankTypeUtil.SetRanking( ID, NewRank)
-		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and NewRank > 0 then
-			local OldRank = table.Copy(Rank)
-			table.remove(vh.RankTypes, vh.RankTypeUtil.GetRanking(ID))
-			table.insert(vh.RankTypes, NewRank, OldRank)
-		end
-		vh.RankTypeUtil.Save()
-	end
+	vh.RankTypeUtil.Save()
 end
 
-hook.Add("PlayerSpawn", "VH_RankTypes", function( Plr )
-	if !Plr.AFirstSpawn then
-		Plr.AFirstSpawn = true
-
-		net.Start("VH_RankTypes")
-			net.WriteString(von.serialize(vh.RankTypes))
-		net.Send(Plr)
+function vh.RankTypeUtil.SetPerm( ID, PermName, Perm )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank and Rank.UID > 1 then
+		Rank.Permissions[PermName] = Perm
 	end
-end)
+	vh.RankTypeUtil.Save()
+end
 
-net.Receive( "VH_RankTypes", function( Length )
-	local Types = von.deserialize(net.ReadString())
-	vh.RankTypes = Types
-end)
+function vh.RankTypeUtil.SetTarget( ID, TargetID, Targetable )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank then
+		table.RemoveByValue(Rank.Target, TargetID)
+		if Targetable then
+			table.insert(Rank.Target, TargetID)
+		end
+	end
+	vh.RankTypeUtil.Save()
+end
+
+function vh.RankTypeUtil.Inherits( ID, InheritID )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank and Rank.UID > 1 then
+		Rank.Inherits = InheritID
+	end
+	vh.RankTypeUtil.Save()
+end
+
+function vh.RankTypeUtil.Remove( ID )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank and Rank.UID > 1 then
+		vh.RankTypes[ vh.RankTypeUtil.GetRanking(ID) ] = nil
+		local Users = vh.RankTypeUtil.GetUsers( ID )
+		for a, b in pairs(Users) do
+			vh.SetRank(b, 1)
+		end
+	end
+	vh.RankTypeUtil.Save()
+end
+
+function vh.RankTypeUtil.UserGroup( ID, NewGroup )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank and Rank.UID > 0 and table.HasValue({"user", "admin", "superadmin"}, string.lower(NewGroup)) then
+		Rank.UserGroup = NewGroup
+	end
+	vh.RankTypeUtil.Save()
+end
+
+function vh.RankTypeUtil.Rename( ID, NewName )
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank then
+		Rank.Name = NewName
+	end
+	vh.RankTypeUtil.Save()
+end
+
+function vh.RankTypeUtil.SetRanking( ID, NewRank)
+	local Rank = vh.RankTypeUtil.FromID( ID )
+	if Rank and NewRank > 0 then
+		local OldRank = table.Copy(Rank)
+		table.remove(vh.RankTypes, vh.RankTypeUtil.GetRanking(ID))
+		table.insert(vh.RankTypes, NewRank, OldRank)
+	end
+	vh.RankTypeUtil.Save()
+end
