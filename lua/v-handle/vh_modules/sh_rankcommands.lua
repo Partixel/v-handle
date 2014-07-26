@@ -42,7 +42,7 @@ function Module.Commands.SetRank.Run(Player, Args, RankID, Perm)
 			if #Players != 0 then
 				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
 			end
-			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name)
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, true)
 			if Player:IsValid() then
 				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
 			end
