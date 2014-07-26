@@ -1,17 +1,19 @@
 
-vh.PlayerData = vh.GetData("PlayerData") or {}
+vh.PlayerData = {}
 
 Registry = debug.getregistry()
 
 if SERVER then
 	util.AddNetworkString("VH_PlayerData")
+
+	vh.PlayerData = vh.GetData("PlayerData") or {}
 	
-	timer.Simple( 1, function()
+	timer.Simple(1, function()
 		for a, b in pairs(vh.PlayerData) do
 			net.Start("VH_PlayerData")
 				net.WriteString(a)
 				net.WriteString(von.serialize(b))
-			net.Send(Plr)
+			net.Broadcast()
 		end
 	end)
 	
@@ -33,7 +35,7 @@ if SERVER then
 	end
 	
 	function Registry.Player:VH_SetPlayerData(Key, Value)
-		vh.SetPlayerData(self:UniqueID, Key, Value)
+		vh.SetPlayerData(self:UniqueID(), Key, Value)
 	end
 end
 
@@ -50,7 +52,7 @@ function vh.GetPlayerData(UID, Key)
 end
 
 function Registry.Player:VH_GetPlayerData(Key)
-	vh.GetPlayerData(self:UniqueID, Key)
+	vh.GetPlayerData(self:UniqueID(), Key)
 end
 
 hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )

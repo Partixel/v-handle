@@ -17,7 +17,7 @@ vh.ChatUtil.Colors = {
 	_fuchsia_ = Color(0xFF,0x00,0xFF),
 	_purple_ = Color(0x80,0x00,0x80),
 	_orange_ = Color(0xFF,0xA5,0x00),
-	_reset_ = = Color(150, 200, 255)
+	_reset_ = Color(150, 200, 255)
 }
 
 function vh.ChatUtil.ParseColors( Message )
@@ -38,6 +38,11 @@ function vh.ChatUtil.ParseColors( Message )
 		until #Final == 7
 	end
 	return Final
+end
+
+function vh.ConsoleMessage( Message )
+	local Msg = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_  -- " .. Message)
+	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
 end
 
 if SERVER then

@@ -9,6 +9,8 @@ Module.Commands.DefaultCommand = { -- A command
   Usage = "<Player>" -- A description of how the command is used
 }
 
+Module.Disabled = true -- Disables the module
+
 function Module.Commands.DefaultCommand.Run(Player, Args) -- The function that is ran via the framework when the command is ran
 	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
 end

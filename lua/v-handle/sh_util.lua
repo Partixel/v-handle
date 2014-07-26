@@ -186,11 +186,6 @@ function vh.SplitStringByLength(value, length)
 	return output
 end
 
-function vh.ConsoleMessage( Message )
-	local Msg = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_  -- " .. Message)
-	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
-end
-
 vh.data = vh.data or {}
 
 function vh.SetData(key, value, noSave)

@@ -16,46 +16,18 @@ vh.Version = version_util.Version( 0, 0, 1 )
 vh.ModuleHooks = {}
 vh.Modules = {}
 concommand.Add("vh", function(Player, Command, Args)
-	
-	local ValidCommands = {}
-	
-	for a, b in pairs(vh.Modules) do
-		if (!b["Commands"]) then continue end
-		for c, d in pairs(b.Commands) do
-			if (Args[1]:lower() == c:lower()) then
-				table.insert(ValidCommands, d)
-			elseif (d["Aliases"]) then
-				for _, e in pairs(d["Aliases"]) do
-					if (Args[1]:lower() == e:lower()) then
-						table.insert(ValidCommands, d)
-					end
-				end
-			end
-		end
-	end
-	
-	if (ValidCommands == {}) then
-		return
-	elseif (#ValidCommands > 1) then
-		Player:PrintMessage( HUD_PRINTTALK, "Multiple commands found using that alias" )
-		return ""
-	end
-	if (not ValidCommands[1]) then return end
-	table.remove(Args, 1)
-	local Outcome = ValidCommands[1].Run(Player, Args)
-	if Outcome[2] == 0 then
-		local Msg = vh.ChatUtil.ParseColors("_RED_ " .. Outcome[1])
-		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
-	elseif Outcome[2] == 1 then
-		local Msg = vh.ChatUtil.ParseColors("_GREEN_ " .. Outcome[1])
-		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
-	else
-		local Msg = vh.ChatUtil.ParseColors("_RESET_ " .. Outcome[1])
+	local Outcome = vh.HandleCommands(Player, Args, {})
+	if Outcome and Outcome != "" then
+		local Msg = vh.ChatUtil.ParseColors(Outcome)
 		MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], "\n")
 	end
 end)
 
 function vh.RegisterModule( Module )
+	if Module.Disabled then
+		vh.ConsoleMessage("Module " .. Module.Name .. " is disabled")
+		return
+	end
 	for a, b in pairs (vh.Modules) do
 		if b.Name == Module.Name then
 			table.remove(vh.Modules, a)
@@ -88,44 +60,59 @@ function vh.RegisterModule( Module )
 	vh.ConsoleMessage("Loaded " .. Module.Name .. " as a Module")
 end
 
-function vh.HandleCommands( Player, Args )
+function vh.HandleCommands( Player, Args, Commands )
 	local ValidCommands = {}
 	
-	for a, b in pairs(vh.Modules) do
-		if (!b["Commands"]) then continue end
-		for c, d in pairs(b.Commands) do
-			if (b.Prefix == "") then continue end
-			if (Args[1]:sub(1, 1):lower() == d.Prefix:lower()) then
-				if (Args[1]:sub(2):lower() == c:lower()) then
-					table.insert(ValidCommands, d)
-				elseif (d["Aliases"]) then
-					for _, e in pairs(d["Aliases"]) do
-						if (Args[1]:sub(2):lower() == e:lower()) then
-							table.insert(ValidCommands, d)
-						end
-					end
+	if #Commands == 0 then
+		for a, b in pairs(vh.Modules) do
+			if (!b["Commands"]) then continue end
+			for c, d in pairs(b.Commands) do
+				Commands[c] = d
+			end
+		end
+	end
+	
+	for a, b in pairs(Commands) do
+		if (Args[1]:lower() == a:lower()) then
+			table.insert(ValidCommands, b)
+		elseif (b["Aliases"]) then
+			for c, d in pairs(b["Aliases"]) do
+				if (Args[1]:lower() == d:lower()) then
+					table.insert(ValidCommands, b)
 				end
 			end
 		end
 	end
 	
-	if (ValidCommands == {}) then
+	if (#ValidCommands > 1) then
+		return "_RED_ Multiple commands found using that alias"
+	elseif (#ValidCommands == 0) then
 		return
-	elseif (#ValidCommands > 1) then
-		Player:PrintMessage( HUD_PRINTTALK, "Multiple commands found using that alias" )
-		return ""
 	end
-	if (not ValidCommands[1]) then return end
-	table.remove(Args, 1)
-	local Outcome = ValidCommands[1].Run(Player, Args)
-	if Outcome[2] == 0 then
-		vh.ChatUtil.SendMessage("_RED_ " .. Outcome[1], Player)
-	elseif Outcome[2] == 1 then
-		vh.ChatUtil.SendMessage("_GREEN_ " .. Outcome[1], Player)
+
+	local RankID = 0
+	if Player:IsValid() then
+		RankID = vh.RankTypeUtil.GetID(Player:VH_GetRank())
+	end
+
+	local Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
+	if Perm != nil and Perm.Value then
+		table.remove(Args, 1)
+
+		if #Args < ValidCommands[1].MinArgs then
+			return "_RESET_ Incorrect usage - " .. ValidCommands[1].Usage
+		end
+		local Outcome = ValidCommands[1].Run(Player, Args, RankID, Perm)
+		if Outcome[2] == 0 then
+			return "_RED_ " .. Outcome[1]
+		elseif Outcome[2] == 1 then
+			return "_GREEN_ " .. Outcome[1]
+		else
+			return "_RESET_ " .. Outcome[1]
+		end
 	else
-		vh.ChatUtil.SendMessage("_RESET_ " .. Outcome[1], Player)
+		return "_RED_ You do not have permission to use this"
 	end
-	return ""
 end
 
 vh.IncludeFolder("vh_modules")

@@ -39,10 +39,12 @@ DefaultRankTypes = {
 	}
 }
 
-vh.RankTypes = vh.GetData("RankTypes") or {}
+vh.RankTypes =  {}
 vh.RankTypeUtil = {}
 
 if SERVER then
+
+	vh.RankTypes = vh.GetData("RankTypes") or {}
 	util.AddNetworkString("VH_RankTypes")
 	
 	function vh.RankTypeUtil.Save()
@@ -51,6 +53,14 @@ if SERVER then
 			net.WriteString(von.serialize(vh.RankTypes))
 		net.Broadcast()
 	end
+
+	if #vh.RankTypes == 0 then
+		vh.RankTypes = table.Copy(DefaultRankTypes)
+	end
+		
+	timer.Simple(1, function()
+		vh.RankTypeUtil.Save()
+	end)
 
 	function vh.RankTypeUtil.Add( Name, InheritID )
 		local Rank = vh.RankTypeUtil.FromID( InheritID )
@@ -115,14 +125,6 @@ if SERVER then
 			Rank.Name = NewName
 		end
 		vh.RankTypeUtil.Save()
-	end
-	
-	if #vh.RankTypes == 0 then
-		vh.RankTypes = table.Copy(DefaultRankTypes)
-		
-		timer.Simple( 1, function()
-			vh.RankTypeUtil.Save()
-		end)
 	end
 
 end
