@@ -19,7 +19,11 @@ function Module.Commands.DefaultCommand.Run(Player, Args, Alias, RankID, Perm) -
 				-- Alias - The alias used to run the command
 				-- RankID - The ID of the rank the player used to run the command
 				-- Perm - The permission that was used to run the command
-	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
+	vh.ChatUtil.SendMessage("_white_ Ran _red_ default _blue_ command", Player) -- The function used to send a player a message
+				-- Replace player with the player recieving the command OR a table 
+				-- of players OR blank for all players OR true for a log message
+				-- Replace the stirng with the message you want sent, a list of colors can be found in the chat
+				-- util
 end
 
 function Module.Commands.DefaultCommand.Vars(ArgNumber) -- The function that is called when getting valid inputs for arguements
@@ -40,14 +44,14 @@ Module.ConCommands.DefaultConCommand = {} -- A console command, the key is what 
 
 function Module.ConCommands.DefaultConCommand.Run(Player, Command, Args) -- The function that is ran via the framework when the
 									 -- console command is ran
-	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
+	vh.ChatUtil.SendMessage("_white_ Ran _red_ default _green_ console _blue_ command", Player)
 end
 
 Module.Hooks = { -- List of hooks required by the module
 	{
 		Type = "PlayerSay", -- The hook required
 		Run = (function( Player, Message, TeamChat ) -- The function to be ran with the corresponding variables
-			Player:PrintMessage( HUD_PRINTTALK, "Hook triggered!" )	
+			vh.ChatUtil.SendMessage("_white_ Default _red_ hook _blue_ triggered", Player)
 		end)
 	}
 }
