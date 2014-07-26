@@ -1,8 +1,5 @@
 
 -- Handle dependancies --
-if (SERVER) then
-	AddCSLuaFile("v-handle/sh_util.lua")
-end
 include("v-handle/sh_util.lua")
 
 vh.IncludeFolder("vh_core")
