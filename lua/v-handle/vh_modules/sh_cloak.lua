@@ -20,19 +20,19 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 		return
 	end
 	
-	if (Alias:lower() == "cloak") then
+	if (string.lower(Alias) == "cloak") then
 		Success = true
 		for _, ply in ipairs(Players) do
 			ply:SetNoDraw(true)
 		end
 	end
-	if (Alias:lower() == "uncloak") then
+	if (string.lower(Alias) == "uncloak") then
 		Success = false
 		for _, ply in ipairs(Players) do
 			ply:SetNoDraw(false)
 		end
 	end
-	if (Alias:lower() == "tcloak") then
+	if (string.lower(Alias) == "tcloak") then
 		Toggle = true
 		for _, ply in ipairs(Players) do
 			ply:SetNoDraw(!ply:GetNoDraw())
