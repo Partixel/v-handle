@@ -10,7 +10,7 @@ DefaultRankTypes = {
 	},
 	{
 		Name = "Owner",
-		UserGroup = "owner",
+		UserGroup = "superadmin",
 		Inherits = 0,
 		Target = {0},
 		Permissions = {
