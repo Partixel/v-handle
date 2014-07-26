@@ -6,12 +6,19 @@ Module.Commands.DefaultCommand = { -- A command
   Aliases = {"AnotherCommand"}, -- Names that can be used to run the command as well as the key
   Prefix = "!", -- The character(s) that needs to be put before the command
   Description = "Does default stuff", -- The desciption of the command for display
-  Usage = "<Player>" -- A description of how the command is used
+  Usage = "<Player>", -- A description of how the command is used
+  Permission = "SetRank", -- The permission required to run the command
+  MinArgs = 2 -- The minimum amount of arguements needed for the command
 }
 
 Module.Disabled = true -- Disables the module
 
-function Module.Commands.DefaultCommand.Run(Player, Args) -- The function that is ran via the framework when the command is ran
+function Module.Commands.DefaultCommand.Run(Player, Args, Alias, RankID, Perm) -- The function that is ran via the framework when the command is ran
+				-- Player - The player that ran the command ( Could be the console )
+				-- Args - The arguements passed with the command
+				-- Alias - The alias used to run the command
+				-- RankID - The ID of the rank the player used to run the command
+				-- Perm - The permission that was used to run the command
 	Player:PrintMessage( HUD_PRINTTALK, "Ran default command!" )
 end
 
