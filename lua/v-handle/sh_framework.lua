@@ -7,7 +7,7 @@ include("v-handle/sh_util.lua")
 
 vh.IncludeFolder("vh_core")
 
-vh.ConsoleMessage("lcore")
+vh.ConsoleMessage("lcore", true)
 
 -- Handle Modules --
 vh.ModuleHooks = {}
@@ -41,7 +41,7 @@ end
 
 function vh.RegisterModule( Module )
 	if Module.Disabled then
-		vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled")
+		vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled", true)
 		return
 	end
 	for a, b in pairs (vh.Modules) do
@@ -80,7 +80,7 @@ function vh.RegisterModule( Module )
 			vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(b)
 		end
 	end
-	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
+	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module", true)
 end
 
 function vh.HandleCommands( Player, Args, Commands )

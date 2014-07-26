@@ -18,12 +18,15 @@ if SERVER then
 	end)
 	
 	function vh.SetPlayerData(UID, Key, Value)
-		local Data = vh.PlayerData[tostring(UID)] or {}
+		if vh.PlayerData[tostring(UID)] == nil then
+			vh.PlayerData[tostring(UID)] = {}
+		end
 		vh.PlayerData[tostring(UID)][Key] = Value
 		if vh.PlayerData[tostring(UID)] == {} then
 			vh.PlayerData[tostring(UID)] = nil
 		end
 		vh.SetData("PlayerData", vh.PlayerData)
+		print(table.ToString(vh.PlayerData[tostring(UID)], nil, true))
 		net.Start("VH_PlayerData")
 			net.WriteString(tostring(UID))
 			net.WriteString(von.serialize(vh.PlayerData[tostring(UID)]))
