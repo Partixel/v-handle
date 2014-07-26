@@ -1,3 +1,6 @@
+
+AddCSLuaFile("v-handle/sh_util.lua")
+
 hook.Add("PlayerSay", "vh_HandleCommands", function(Player, Message, TeamChat)
 	if (TeamChat) then return end
 	local Args = string.Explode(" ", Message)
@@ -25,6 +28,15 @@ util.AddNetworkString("VH_ClientCCmd")
 
 net.Receive( "VH_ClientCCmd", function( Length )
 	local Vars = von.deserialize(net.ReadString())
+	local Outcome = vh.HandleCommands(Vars.Player, Vars.Args, {})
+	if Outcome and Outcome != "" then
+		vh.ChatUtil.SendMessage(Outcome, Vars.Player)
+	end
+end)
+
+usermessage.Hook("vh_clientccmd", function(Message)
+	local Vars = von.deserialise(Message:ReadString())
+
 	local Outcome = vh.HandleCommands(Vars.Player, Vars.Args, {})
 	if Outcome and Outcome != "" then
 		vh.ChatUtil.SendMessage(Outcome, Vars.Player)
