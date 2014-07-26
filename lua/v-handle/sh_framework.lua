@@ -50,7 +50,10 @@ function vh.RegisterModule( Module )
 				hook.Add(Hook, "vh_" .. Hook, function(q, w, e, r, t)
 					local Returns = {}
 					for c, d in pairs(vh.ModuleHooks[Hook]) do
-						table.insert(Returns, d(q, w, e, r, t))
+						local Return = d(q, w, e, r, t)
+						if Return then
+							table.insert(Returns, Return)
+						end
 					end
 					return Returns[1]
 				end)
