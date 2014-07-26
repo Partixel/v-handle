@@ -65,7 +65,7 @@ end
 
 function vh.ChatUtil.FormatMessage( Msg, Console, Log )
 	if vh.ChatUtil.Precached[string.lower(Msg)] then
-		Msg = vh.ChatUtil.Precached[string.lower(Msg)]
+		Msg = table.Copy(vh.ChatUtil.Precached[string.lower(Msg)])
 	else
 		Msg = vh.ChatUtil.ParseColors(Msg)
 	end
@@ -86,21 +86,20 @@ function vh.ConsoleMessage( Message, Log )
 end
 
 if SERVER then
-	function vh.ChatUtil.SendMessage(Message, Player)
+	function vh.ChatUtil.SendMessage(Message, Player, Log)
+		if Log then
+			vh.ConsoleMessage(Message, true)
+		end
+
 		if Player == nil then
 			umsg.Start("vh_message")
 				umsg.String(Message)
 			umsg.End()
-			vh.ConsoleMessage(Message, true)
 			return
 		end
 		
-		if Player.IsValid then
-			if Player:IsValid() then
-				Player = {Player}
-			end
-		else
-			vh.ConsoleMessage(Message, true)
+		if Player.IsValid and Player:IsValid() then
+			Player = {Player}
 		end
 		
 		if type(Player) == "table" then
