@@ -9,6 +9,15 @@ DefaultRankTypes = {
 		}
 	},
 	{
+		Name = "Owner",
+		UserGroup = "owner",
+		Inherits = 0,
+		Target = {0},
+		Permissions = {
+			All = {Value = true}
+		}
+	},
+	{
 		Name = "Moderator",
 		UserGroup = "user",
 		Inherits = 1,
@@ -34,17 +43,6 @@ DefaultRankTypes = {
 		Target = {1, 2, 3, 4},
 		Permissions = {
 			SetRank = {Value = true, Target = {1, 2, 3}}
-		}
-	},
-	{
-		Name = "Owner",
-		UserGroup = "owner",
-		Inherits = 4,
-		Target = {1, 2, 3, 4, 5},
-		Permissions = {
-			SetRank = {Value = true, Target = {1, 2, 3, 4}},
-			Cloak = {Value = true},
-			Kick = {Value = true, Target = {1, 2, 3, 4}}
 		}
 	}
 }
@@ -84,7 +82,7 @@ if SERVER then
 
 	function vh.RankTypeUtil.SetPerm( ID, PermName, Perm )
 		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank then
+		if Rank and ID > 2 then
 			Rank.Permissions[PermName] = Perm
 		end
 		vh.RankTypeUtil.Save()
@@ -103,7 +101,7 @@ if SERVER then
 
 	function vh.RankTypeUtil.Inherits( ID, InheritID )
 		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and ID != 1 then
+		if Rank and ID > 2 then
 			Rank.Inherits = InheritID
 		end
 		vh.RankTypeUtil.Save()
@@ -111,7 +109,7 @@ if SERVER then
 
 	function vh.RankTypeUtil.Remove( ID )
 		local Rank = vh.RankTypeUtil.FromID( ID )
-		if Rank and ID != 1 then
+		if Rank and ID > 2 then
 			vh.RankTypes[ ID ] = nil
 			local Users = vh.RankTypeUtil.GetUsers( ID )
 			for a, b in pairs(Users) do
@@ -142,10 +140,10 @@ end
 function vh.RankTypeUtil.CanTarget( Perm, ID, TargetID)
 	if ID == 0 then return true end
 	if Perm != nil and Perm.Target != nil then
-		return table.HasValue(Perm.Target, TargetID)
+		return table.HasValue(Perm.Target, TargetID) or table.HasValue(Perm.Target, 0)
 	else
 		local Rank = vh.RankTypeUtil.FromID( ID )
-		return table.HasValue(Rank.Target, TargetID)
+		return table.HasValue(Rank.Target, TargetID) or table.HasValue(Rank.Target, 0)
 	end
 end
 
@@ -163,7 +161,7 @@ function vh.RankTypeUtil.HasPermission( ID, PermName )
 	if ID == 0 then return {Value = true, Target = {0}} end
 	local Perms = vh.RankTypeUtil.GetFullPermissions(ID)
 	for a, b in pairs(Perms) do
-		if string.lower(a) == string.lower(PermName) then
+		if string.lower(a) == string.lower(PermName) or string.lower(a) == "all" then
 			return b
 		end
 	end
