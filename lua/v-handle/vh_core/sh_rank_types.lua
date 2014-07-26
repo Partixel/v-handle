@@ -42,7 +42,9 @@ DefaultRankTypes = {
 		Inherits = 4,
 		Target = {1, 2, 3, 4, 5},
 		Permissions = {
-			SetRank = {Value = true, Target = {1, 2, 3, 4}}
+			SetRank = {Value = true, Target = {1, 2, 3, 4}},
+			Cloak = {Value = true},
+			Kick = {Value = true, Target = {1, 2, 3, 4}}
 		}
 	}
 }
