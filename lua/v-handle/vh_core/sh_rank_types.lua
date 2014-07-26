@@ -30,10 +30,18 @@ DefaultRankTypes = {
 	{
 		Name = "Super Admin",
 		UserGroup = "superadmin",
-		Inherits = 2,
-		Target = {1, 2, 3},
+		Inherits = 3,
+		Target = {1, 2, 3, 4},
 		Permissions = {
-			TestPerm = {Value = false, Target = {1}},
+			SetRank = {Value = true, Target = {1, 2, 3}}
+		}
+	},
+	{
+		Name = "Owner",
+		UserGroup = "owner",
+		Inherits = 4,
+		Target = {1, 2, 3, 4, 5},
+		Permissions = {
 			SetRank = {Value = true, Target = {1, 2, 3, 4}}
 		}
 	}
