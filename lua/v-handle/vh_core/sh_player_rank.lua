@@ -28,7 +28,6 @@ function vh.GetRankObject(UID)
 end
 
 function Registry.Player:VH_GetRank()
-	if ( SERVER and self:IsListenServerHost() ) then return "Super Admin" end
 	return vh.GetRank(self:UniqueID())
 end
 

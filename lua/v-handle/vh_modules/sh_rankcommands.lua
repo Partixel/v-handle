@@ -2,7 +2,8 @@ local Module = {}
 Module.Name = "Rank Commands"
 Module.Description = "Contains rank related commands"
 Module.PrecacheStrings = {
-	nrank = "_red_ That is not a valid rank"
+	nrank = "_red_ That is not a valid rank",
+	irank = "_red_ You cannot target that rank"
 }
 Module.Commands = {}
 Module.Commands.SetRank = {
@@ -15,16 +16,20 @@ Module.Commands.SetRank = {
 }
 
 function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
-	local Rank = vh.RankTypeUtil.GetID(table.concat(Args, " ", 2))
+	local Rank = vh.RankTypeUtil.FromName(table.concat(Args, " ", 2))
 	if Rank then
-	
+		if vh.RankTypeUtil.GetRanking(Rank.UID) >= vh.RankTypeUtil.GetRanking(RankID) then
+			vh.ChatUtil.SendMessage("irank", Player)
+			return
+		end
+
 		local Targets = vh.FindPlayers(Args[1])
 		local Complete = {}
 		local Invalid = {}
 		
 		for a, b in pairs(Targets) do
-			if vh.RankTypeUtil.CanTarget(Perm, RankID, Rank) then
-				b:VH_SetRank(Rank)
+			if vh.RankTypeUtil.CanTarget(Perm, RankID, Rank.UID) then
+				b:VH_SetRank(Rank.UID)
 				table.insert(Complete, b)
 			else
 				table.insert(Invalid, b)
@@ -43,17 +48,17 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 				end
 			end
 			if #Players != 0 then
-				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
+				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Players)
 			end
-			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, true)
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, true)
 			if Player:IsValid() then
-				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Player)
 			end
 			return
 		end
 		
 		if #Invalid != 0 then
-			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Player)
 			return
 		end
 		

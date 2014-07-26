@@ -121,9 +121,9 @@ function vh.HandleCommands( Player, Args, Commands )
 		return
 	end
 
-	local RankID = 0
+	local RankID = -1
 	if Player:IsValid() then
-		RankID = vh.RankTypeUtil.GetID(Player:VH_GetRank())
+		RankID = Player:VH_GetRankObject().UID
 	end
 
 	local Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
