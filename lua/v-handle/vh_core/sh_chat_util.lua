@@ -59,7 +59,7 @@ function vh.ConsoleMessage( Message, Log )
 	if vh.ChatUtil.Precached[string.lower(Message)] then
 		Msg = vh.ChatUtil.Precached[string.lower(Message)]
 	else
-		if Log then
+		if !Log then
 			Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
 		end
 		Msg = vh.ChatUtil.ParseColors(Message)
@@ -84,7 +84,7 @@ if SERVER then
 				umsg.String(Message)
 			umsg.End()
 		elseif !Player:IsValid() then
-			vh.ConsoleMessage(Message)
+			vh.ConsoleMessage(Message, true)
 		else
 			umsg.Start("vh_message")
 				umsg.String(Message)
