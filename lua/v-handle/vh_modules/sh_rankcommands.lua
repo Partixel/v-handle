@@ -47,10 +47,7 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 					table.remove(Players, a)
 				end
 			end
-			if #Players != 0 then
-				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Players)
-			end
-			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, true)
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Players)
 			if Player:IsValid() then
 				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Player)
 			end

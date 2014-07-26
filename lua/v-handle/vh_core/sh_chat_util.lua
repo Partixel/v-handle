@@ -22,7 +22,7 @@ vh.ChatUtil.Colors = {
 
 function vh.ChatUtil.ParseColors( Message )
 	local Msg = string.Explode(" ", Message)
-	local Final = {vh.ChatUtil.Colors["_white_"]}
+	local Final = {}
 	for a, b in pairs(Msg) do
 		if vh.ChatUtil.Colors[string.lower(b)] then
 			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
@@ -39,10 +39,8 @@ function vh.ChatUtil.ParseColors( Message )
 			end
 		end
 	end
-	if #Final < 20 then
-		repeat
-			table.insert(Final, "")
-		until #Final == 20
+	if type(Final[1]) == "string" then
+		table.insert(Final, 1, vh.ChatUtil.Colors["_white_"])
 	end
 	return Final
 end
@@ -75,12 +73,14 @@ if SERVER then
 			umsg.Start("vh_message")
 				umsg.String(Message)
 			umsg.End()
+			vh.ConsoleMessage(Message, true)
 		elseif type(Player) == "table" then
 			for a, b in pairs(Player) do
 				umsg.Start("vh_message", b)
 					umsg.String(Message)
 				umsg.End()
 			end
+			vh.ConsoleMessage(Message, true)
 		elseif Player == true then
 			vh.ConsoleMessage(Message, true)
 		elseif Player:IsValid() then
