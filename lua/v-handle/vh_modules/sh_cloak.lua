@@ -16,7 +16,7 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 	local Success = false
 	local Toggle = false
 	if (not Players or #Players == 0) then
-		vh.ChatUtil.SendMessage("_white_ No valid _red_ players _white_ found", Player)
+		vh.ChatUtil.SendMessage("nplr", Player)
 		return
 	end
 	

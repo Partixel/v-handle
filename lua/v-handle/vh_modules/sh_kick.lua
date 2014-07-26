@@ -14,7 +14,7 @@ Module.Commands.Kick = {
 function Module.Commands.Kick.Run(Player, Args, Alias, RankID, Perm)
 	local Players = vh.FindPlayers(Arg, Player)
 	if (not Players or #Players == 0) then
-		vh.ChatUtil.SendMessage("_white_ No valid _red_ players _white_ found", Player)
+		vh.ChatUtil.SendMessage("nplr", Player)
 		return
 	end
 	
