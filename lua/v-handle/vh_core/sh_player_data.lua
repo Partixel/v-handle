@@ -63,6 +63,12 @@ hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )
 				net.WriteString(von.serialize(b))
 			net.Send(Plr)
 		end
+
+		-- Compatability
+		local Rank = Plr:VH_GetRankObject()
+		if Rank then
+			Plr:SetNWString("usergroup", Rank.Name)
+		end
 	end
 end)
 

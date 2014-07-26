@@ -3,16 +3,23 @@ Registry = debug.getregistry()
 
 if SERVER then
 	function vh.SetRank(UID, ID)
+		if vh.RankTypeUtil.FromID(ID) == nil then return end
+		
+		-- Compatability
+		local Plr = player.GetByUniqueID(UID)
+		if Plr then
+			Plr:SetNWString("usergroup", vh.RankTypeUtil.FromID(ID).Name)
+		end
+
 		if ID == 1 then
 			vh.SetPlayerData(UID, "VH_Rank", nil)
 		elseif vh.RankTypeUtil.FromID(ID) then
 			vh.SetPlayerData(UID, "VH_Rank", ID)
-		else
-			vh.ConsoleMessage("Invalid rank ID")
 		end
 	end
 	
 	function Registry.Player:VH_SetRank(ID)
+		self:SetNWString("usergroup", vh.RankTypeUtil.FromID(ID).Name)
 		return vh.SetRank(self:UniqueID(), ID)
 	end
 end
