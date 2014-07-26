@@ -1,6 +1,8 @@
 
 vh.PlayerData = vh.GetData("PlayerData") or {}
 
+Registry = debug.getregistry()
+
 if SERVER then
 	util.AddNetworkString("VH_PlayerData")
 	
@@ -29,6 +31,10 @@ if SERVER then
 			net.WriteString(von.serialize(vh.PlayerData[tostring(UID)]))
 		net.Broadcast()
 	end
+	
+	function Registry.Player:VH_SetPlayerData(Key, Value)
+		vh.SetPlayerData(self:UniqueID, Key, Value)
+	end
 end
 
 function vh.PlayerHasData(UID, Key)
@@ -41,6 +47,10 @@ function vh.GetPlayerData(UID, Key)
 		return vh.PlayerData[tostring(UID)][Key]
 	end
 	return nil
+end
+
+function Registry.Player:VH_GetPlayerData(Key)
+	vh.GetPlayerData(self:UniqueID, Key)
 end
 
 hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )
