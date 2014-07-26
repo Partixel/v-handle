@@ -59,15 +59,12 @@ hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )
 	if !Plr.FirstSpawn then
 		Plr.FirstSpawn = true
 		
-
-		net.Start("VH_RankTypes")
-			for a, b in pairs(vh.PlayerData) do
-				net.Start("VH_PlayerData")
-					net.WriteString(a)
-					net.WriteString(von.serialize(b))
-				net.Send(Plr)
-			end
-		net.Send(Plr)
+		for a, b in pairs(vh.PlayerData) do
+			net.Start("VH_PlayerData")
+				net.WriteString(a)
+				net.WriteString(von.serialize(b))
+			net.Send(Plr)
+		end
 	end
 end)
 
