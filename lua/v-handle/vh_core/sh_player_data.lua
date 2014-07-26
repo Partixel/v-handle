@@ -18,12 +18,8 @@ if SERVER then
 	end)
 	
 	function vh.SetPlayerData(UID, Key, Value)
-		local Data = vh.PlayerData[tostring(UID)]
-		if Data then
-			vh.PlayerData[tostring(UID)][Key] = Value
-		else
-			vh.PlayerData[tostring(UID)] = {Key = Value}
-		end
+		local Data = vh.PlayerData[tostring(UID)] or {}
+		vh.PlayerData[tostring(UID)][Key] = Value
 		if vh.PlayerData[tostring(UID)] == {} then
 			vh.PlayerData[tostring(UID)] = nil
 		end
