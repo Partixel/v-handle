@@ -22,7 +22,8 @@ concommand.Add("vh", function(Player, Command, Args)
 		local Outcome = vh.HandleCommands(Player, Args, {})
 		if Outcome and Outcome != "" then
 			local Msg = vh.ChatUtil.ParseColors(Outcome)
-			MsgC(unpack(Msg), "\n")
+			table.insert(Msg, "\n")
+			MsgC(unpack(Msg))
 		end
 	end
 end)
