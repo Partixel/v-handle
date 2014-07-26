@@ -22,8 +22,10 @@ vh.ChatUtil.Colors = {
 
 function vh.ChatUtil.ParseColors( Message )
 	local Msg = string.Explode(" ", Message)
+	
 	local Final = {}
-	for a, b in pairs(Msg) do
+	
+	for a, b in ipairs(Msg) do
 		if vh.ChatUtil.Colors[string.lower(b)] then
 			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
 		elseif string.lower(b) == "_random_" then
@@ -46,24 +48,40 @@ function vh.ChatUtil.ParseColors( Message )
 end
 
 vh.ChatUtil.Precached = {
+	vh = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_ -- "),
 	nplr = vh.ChatUtil.ParseColors("_red_ No valid players found"),
 	malias = vh.ChatUtil.ParseColors("_red_ Multiple commands found using that alias"),
 	nperm = vh.ChatUtil.ParseColors("_red_ You do not have permission to use this"),
-	lcore = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_ -- Loaded _lime_ Core _white_ files")
+	lcore = vh.ChatUtil.ParseColors("Loaded _lime_ Core _white_ files")
 }
 
-function vh.ConsoleMessage( Message, Log )
-	local Msg = {}
-	if vh.ChatUtil.Precached[string.lower(Message)] then
-		Msg = vh.ChatUtil.Precached[string.lower(Message)]
-	else
-		if !Log then
-			Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
-		end
-		Msg = vh.ChatUtil.ParseColors(Message)
+function vh.ChatUtil.MergeMessages( Prefix, Message )
+	local Msg = table.Copy(Prefix)
+	for a, b in ipairs( Message ) do
+		table.insert(Msg, b)
 	end
-	Msg = table.Copy(Msg)
-	table.insert(Msg, "\n")
+	return Msg
+end
+
+function vh.ChatUtil.FormatMessage( Msg, Console, Log )
+	if vh.ChatUtil.Precached[string.lower(Msg)] then
+		Msg = vh.ChatUtil.Precached[string.lower(Msg)]
+	else
+		Msg = vh.ChatUtil.ParseColors(Msg)
+	end
+	
+	if Console then
+		if !Log then
+			Msg = vh.ChatUtil.MergeMessages(vh.ChatUtil.Precached.vh, Msg)
+		end
+		table.insert(Msg, "\n")
+	end
+
+	return Msg
+end
+
+function vh.ConsoleMessage( Message, Log )
+	local Msg = vh.ChatUtil.FormatMessage(Message, true, Log)
 	MsgC(unpack(Msg))
 end
 
@@ -74,32 +92,31 @@ if SERVER then
 				umsg.String(Message)
 			umsg.End()
 			vh.ConsoleMessage(Message, true)
-		elseif type(Player) == "table" then
-			for a, b in pairs(Player) do
+			return
+		end
+		
+		if Player.IsValid then
+			if Player:IsValid() then
+				Player = {Player}
+			end
+		else
+			vh.ConsoleMessage(Message, true)
+		end
+		
+		if type(Player) == "table" then
+			for a, b in ipairs(Player) do
 				umsg.Start("vh_message", b)
 					umsg.String(Message)
 				umsg.End()
 			end
-			vh.ConsoleMessage(Message, true)
-		elseif Player == true then
-			vh.ConsoleMessage(Message, true)
-		elseif Player:IsValid() then
-			umsg.Start("vh_message", Player)
-				umsg.String(Message)
-			umsg.End()
-		elseif !Player:IsValid() then
-			vh.ConsoleMessage(Message, true)
-
+			return
 		end
+		
+		vh.ConsoleMessage(Message, true)
 	end
 else
 	usermessage.Hook("vh_message", function(Message)
-		local Msg = Message:ReadString()
-		if vh.ChatUtil.Precached[string.lower(Msg)] then
-			Msg = vh.ChatUtil.Precached[string.lower(Msg)]
-		else
-			Msg = vh.ChatUtil.ParseColors(Msg)
-		end
+		local Msg = vh.ChatUtil.FormatMessage(Message:ReadString())
 		chat.AddText(unpack(Msg))
 	end)
 end
