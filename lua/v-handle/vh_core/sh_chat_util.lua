@@ -21,53 +21,57 @@ vh.ChatUtil.Colors = {
 }
 
 function vh.ChatUtil.ParseColors( Message )
-	local Msg = string.Explode(" ", Message)
-	
-	local Final = {}
-	
-	for a, b in ipairs(Msg) do
+	for a, b in ipairs(Message) do
 		if vh.ChatUtil.Colors[string.lower(b)] then
-			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
+			Message[a] = vh.ChatUtil.Colors[string.lower(b)]
 		elseif string.lower(b) == "_random_" then
 			local RandomColor = table.Random(vh.ChatUtil.Colors)
-			table.insert(Final, RandomColor)
-		elseif type(Final[#Final]) == "string" then
-			Final[#Final] = Final[#Final] .. " " .. b
-		else
-			if type(Final[#Final]) == "table" and #Final != 1 then
-				table.insert(Final, " " .. b)
-			else
-				table.insert(Final, b)
-			end
+			Message[a] = RandomColor
 		end
 	end
-	if type(Final[1]) == "string" then
-		table.insert(Final, 1, vh.ChatUtil.Colors["_white_"])
+	if type(Message[1]) == "string" then
+		table.insert(Message, 1, vh.ChatUtil.Colors["_white_"])
 	end
-	return Final
+	return Message
+end
+
+function vh.ChatUtil.ParsePrecached( Message )
+	local Msg = {}
+	for a, b in ipairs(Message) do
+		if type(b) == "string" and vh.ChatUtil.Precached[string.lower(b)] then
+			Msg = vh.ChatUtil.MergeMessages(Msg, vh.ChatUtil.Precached[string.lower(b)])
+		else
+			table.insert(Msg, b)
+		end
+	end
+	return Msg
 end
 
 vh.ChatUtil.Precached = {
-	vh = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_ -- "),
-	nplr = vh.ChatUtil.ParseColors("_red_ No valid players found"),
-	malias = vh.ChatUtil.ParseColors("_red_ Multiple commands found using that alias"),
-	nperm = vh.ChatUtil.ParseColors("_red_ You do not have permission to use this"),
-	lcore = vh.ChatUtil.ParseColors("Loaded _lime_ Core _white_ files")
+	_vh_ = vh.ChatUtil.ParseColors(string.Explode(" ", "_RESET_ V-Handle _WHITE_ -- ")),
+	_nplr_ = vh.ChatUtil.ParseColors(string.Explode(" ", "_red_ No valid players found")),
+	_malias_ = vh.ChatUtil.ParseColors(string.Explode(" ", "_red_ Multiple commands found using that alias")),
+	_nperm_ = vh.ChatUtil.ParseColors(string.Explode(" ", "_red_ You do not have permission to use this")),
+	_lcore_ = vh.ChatUtil.ParseColors(string.Explode(" ", "Loaded _lime_ Core _white_ files"))
 }
 
 function vh.ChatUtil.MergeMessages( Prefix, Message )
-	local Msg = table.Copy(Prefix)
+	local Msg = table.Copy(Prefix) or {}
 	for a, b in ipairs( Message ) do
 		table.insert(Msg, b)
 	end
 	return Msg
 end
 
-function vh.ChatUtil.FormatMessage( Msg, Console, Log )
-	if vh.ChatUtil.Precached[string.lower(Msg)] then
-		Msg = table.Copy(vh.ChatUtil.Precached[string.lower(Msg)])
-	else
-		Msg = vh.ChatUtil.ParseColors(Msg)
+function vh.ChatUtil.FormatMessage( Message, Console, Log )
+	local Msg = string.Explode(" ", Message)
+	Msg = vh.ChatUtil.ParseColors(Msg)
+	Msg = vh.ChatUtil.ParsePrecached(Msg)
+	
+	for a, b in ipairs(Msg) do
+		if type(b) == "string" then
+			Msg[a] = b .. " "
+		end
 	end
 	
 	if Console then

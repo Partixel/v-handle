@@ -2,8 +2,8 @@ local Module = {}
 Module.Name = "Rank Commands"
 Module.Description = "Contains rank related commands"
 Module.PrecacheStrings = {
-	nrank = "_red_ That is not a valid rank",
-	irank = "_red_ You cannot target that rank"
+	_nrank_ = "_red_ That is not a valid rank",
+	_irank_ = "_red_ You cannot target that rank"
 }
 Module.Commands = {}
 Module.Commands.SetRank = {
@@ -19,7 +19,7 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 	local Rank = vh.RankTypeUtil.FromName(table.concat(Args, " ", 2))
 	if Rank then
 		if vh.RankTypeUtil.GetRanking(Rank.UID) >= vh.RankTypeUtil.GetRanking(RankID) then
-			vh.ChatUtil.SendMessage("irank", Player)
+			vh.ChatUtil.SendMessage("_irank_", Player)
 			return
 		end
 
@@ -50,10 +50,10 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 			return
 		end
 		
-		vh.ChatUtil.SendMessage("nplr", Player)
+		vh.ChatUtil.SendMessage("_nplr_", Player)
 		return
 	else
-		vh.ChatUtil.SendMessage("nrank", Player)
+		vh.ChatUtil.SendMessage("_nrank_", Player)
 		return
 	end
 end

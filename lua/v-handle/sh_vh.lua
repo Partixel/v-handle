@@ -4,7 +4,7 @@ include("v-handle/sh_util.lua")
 
 vh.IncludeFolder("vh_core")
 
-vh.ConsoleMessage("lcore")
+vh.ConsoleMessage("_lcore_")
 
 -- Handle Modules --
 vh.ModuleHooks = {}
@@ -48,7 +48,7 @@ function vh.RegisterModule( Module )
 	end
 	if Module["PrecacheStrings"] then
 		for a, b in pairs(Module.PrecacheStrings) do
-			vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(b)
+			vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(string.Explode(" ", b))
 		end
 	end
 	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
