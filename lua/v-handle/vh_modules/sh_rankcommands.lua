@@ -1,6 +1,9 @@
 local Module = {}
 Module.Name = "Rank Commands"
 Module.Description = "Contains rank related commands"
+Module.PrecacheStrings = {
+	nrank = "_red_ That is not a valid rank"
+}
 Module.Commands = {}
 Module.Commands.SetRank = {
   Aliases = {},
@@ -40,24 +43,24 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 				end
 			end
 			if #Players != 0 then
-				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _random_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
+				vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Players)
 			end
-			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _random_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, true)
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, true)
 			if Player:IsValid() then
-				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _random_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+				vh.ChatUtil.SendMessage("_lime_ You _white_ have set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
 			end
 			return
 		end
 		
 		if #Invalid != 0 then
-			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _random_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
+			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. vh.RankTypeUtil.FromID(Rank).Name, Player)
 			return
 		end
 		
-		vh.ChatUtil.SendMessage("_white_ No valid _red_ players _white_ found", Player)
+		vh.ChatUtil.SendMessage("nplr", Player)
 		return
 	else
-		vh.ChatUtil.SendMessage("_white_ That is not a valid _red_ rank", Player)
+		vh.ChatUtil.SendMessage("nrank", Player)
 		return
 	end
 end

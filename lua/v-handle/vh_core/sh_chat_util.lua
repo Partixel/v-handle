@@ -27,7 +27,8 @@ function vh.ChatUtil.ParseColors( Message )
 		if vh.ChatUtil.Colors[string.lower(b)] then
 			table.insert(Final, vh.ChatUtil.Colors[string.lower(b)])
 		elseif string.lower(b) == "_random_" then
-			table.insert(Final, table.random(vh.ChatUtil.Colors))
+			local RandomColor = table.Random(vh.ChatUtil.Colors)
+			table.insert(Final, RandomColor)
 		elseif type(Final[#Final]) == "string" then
 			Final[#Final] = Final[#Final] .. " " .. b
 		else
@@ -46,37 +47,56 @@ function vh.ChatUtil.ParseColors( Message )
 	return Final
 end
 
+vh.ChatUtil.Precached = {
+	nplr = vh.ChatUtil.ParseColors("_red_ No valid players found"),
+	malias = vh.ChatUtil.ParseColors("_red_ Multiple commands found using that alias"),
+	nperm = vh.ChatUtil.ParseColors("_red_ You do not have permission to use this"),
+	lcore = vh.ChatUtil.ParseColors("_RESET_ V-Handle _WHITE_ -- Loaded _lime_ Core _white_ files")
+}
+
 function vh.ConsoleMessage( Message, Log )
-	if !Log then
-		Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
+	local Msg = {}
+	if vh.ChatUtil.Precached[string.lower(Message)] then
+		Msg = vh.ChatUtil.Precached[string.lower(Message)]
+	else
+		if !Log then
+			Message = "_RESET_ V-Handle _WHITE_ -- " .. Message 
+		end
+		Msg = vh.ChatUtil.ParseColors(Message)
 	end
-	local Msg = vh.ChatUtil.ParseColors(Message)
 	MsgC(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12], Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20], "\n")
 end
 
 if SERVER then
-	function vh.ChatUtil.SendMessage(String, Player)
+	function vh.ChatUtil.SendMessage(Message, Player)
 		if type(Player) == "table" then
 			for a, b in pairs(Player) do
 				umsg.Start("vh_message", b)
-					umsg.String(String)
+					umsg.String(Message)
 				umsg.End()
 			end
 		elseif Player == true then
-			vh.ConsoleMessage(String, true)
+			vh.ConsoleMessage(Message, true)
 		elseif Player:IsValid() then
 			umsg.Start("vh_message", Player)
-				umsg.String(String)
+				umsg.String(Message)
 			umsg.End()
+		elseif !Player:IsValid() then
+			return
 		else
 			umsg.Start("vh_message")
-				umsg.String(String)
+				umsg.String(Message)
 			umsg.End()
 		end
 	end
 else
 	usermessage.Hook("vh_message", function(Message)
-		local Msg = vh.ChatUtil.ParseColors(Message:ReadString())
+		local Msg = Message:ReadString()
+		if vh.ChatUtil.Precached[string.lower(Msg)] then
+			Msg = vh.ChatUtil.Precached[string.lower(Msg)]
+		else
+			Msg = vh.ChatUtil.ParseColors(Msg)
+		end
 		chat.AddText(Msg[1], Msg[2], Msg[3], Msg[4], Msg[5], Msg[6], Msg[7], Msg[8], Msg[9], Msg[10], Msg[11], Msg[12], Msg[13], Msg[14], Msg[15], Msg[16], Msg[17], Msg[18], Msg[19], Msg[20])
 	end)
 end

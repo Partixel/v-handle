@@ -7,7 +7,7 @@ include("v-handle/sh_util.lua")
 
 vh.IncludeFolder("vh_core")
 
-vh.ConsoleMessage("Loaded _lime_ Core _white_ files")
+vh.ConsoleMessage("lcore")
 
 -- Handle Modules --
 vh.ModuleHooks = {}
@@ -73,6 +73,11 @@ function vh.RegisterModule( Module )
 			end
 		end
 	end
+	if Module["PrecacheStrings"] then
+		for a, b in pairs(Module.PrecacheStrings) do
+			vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(b)
+		end
+	end
 	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
 end
 
@@ -108,7 +113,7 @@ function vh.HandleCommands( Player, Args, Commands )
 			end
 		end
 		if (#ValidCommands > 1) then
-			return "_red_ Multiple commands found using that alias"
+			return "malias"
 		end
 	elseif (#ValidCommands == 0) then
 		return
@@ -130,7 +135,7 @@ function vh.HandleCommands( Player, Args, Commands )
 		ValidCommands[1].Run(Player, Args, Alias, RankID, Perm)
 		return ""
 	else
-		return "_red_ You do not have permission to use this"
+		return "nperm"
 	end
 end
 
