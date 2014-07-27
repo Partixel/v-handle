@@ -45,9 +45,17 @@ function vh.HandleCommands( Player, Args, Commands )
 	if Player:IsValid() then
 		RankID = Player:VH_GetRank().UID
 	end
+	
+	local CanRun = true
+	local Perm = nil
+	if ValidCommands[1].Permission and ValidCommands[1].Permission != "" then
+		Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
+		if Perm == nil or !Perm.Value then
+			CanRun = false
+		end
+	end
 
-	local Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
-	if Perm != nil and Perm.Value then
+	if CanRun then
 		local Alias = Args[1]
 		table.remove(Args, 1)
 
