@@ -1,6 +1,6 @@
 vh.ArgsUtil = {}
 
-function vh.ArgsUtil.GetPlayer(Arg, Single)
+function vh.ArgsUtil.GetPlayer(Arg)
 	if type(Arg) != "string" then
 		return
 	end
@@ -46,7 +46,7 @@ function vh.ArgsUtil.GetPlayer(Arg, Single)
 	else
 		local Found = {}
 		for a, b in ipairs(player.GetAll()) do
-			if Single and string.lower(b:Nick()) == string.lower(Arg) then
+			if string.lower(b:Nick()) == string.lower(Arg) then
 				return {b:SteamID()}
 			elseif string.sub(string.lower(b:Nick()), 1, string.len(Arg)) == string.lower(Arg) then
 				table.insert(Found, b:SteamID())

@@ -28,8 +28,10 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 		local Invalid = {}
 		
 		for a, b in pairs(Targets) do
-			if vh.RankTypeUtil.CanTarget(Perm, RankID, Rank.UID) then
-				vh.SetRank(vh.ArgsUtil.SIDToUID(b), Rank.UID)
+			local TUID = vh.ArgsUtil.SIDToUID(b)
+			local TRank = vh.GetRank(TUID)
+			if vh.RankTypeUtil.CanTarget(Perm, RankID, TRank.UID) then
+				vh.SetRank(TUID, Rank.UID)
 				table.insert(Complete, b)
 			else
 				table.insert(Invalid, b)
