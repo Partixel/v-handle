@@ -12,7 +12,7 @@ Module.Commands.Cloak = {
 }
 
 function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
-	local Players = vh.FindPlayers(Args, Player)
+	local Players = vh.ArgsUtil.GetPlayer(Args[1])
 	local Success = false
 	local Toggle = false
 	if (not Players or #Players == 0) then
@@ -45,9 +45,9 @@ function Module.Commands.Cloak.Run(Player, Args, Alias, RankID, Perm)
 	end
 	
 	if Toggle then
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.ArgsUtil.PlayersToString(Players))
 	else
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.CreatePlayerList(Players))
+		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.ArgsUtil.PlayersToString(Players))
 	end
 	return
 end
