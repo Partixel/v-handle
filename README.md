@@ -9,7 +9,7 @@ If you want something changed within the aforementioned files please make a pull
 When typing a command keep these few tips in mind:
 * You do not need to type the players full name
 * Typing a players steam ID works too
-* if you want to target several players put / / either side and seperate the names/ids with commas (NOT SPACES)
+* if you want to target several players put / either side and seperate the names/ids with commas (NOT SPACES) e.g. /Partixel,Code/
 
 ##Modules
 ##Framework
