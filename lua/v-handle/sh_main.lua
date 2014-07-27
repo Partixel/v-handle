@@ -1,7 +1,45 @@
 
 -- Handle dependancies --
-include("v-handle/sh_util.lua")
+function vh.IncludeFile(Name, Side)
+	if Side == nil then
+		if SERVER then
+			AddCSLuaFile(Name)
+		end
+		include(Name)
+	elseif string.lower(Side) == "sv" and SERVER then
+		include(Name)
+	else
+		if SERVER then
+			AddCSLuaFile(Name)
+		else
+			include(Name)
+		end
+	end
+end
 
+function vh.IncludeFolder(Name, Side)
+
+	local Files, Dirs = file.Find("v-handle/" .. Name .. "/*", "LUA")
+
+	for a, b in ipairs(Files) do
+		if string.Right(b, 4) == ".lua" then
+			vh.IncludeFile(Name .. "/" .. b, Side)
+		end
+	end
+
+	for a, b in ipairs(Dirs) do
+		if string.lower(b) == "server" then
+			vh.IncludeFolder(Name .. "/" .. b, "sv")
+		elseif string.lower(b) == "client" then
+			vh.IncludeFolder(Name .. "/" .. b, "cl")
+		end
+	end
+end
+
+-- Loading external files --
+vh.IncludeFolder("external")
+
+-- Loading core files --
 vh.IncludeFolder("vh_core")
 
 vh.ConsoleMessage("_lcore_")

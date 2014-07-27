@@ -23,13 +23,13 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 			return
 		end
 
-		local Targets = vh.FindPlayers(Args[1])
+		local Targets = vh.ArgsUtil.GetPlayer(Args[1])
 		local Complete = {}
 		local Invalid = {}
 		
 		for a, b in pairs(Targets) do
 			if vh.RankTypeUtil.CanTarget(Perm, RankID, Rank.UID) then
-				b:VH_SetRank(Rank.UID)
+				vh.SetRank(vh.ArgsUtil.SIDToUID(b), Rank.UID)
 				table.insert(Complete, b)
 			else
 				table.insert(Invalid, b)
@@ -41,12 +41,12 @@ function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
 			if Player:IsValid() then
 				Nick = Player:Nick()
 			end
-			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, nil, true)
+			vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the rank of _reset_ " .. vh.ArgsUtil.PlayersToString(Complete) .. " _white_ to _red_ " .. Rank.Name, nil, true)
 			return
 		end
 		
 		if #Invalid != 0 then
-			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.CreatePlayerList(Complete) .. " _white_ to _red_ " .. Rank.Name, Player)
+			vh.ChatUtil.SendMessage("_lime_ You _white_ cannot set the rank of _reset_ " .. vh.ArgsUtil.PlayersToString(Complete) .. " _white_ to _red_ " .. Rank.Name, Player)
 			return
 		end
 		

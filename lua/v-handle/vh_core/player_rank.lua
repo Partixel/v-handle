@@ -26,11 +26,6 @@ end
 
 function vh.GetRank(UID)
 	local ID = vh.GetPlayerData(UID, "VH_Rank") or 1
-	return vh.RankTypeUtil.FromID(ID).Name
-end
-
-function vh.GetRankObject(UID)
-	local ID = vh.GetPlayerData(UID, "VH_Rank") or 1
 	return vh.RankTypeUtil.FromID(ID)
 end
 
@@ -38,17 +33,13 @@ function Registry.Player:VH_GetRank()
 	return vh.GetRank(self:UniqueID())
 end
 
-function Registry.Player:VH_GetRankObject()
-	return vh.GetRankObject(self:UniqueID())
-end
-
 -- Compatibility --
 function Registry.Player:EV_GetRank()
-	return vh.GetRank(self:UniqueID())
+	return vh.GetRank(self:UniqueID()).Name
 end
 
 function Registry.Player:GetUserGroup()
-	return string.lower(vh.GetRankObject(self:UniqueID()).UserGroup)
+	return string.lower(vh.GetRank(self:UniqueID()).UserGroup)
 end
 
 function Registry.Player:IsUserGroup(Name)

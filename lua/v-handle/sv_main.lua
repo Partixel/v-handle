@@ -1,8 +1,6 @@
 
 vh.Data = vh.Data or {}
 
-AddCSLuaFile("v-handle/sh_util.lua")
-
 util.AddNetworkString("VH_ClientCCmd")
 
 function vh.HandleCommands( Player, Args, Commands )
@@ -45,7 +43,7 @@ function vh.HandleCommands( Player, Args, Commands )
 
 	local RankID = -1
 	if Player:IsValid() then
-		RankID = Player:VH_GetRankObject().UID
+		RankID = Player:VH_GetRank().UID
 	end
 
 	local Perm = vh.RankTypeUtil.HasPermission(RankID, ValidCommands[1].Permission)
@@ -67,7 +65,7 @@ function vh.SetData(Key, Value)
 	vh.Data[Key] = Value
 	
 	file.CreateDir("v-handle")
-	fiel.Write("v-handle/" .. Key .. ".txt", util.Compress(von.serialize(vh.Data)))
+	file.Write("v-handle/" .. Key .. ".txt", util.Compress(von.serialize(vh.Data)))
 end
 
 function vh.GetData(Key, Default)

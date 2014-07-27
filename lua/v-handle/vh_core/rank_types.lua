@@ -1,3 +1,70 @@
+
+if SERVER then
+	vh.DefaultRankTypes = {
+		{
+			Name = "User",
+			UserGroup = "user",
+			UID = 1,
+			Inherits = 0,
+			Target = {1},
+			Permissions = {
+				
+			}
+		},
+		{
+			Name = "Moderator",
+			UserGroup = "user",
+			UID = 2,
+			Inherits = 1,
+			Target = {1, 2},
+			Permissions = {
+				TestPerm = {Value = true, Target = {1}},
+				TestPermB = {Value = true, Target = {1, 2}}
+			}
+		},
+		{
+			Name = "Admin",
+			UserGroup = "admin",
+			UID = 3,
+			Inherits = 2,
+			Target = {1, 2, 3},
+			Permissions = {
+				TestPerm = {Value = false, Target = {1}}
+			}
+		},
+		{
+			Name = "Super Admin",
+			UserGroup = "superadmin",
+			UID = 4,
+			Inherits = 3,
+			Target = {1, 2, 3, 4},
+			Permissions = {
+				SetRank = {Value = true, Target = {1, 2, 3}}
+			}
+		},
+		{
+			Name = "Owner",
+			UserGroup = "superadmin",
+			UID = 0,
+			Inherits = 0,
+			Target = {0},
+			Permissions = {
+				All = {Value = true}
+			}
+		},
+		{
+			Name = "Console",
+			UserGroup = "superadmin",
+			UID = -1,
+			Inherits = 0,
+			Target = {0},
+			Permissions = {
+				All = {Value = true}
+			}
+		}
+	}
+end
+
 vh.RankTypes =  {}
 vh.RankTypeUtil = {}
 
@@ -22,10 +89,11 @@ function vh.RankTypeUtil.GetUsers( ID )
 end
 
 function vh.RankTypeUtil.HasPermission( ID, PermName )
-	if ID == -1 then return {Value = true, Target = {0}} end
 	local Perms = vh.RankTypeUtil.GetFullPermissions(ID)
 	for a, b in pairs(Perms) do
-		if string.lower(a) == string.lower(PermName) or string.lower(a) == "all" then
+		if string.lower(a) == string.lower(PermName) then
+			return b
+		elseif string.lower(a) == "all" then
 			return {Value = true}
 		end
 	end
@@ -115,7 +183,7 @@ end
 
 if SERVER then
 
-	vh.RankTypes = vh.GetData("RankTypes") or {}
+	vh.RankTypes = vh.GetData("RankTypes") or table.Copy(vh.DefaultRankTypes)
 	util.AddNetworkString("VH_RankTypes")
 	
 	function vh.RankTypeUtil.Save()
@@ -123,10 +191,6 @@ if SERVER then
 		net.Start("VH_RankTypes")
 			net.WriteString(von.serialize(vh.RankTypes))
 		net.Broadcast()
-	end
-
-	if #vh.RankTypes == 0 then
-		vh.RankTypes = table.Copy(vh.DefaultRankTypes)
 	end
 		
 	timer.Simple(1, function()

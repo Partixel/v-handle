@@ -65,7 +65,7 @@ hook.Add("PlayerSpawn", "VH_PlayerData", function( Plr )
 		end
 
 		-- Compatability
-		local Rank = Plr:VH_GetRankObject()
+		local Rank = Plr:VH_GetRank()
 		if Rank then
 			Plr:SetNWString("usergroup", Rank.Name)
 		end
