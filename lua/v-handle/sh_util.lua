@@ -185,34 +185,3 @@ function vh.SplitStringByLength(value, length)
 
 	return output
 end
-
-vh.data = vh.data or {}
-
-function vh.SetData(key, value, noSave)
-	vh.data[key] = value
-
-	if (!noSave) then
-		file.CreateDir("v-handle")
-		file.Write("v-handle/"..key..".txt", util.Compress(von.serialize(vh.data)))
-	end
-end
-
-function vh.GetData(key, default, noCache)
-	if (noCache or vh.data[key] == nil) then
-		local contents = file.Read("v-handle/"..key..".txt", "DATA")
-
-		if (contents and contents != "") then
-			local deserialized = von.deserialize(util.Decompress(contents))
-
-			if (deserialized[key] != nil) then
-				vh.data[key] = deserialized[key]
-
-				return deserialized[key]
-			end
-		end
-	elseif (vh.data[key] != nil) then
-		return vh.data[key]
-	end
-
-	return default
-end
