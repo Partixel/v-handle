@@ -1,15 +1,9 @@
 
+vh.Data = vh.Data or {}
+
 AddCSLuaFile("v-handle/sh_util.lua")
 
 util.AddNetworkString("VH_ClientCCmd")
-
-concommand.Add("vh", function(Player, Command, Args)
-	if #Args == 0 then return end
-	local Outcome = vh.HandleCommands(Player, Args, {})
-	if Outcome and Outcome != "" then
-		vh.ConsoleMessage(Outcome, true)
-	end
-end)
 
 function vh.HandleCommands( Player, Args, Commands )
 	local ValidCommands = {}
@@ -68,6 +62,38 @@ function vh.HandleCommands( Player, Args, Commands )
 		return "nperm"
 	end
 end
+
+function vh.SetData(Key, Value)
+	vh.Data[Key] = Value
+	
+	file.CreateDir("v-handle")
+	fiel.Write("v-handle/" .. Key .. ".txt", util.Compress(von.serialize(vh.Data)))
+end
+
+function vh.GetData(Key, Default)
+	if (vh.Data[Key]) then
+		return vh.Data[Key]
+	else
+		local ReadData = file.Read("v-handle/" .. Key .. ".txt", "DATA")
+		
+		if ReadData and ReadData != "" then
+			local DesData = von.deserialize(util.Decompress(ReadData))
+			
+			vh.Data[Key] = DesData[Key]
+			return vh.Data[Key]
+		end
+	end
+
+	return Default
+end
+
+concommand.Add("vh", function(Player, Command, Args)
+	if #Args == 0 then return end
+	local Outcome = vh.HandleCommands(Player, Args, {})
+	if Outcome and Outcome != "" then
+		vh.ConsoleMessage(Outcome, true)
+	end
+end)
 
 hook.Add("PlayerSay", "vh_HandleCommands", function(Player, Message, TeamChat)
 	if (TeamChat) then return end
