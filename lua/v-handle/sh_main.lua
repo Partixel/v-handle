@@ -1,4 +1,3 @@
-
 -- Handle dependancies --
 function vh.IncludeFile(Name, Side)
 	if Side == nil then
@@ -41,6 +40,12 @@ vh.IncludeFolder("external")
 
 -- Loading core files --
 vh.IncludeFolder("vh_core")
+
+vh.IncludeFile("libs/V-LogLib/main.lua")
+
+_V.LogLib.Log("Hia", _V.LogLib.Type.Error)
+_V.LogLib.Log("Hia", _V.LogLib.Type.Warning)
+_V.LogLib.Log("Hia", _V.LogLib.Type.Message)
 
 vh.ConsoleMessage("_lcore_")
 
