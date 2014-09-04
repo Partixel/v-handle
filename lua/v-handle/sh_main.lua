@@ -43,10 +43,11 @@ vh.IncludeFolder("vh_core")
 
 vh.IncludeFile("libs/V-LogLib/main.lua")
 
-_V.LogLib.Log("Hia", _V.LogLib.Type.Error)
-_V.LogLib.Log("Hia", _V.LogLib.Type.Warning)
-_V.LogLib.Log("Hia", _V.LogLib.Type.Message)
-
+_V.LogLib.Log("Hia", _V.LogLib.Type.SEVERE)
+_V.LogLib.Log("Hia", _V.LogLib.Type.WARNING)
+_V.LogLib.Log("Hia", _V.LogLib.Type.INFO)
+_V.LogLib.Log("Hia", _V.LogLib.Type.DEBUG)
+_V.LogLib.Log("Hia", _V.LogLib.Type.CONFIG)
 vh.ConsoleMessage("_lcore_")
 
 -- Handle Modules --

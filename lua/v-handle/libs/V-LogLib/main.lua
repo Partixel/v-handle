@@ -35,7 +35,7 @@ function _V.LogLib.Log(Message, Type)
 		elseif Type == _V.LogLib.Type.CONFIG then
 			Message = "V-Handle - CONFIG - " .. Message
 		else
-			_V.LogLib.Log("Invalid log type type: ".. Message, _V.LogLib.Type.Error)
+			_V.LogLib.Log("Invalid log type type: ".. Message, _V.LogLib.Type.SEVERE)
 			return
 		end
 		
@@ -48,7 +48,7 @@ function _V.LogLib.Log(Message, Type)
 			-- Add the message to the log file
 		end
 	else
-		_V.LogLib.Log("Invalid message type: ".. Message, _V.LogLib.Type.Error)
+		_V.LogLib.Log("Invalid message type: ".. Message, _V.LogLib.Type.SEVERE)
 		return
 	end
 end
