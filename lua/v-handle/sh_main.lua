@@ -41,6 +41,8 @@ vh.IncludeFolder("external")
 -- Loading core files --
 vh.IncludeFolder("vh_core")
 
+vh.IncludeFile("libs/V-ConfigLib/main.lua")
+
 vh.IncludeFile("libs/V-LogLib/main.lua")
 
 _V.LogLib.Log("Hia", _V.LogLib.Type.SEVERE)
