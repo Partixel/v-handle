@@ -33,3 +33,5 @@ This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to ha
   - [ ] Noclip
   - [ ] Strip
 - [ ] Make list of targetted players default, and options within commands to control it
+- [ ] Player data Lib
+- [ ] GUI Lib
