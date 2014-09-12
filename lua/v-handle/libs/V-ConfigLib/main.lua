@@ -82,7 +82,7 @@ end
 function _V.ConfigLib.ParseValue(Value, Type)
 	-- Corrects a value to the type specified
 	local FixedValue = Value
-	if _V.ConfigLib.CorrectValues[Type] then
+	if _V.ConfigLib.ValuesParser[Type] then
 		FixedValue = _V.ConfigLib.ValuesParser[Type](Value)
 	end
 	return FixedValue
