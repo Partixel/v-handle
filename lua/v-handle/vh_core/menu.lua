@@ -17,6 +17,8 @@ local GUI = GUI or {}
 
 local Tabs = {"Commands", "Bans", "Ranks", "Reports", "Adverts", "Warns", "Statistics", "Settings"}
 
+repeat wait() until surface
+
 function giveAlpha(Colour)
 	return Color(Colour.r, Colour.g, Colour.b, 120)
 end
