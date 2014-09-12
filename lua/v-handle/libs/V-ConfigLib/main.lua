@@ -38,8 +38,16 @@ _V.ConfigLib.ValuesParser = {
 	-- Used to convert from string to number
 	boolean = function(Value) if type(Value) == "string" then return string.lower(Value) == "true" else return tostring(Value) end end,
 	-- Used to convert from string to boolean
-	table = function(Value) if type(Value) == "string" then return Value else return table.ToString(Value) end end
+	table = function(Value) if type(Value) == "string" then return ParseTable(Value) else return table.ToString(Value) end end
 }
+
+function ParseTable(Value)
+	local Exploded = string.Explode(",", string.sub(Value, 2, #Value - 2))
+	for _, v in pairs(Exploded) do
+		Exploded[_] = string.sub(v, 2, #v - 1)
+	end
+	return Exploded
+end
 
 function _V.ConfigLib.ConfigValue:Get() -- Returns the current value of the ConfigValues key
 	return _V.ConfigLib.Get(self.Key, self.Container, self.Default, self)
@@ -114,7 +122,7 @@ function _V.ConfigLib.WriteConfig(Location, Data)
 		if ConfigVal then
 			Formatted = Formatted .. ConfigVal:ToString(b) .. "\n"
 		else
-			Formatted = Formatted .. a .. " = " .. type(b) .. " = " .. b .. " --No valid ConfigValue found\n"
+			Formatted = Formatted .. a .. " = " .. type(b) .. " = " .. _V.ConfigLib.ParseValue(b, type(b)) .. " --No valid ConfigValue found\n"
 		end
 	end
 	file.Write(_V.ConfigLib.ConfigLocation .. "/" .. Location .. ".txt", Formatted)
@@ -152,12 +160,13 @@ function _V.ConfigLib.Get(Key, ConKey, Default, ConfigValue)
 		end
 	else
 		local Data = _V.ConfigLib.ReadConfig(ConKey)
-		if Data then
+		if Data and Data != "" then
 			_V.ConfigLib.Containers[ConKey] = Data
 			return _V.ConfigLib.Get(Key, ConKey, Default)
 			-- Runs the function again to save on repetitive code
 		else
 			Container = {} -- Creates the config file with default value
+			Container[Key] = Default
 			_V.ConfigLib.Containers[ConKey] = Container
 			_V.ConfigLib.WriteConfig(ConKey, Container) -- Saves the file
 			return Default
