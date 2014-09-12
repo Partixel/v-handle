@@ -36,8 +36,9 @@ _V.ConfigLib.ConfigValue = {
 _V.ConfigLib.CorrectValues = {
 	number = function(Value) return tonumber(Value) end,
 	-- Used to convert from string to number
-	boolean = function(Value) return string.lower(Value) == "true" end
+	boolean = function(Value) return string.lower(Value) == "true" end,
 	-- Used to convert from string to boolean
+	table = function(Value) return "" end
 }
 
 function _V.ConfigLib.ConfigValue:Get() -- Returns the current value of the ConfigValues key

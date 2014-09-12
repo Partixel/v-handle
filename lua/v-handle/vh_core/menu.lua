@@ -24,7 +24,7 @@ end
 function vh:ShowMenu()
 	if (not GUI.MenuFrame) then CreateGui() end
 	if (not GUI.MenuFrame) then return end
-	GUI.MenuFrame:SetVisible(true) -- Todo animation of some sorts
+	GUI.MenuFrame:SetVisible(true)
 end
 
 function vh:HideMenu()
@@ -32,6 +32,7 @@ function vh:HideMenu()
 	if (not GUI.MenuFrame) then return end
 	GUI.MenuFrame:SetVisible(false)
 end
+
 function surface.DrawTrapezoid( x, y, w, h, col, a)
 	local t = {
 	{x = x + a, y = y, u = 0, v = 0},
