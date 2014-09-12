@@ -33,12 +33,12 @@ _V.ConfigLib.ConfigValue = {
 	Category = nil -- Category the value is under
 }
 
-_V.ConfigLib.CorrectValues = {
-	number = function(Value) return tonumber(Value) end,
+_V.ConfigLib.ValuesParser = {
+	number = function(Value) if type(Value) == "string" then return tonumber(Value) else return tostring(Value) end end,
 	-- Used to convert from string to number
-	boolean = function(Value) return string.lower(Value) == "true" end,
+	boolean = function(Value) if type(Value) == "string" then return string.lower(Value) == "true" else return tostring(Value) end end,
 	-- Used to convert from string to boolean
-	table = function(Value) return "" end
+	table = function(Value) if type(Value) == "string" then return Value else return table.ToString(Value) end end
 }
 
 function _V.ConfigLib.ConfigValue:Get() -- Returns the current value of the ConfigValues key
@@ -47,7 +47,8 @@ end
 
 function _V.ConfigLib.ConfigValue:ToString(Value) -- Returns the ConfigValue as a nicely formatted string
 	local Text = self.Key .. " = "
-	Text = Text .. type(Value) .. " = " .. tostring(Value)
+	local ValueAsString = _V.ConfigLib.ParseValue(Value, type(Value))
+	Text = Text .. type(Value) .. " = " .. ValueAsString
 	if self.Desc then
 		Text = Text .. " --" .. self.Desc
 	end
@@ -60,7 +61,7 @@ function _V.ConfigLib.ConfigValue:FromString(String) -- Returns the key and valu
 		local SplitB = string.Explode(" = ", SplitA[1])
 		if SplitB and SplitB[1] and SplitB[2] and SplitB[3] then
 			-- Gets the key [1], value type [2] and value [3]
-			local Value = _V.ConfigLib.CorrectValue(SplitB[3], SplitB[2])
+			local Value = _V.ConfigLib.ParseValue(SplitB[3], SplitB[2])
 			return {Key = SplitB[1], Value = Value}
 		end
 	end
@@ -78,11 +79,11 @@ function _V.ConfigLib.ConfigValue:new(Key, Container, Default, Desc, Category)
 	return Object
 end
 
-function _V.ConfigLib.CorrectValue(Value, Type)
+function _V.ConfigLib.ParseValue(Value, Type)
 	-- Corrects a value to the type specified
 	local FixedValue = Value
 	if _V.ConfigLib.CorrectValues[Type] then
-		FixedValue = _V.ConfigLib.CorrectValues[Type](Value)
+		FixedValue = _V.ConfigLib.ValuesParser[Type](Value)
 	end
 	return FixedValue
 end
