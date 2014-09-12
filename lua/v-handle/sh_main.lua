@@ -52,6 +52,8 @@ _V.LogLib.Log("Hia", _V.LogLib.Type.DEBUG)
 _V.LogLib.Log("Hia", _V.LogLib.Type.CONFIG)
 vh.ConsoleMessage("_lcore_")
 
+vh.IncludeFile("libs/V-MenuLib/main.lua")
+
 -- Handle Modules --
 vh.ModuleHooks = {}
 vh.Modules = {}
