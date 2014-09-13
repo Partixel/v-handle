@@ -1,3 +1,5 @@
+_V = _V or {}
+
 _V.MenuLib = {}
 
 local RegisteredTabs = {}
