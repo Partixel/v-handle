@@ -1,49 +1,12 @@
--- Handle dependancies --
-function vh.IncludeFile(Name, Side)
-	if Side == nil then
-		if SERVER then
-			AddCSLuaFile(Name)
-		end
-		include(Name)
-	elseif string.lower(Side) == "sv" and SERVER then
-		include(Name)
-	else
-		if SERVER then
-			AddCSLuaFile(Name)
-		else
-			include(Name)
-		end
-	end
-end
 
-function vh.IncludeFolder(Name, Side)
-
-	local Files, Dirs = file.Find("v-handle/" .. Name .. "/*", "LUA")
-
-	for a, b in ipairs(Files) do
-		if string.Right(b, 4) == ".lua" then
-			vh.IncludeFile(Name .. "/" .. b, Side)
-		end
-	end
-
-	for a, b in ipairs(Dirs) do
-		if string.lower(b) == "server" then
-			vh.IncludeFolder(Name .. "/" .. b, "sv")
-		elseif string.lower(b) == "client" then
-			vh.IncludeFolder(Name .. "/" .. b, "cl")
-		end
-	end
-end
+-- Load libs --
+_V.FileLib.IncludeDir("libs")
 
 -- Loading external files --
-vh.IncludeFolder("external")
+_V.FileLib.IncludeDir("external")
 
 -- Loading core files --
-vh.IncludeFolder("vh_core")
-
-vh.IncludeFile("libs/V-ConfigLib/main.lua")
-
-vh.IncludeFile("libs/V-LogLib/main.lua")
+_V.FileLib.IncludeDir("vh_core")
 
 _V.LogLib.Log("Hia", _V.LogLib.Type.SEVERE)
 _V.LogLib.Log("Hia", _V.LogLib.Type.WARNING)
@@ -51,8 +14,6 @@ _V.LogLib.Log("Hia", _V.LogLib.Type.INFO)
 _V.LogLib.Log("Hia", _V.LogLib.Type.DEBUG)
 _V.LogLib.Log("Hia", _V.LogLib.Type.CONFIG)
 vh.ConsoleMessage("_lcore_")
-
-vh.IncludeFile("libs/V-MenuLib/main.lua")
 
 -- Handle Modules --
 vh.ModuleHooks = {}
@@ -102,4 +63,4 @@ function vh.RegisterModule( Module )
 	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
 end
 
-vh.IncludeFolder("vh_modules")
+_V.FileLib.IncludeDir("vh_modules")
