@@ -58,9 +58,11 @@ end
 
 function _V.FileLib.RequireLib(Var)
 	return coroutine.create(function()
+		local Repeated = 0
 		repeat
+			Repeated = Repeated + 1
 			coroutine.wait(1)
-		until _V[Var] and _V[Var] != {}
+		until _V[Var] or Repeated >= 10
 		return true
 	end)
 end
