@@ -1,4 +1,3 @@
-_V = _V or {}
 _V.LogLib = {}
 _V.LogLib.LogLocation = _V.ConfigLib.ConfigValue:new("LogLocation", "LibConfig", "_V/Logs", "Desc!", _V.ConfigLib.Categories.TEST)
 -- The directory the file is located in
