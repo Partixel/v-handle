@@ -1,4 +1,5 @@
 vh = vh or {}
+_V = _V or {}
 
 if (SERVER) then
 	include("v-handle/libs/V-FileLib/main.lua")
