@@ -55,6 +55,23 @@ surface.CreateFont("VHUIFont", {
 	outline = false,
 })
 
+surface.CreateFont("VHUIFontSmall", {
+	font = "MV Boli",
+	size = 20,
+	weight = 500,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false,
+})
+
 _V.MenuLib.VTab = {
 	Name = nil, -- Name of the Tab
 	RenderCall = nil -- Function to call on render
@@ -83,8 +100,8 @@ end
 
 local GUI = GUI or {}
 
-function giveAlpha(Colour, Mult)
-	return Color(Colour.r, Colour.g, Colour.b, 120 / (Mult or 1))
+function giveAlpha(InitialColor, Mult)
+	return Color(InitialColor.r, InitialColor.g, InitialColor.b, 120 / (Mult or 1))
 end
 
 function DrawTrapezoid( x, y, w, h, col, a)
@@ -129,6 +146,9 @@ end
 function DrawTabs()
 	if GUI.Tabs then
 		for _, v in pairs(GUI.Tabs) do
+			if v.Label then
+				v.Label:Remove()
+			end
 			v:Remove()
 		end
 	end
@@ -140,7 +160,6 @@ function DrawTabs()
 		if not Active then
 			local Offset = i - ActiveTab
 			GUI.Tabs[i] = vgui.Create("DPanel", GUI.MasterFrame)
-			GUI.Tabs[i]:SetZPos(1)
 			GUI.Tabs[i]:SetPos(ShownX + Offset * 40, ShownY - Offset * 40)
 			GUI.Tabs[i]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
 			GUI.Tabs[i].Paint = function()
@@ -150,44 +169,37 @@ function DrawTabs()
 			end
 		end
 	end
-	for i, v in pairs(OpenTabs) do
-		local Active = i == ActiveTab
-		if Active then
-			GUI.Tabs[i] = vgui.Create("DPanel", GUI.MasterFrame)
-			GUI.Tabs[i]:SetZPos(2)
-			GUI.Tabs[i]:SetPos(ShownX, ShownY)
-			GUI.Tabs[i]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
-			GUI.Tabs[i].Paint = function()
-				surface.SetMaterial(Settings.Textures.Normal)
-				DrawTrapezoid(5, 5, GUI.Tabs[i]:GetWide() - 10, GUI.Tabs[i]:GetTall() - 10, Settings.Colors.Active, 40)
-				DrawTrapezoid(0, 0, GUI.Tabs[i]:GetWide(), GUI.Tabs[i]:GetTall(), giveAlpha(Settings.Colors.Active), 40)
-			end
-			GUI.Tabs[i].Label = vgui.Create("DLabel", GUI.Tabs[i])
-			GUI.Tabs[i].Label:SetZPos(3)
-			GUI.Tabs[i].Label:SetPos(0, 0)
-			GUI.Tabs[i].Label:SetSize(GUI.Tabs[i]:GetWide(), 40)
-			GUI.Tabs[i].Label:SetText("")
-			GUI.Tabs[i].Label.Paint = function()
-				draw.SimpleText(v.Name, "VHUIFont", GUI.Tabs[i]:GetWide()/2, 20, Color(50, 50, 50, 255), 1, 1)
-			end
-		end
+	GUI.Tabs[ActiveTab] = vgui.Create("DPanel", GUI.MasterFrame)
+	GUI.Tabs[ActiveTab]:SetPos(ShownX, ShownY)
+	GUI.Tabs[ActiveTab]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
+	GUI.Tabs[ActiveTab].Paint = function()
+		surface.SetMaterial(Settings.Textures.Normal)
+		DrawTrapezoid(5, 5, GUI.Tabs[ActiveTab]:GetWide() - 10, GUI.Tabs[ActiveTab]:GetTall() - 10, Settings.Colors.Active, 40)
+		DrawTrapezoid(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall(), giveAlpha(Settings.Colors.Active), 40)
+	end
+	GUI.Tabs[ActiveTab].Label = vgui.Create("DLabel", GUI.Tabs[ActiveTab])
+	GUI.Tabs[ActiveTab].Label:SetPos(0, 0)
+	GUI.Tabs[ActiveTab].Label:SetSize(GUI.Tabs[ActiveTab]:GetWide(), 40)
+	GUI.Tabs[ActiveTab].Label:SetText("")
+	GUI.Tabs[ActiveTab].Label.Paint = function()
+		draw.SimpleText(OpenTabs[ActiveTab].Name, "VHUIFont", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Color(50, 50, 50, 255), 1, 1)
 	end
 	for i, v in pairs(OpenTabs) do
 		local Active = i == ActiveTab
 		if not Active then
-			GUI.Tabs[i].Label = vgui.Create("DButton", GUI.Tabs[i])
-			GUI.Tabs[i].Label:SetZPos(4)
-			GUI.Tabs[i].Label:SetSize(40, GUI.Tabs[i]:GetTall())
+			local Offset = i - ActiveTab
+			GUI.Tabs[i].Label = vgui.Create("DButton", GUI.MasterFrame)
+			GUI.Tabs[i].Label:SetSize(GUI.Tabs[ActiveTab]:GetWide(), 40)
 			GUI.Tabs[i].Label:SetText("")
 			if i < ActiveTab then
-				GUI.Tabs[i].Label:SetPos(40, 0)
+				GUI.Tabs[i].Label:SetPos(ShownX + Offset * 40, ShownY - Offset * 40 + GUI.Tabs[ActiveTab]:GetTall() - 40)
 				GUI.Tabs[i].Label.Paint = function()
-					draw.SimpleText("T", "VHUIFont", 0, GUI.Tabs[i]:GetTall()/2, Color(50, 50, 50, 255), 1, 1)
+					draw.SimpleText(v.Name, "VHUIFontSmall", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Color(50, 50, 50, 255), 1, 1)
 				end
 			else
-				GUI.Tabs[i].Label:SetPos(GUI.Tabs[i]:GetWide() - 40, 0)
+				GUI.Tabs[i].Label:SetPos(ShownX + Offset * 40, ShownY - Offset * 40)
 				GUI.Tabs[i].Label.Paint = function()
-					draw.SimpleText("T", "VHUIFont", 0, GUI.Tabs[i]:GetTall()/2, Color(50, 50, 50, 255), 1, 1)
+					draw.SimpleText(v.Name, "VHUIFontSmall", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Color(50, 50, 50, 255), 1, 1)
 				end
 			end
 			GUI.Tabs[i].Label.DoClick = function()
