@@ -62,7 +62,7 @@ function _V.FileLib.RequireLib(Var)
 			coroutine.wait(1)
 		until _V[Var] and _V[Var] != {}
 		return true
-	)
+	end)
 end
 
 function _V.FileLib.Logger(Message, Type)
