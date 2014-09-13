@@ -5,6 +5,6 @@ Module.Description = "Tab containing settings"
 function RenderCall(Frame, Table)
 end
 
-local SettingsTab = _V.MenuLib.VTab:new("Settings", RenderCall, 1)
+local SettingsTab = _V.MenuLib.VTab:new("Settings", RenderCall)
 
 vh.RegisterModule(Module)

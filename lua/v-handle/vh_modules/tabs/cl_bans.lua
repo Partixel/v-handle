@@ -5,6 +5,6 @@ Module.Description = "Tab containing all Bans"
 function RenderCall(Frame, Table)
 end
 
-local BansTab = _V.MenuLib.VTab:new("Bans", RenderCall, 1)
+local BansTab = _V.MenuLib.VTab:new("Bans", RenderCall)
 
 vh.RegisterModule(Module)

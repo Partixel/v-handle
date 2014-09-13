@@ -6,6 +6,7 @@ local CommandOpen = nil
 
 function RenderCall(Frame, Table)
 	local CurrentCommands = 0
+	print(CommandOpen)
 	if CommandOpen then
 		Table[i].BackButton = vgui.Create("DButton", Table[i])
 		Table[i].BackButton:SetPos(Table[i]:GetWide() - 90, 10)
@@ -16,7 +17,7 @@ function RenderCall(Frame, Table)
 			draw.SimpleText("<", "VHUIFont", Table[i].BackButton:GetWide()/2, Table[i].BackButton:GetTall()/2 - 4, Color(50, 50, 50, 255), 1, 1)
 		end
 		Table[i].BackButton.DoClick = function()
-			CommandOpen = false
+			CommandOpen = nil
 			RenderCall(Frame, Table)
 		end
 	else

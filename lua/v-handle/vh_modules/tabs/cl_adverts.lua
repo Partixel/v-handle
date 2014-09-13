@@ -5,6 +5,6 @@ Module.Description = "Tab containing all Adverts"
 function RenderCall(Frame, Table)
 end
 
-local AdvertsTab = _V.MenuLib.VTab:new("Adverts", RenderCall, 1)
+local AdvertsTab = _V.MenuLib.VTab:new("Adverts", RenderCall)
 
 vh.RegisterModule(Module)
