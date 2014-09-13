@@ -56,6 +56,12 @@ function _V.FileLib.IncludeDir(Dir)
 	end
 end
 
+function _V.FileLib.Require(Var)
+	repeat
+		wait()
+	until Var and Var != {}
+end
+
 function _V.FileLib.Logger(Message, Type)
 	if _V.LogLib then
 		_V.LogLib.Log(Message, Type)
