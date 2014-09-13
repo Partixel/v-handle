@@ -57,9 +57,12 @@ function _V.FileLib.IncludeDir(Dir)
 end
 
 function _V.FileLib.RequireLib(Var)
-	repeat
-		wait()
-	until _V[Var] and _V[Var] != {}
+	return coroutine.create(function()
+		repeat
+			coroutine.wait(1)
+		until _V[Var] and _V[Var] != {}
+		return true
+	)
 end
 
 function _V.FileLib.Logger(Message, Type)
