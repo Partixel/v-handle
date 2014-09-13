@@ -76,7 +76,7 @@ end
 _V.MenuLib.VTab = {
 	Name = nil, 		-- Name of the Tab
 	RenderCall = nil, 	-- Function to call on render
-	Position = nil 		-- Forced position of the tab
+	Position = nil		-- Forced position of the tab
 }
 
 function _V.MenuLib.VTab:new(Name, RenderCall, Position)
@@ -230,7 +230,8 @@ function DrawTabs(OldActiveTab)
 	GUI.Tabs[ActiveTab]:MoveTo(ShownX, ShownY, 0.5, 0, 1)
 	GUI.Tabs[ActiveTab]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
 	GUI.Tabs[ActiveTab].Paint = function()
-		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall(), Settings.Colors.Active, 40, 5)
+		_V.MenuLib.DrawTrapezoidFancy(0, GUI.Tabs[ActiveTab]:GetTall() * 0.2 + 5, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall() * 0.2, Settings.Colors.Secondary, 40, 5)
+		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall() * 0.8 - 5, Settings.Colors.Main, 40, 5)
 	end
 	GUI.Tabs[ActiveTab].Label = vgui.Create("DLabel", GUI.Tabs[ActiveTab])
 	GUI.Tabs[ActiveTab].Label:SetPos(0, 0)
@@ -289,34 +290,3 @@ function DrawTabs(OldActiveTab)
 		end
 	end
 end
-
---[[function RenderCall(Frame, Table)
-	for i, v in pairs(_V.MenuLib.GetRegisteredTabs()) do
-		if v.Name ~= "Main" then
-			Table[v.Name] = vgui.Create("DButton", Frame)
-			Table[v.Name]:SetPos(Frame:GetWide() * 0.2 - (3 * (i - 1)), 10 + (35 * (i - 1)))
-			Table[v.Name]:SetSize(Frame:GetWide() * 0.6, 30)
-			Table[v.Name]:SetText("")
-			Table[v.Name].Paint = function()
-				_V.MenuLib.DrawTrapezoidFancy(0, 0, Table[v.Name]:GetWide(), Table[v.Name]:GetTall(), _V.MenuLib.GetSettings().Colors.MainButton, 2, 2)
-				draw.SimpleText(v.Name, "VHUIFontSmall", Table[v.Name]:GetWide()/2, Table[v.Name]:GetTall()/2 - 4, Color(50, 50, 50, 255), 1, 1)
-			end
-			Table[v.Name].DoClick = function()
-				_V.MenuLib.OpenTab(v)
-			end
-		end
-	end
-end
-
-local IndexTab = _V.MenuLib.VTab:new("Main", RenderCall, false, 1)
-
-_V.MenuLib.RegisteredTabsilent(IndexTab)]]
-
-local TestTab = _V.MenuLib.VTab:new("TestTab", nil)
-local TestTabB = _V.MenuLib.VTab:new("TestTabB", nil)
-local TestTabC = _V.MenuLib.VTab:new("TestTabC", nil)
-local TestTabD = _V.MenuLib.VTab:new("A Tab", nil)
-
-concommand.Add("vh_menu", function() ShowMenu() end)
-concommand.Add("+vh_menu", function() ShowMenu() end)
-concommand.Add("-vh_menu", function() HideMenu() end)
