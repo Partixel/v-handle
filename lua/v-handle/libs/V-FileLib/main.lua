@@ -56,10 +56,10 @@ function _V.FileLib.IncludeDir(Dir)
 	end
 end
 
-function _V.FileLib.Require(Var)
+function _V.FileLib.RequireLib(Var)
 	repeat
 		wait()
-	until Var and Var != {}
+	until _V[Var] and _V[Var] != {}
 end
 
 function _V.FileLib.Logger(Message, Type)
