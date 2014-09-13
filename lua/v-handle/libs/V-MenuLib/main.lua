@@ -232,8 +232,7 @@ function DrawTabs(OldActiveTab)
 	GUI.Tabs[ActiveTab]:MoveTo(ShownX, ShownY, 0.5, 0, 1)
 	GUI.Tabs[ActiveTab]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
 	GUI.Tabs[ActiveTab].Paint = function()
-		_V.MenuLib.DrawTrapezoidFancy(0, GUI.Tabs[ActiveTab]:GetTall() * 0.2 + 5, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall() * 0.2, Settings.Colors.Secondary, 40, 5)
-		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall() * 0.8 - 5, Settings.Colors.Main, 40, 5)
+		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall(), Settings.Colors.Main, 40, 5)
 	end
 	GUI.Tabs[ActiveTab].Label = vgui.Create("DLabel", GUI.Tabs[ActiveTab])
 	GUI.Tabs[ActiveTab].Label:SetPos(0, 0)
@@ -292,3 +291,7 @@ function DrawTabs(OldActiveTab)
 		end
 	end
 end
+
+concommand.Add("vh_menu", function() ShowMenu() end)
+concommand.Add("+vh_menu", function() ShowMenu() end)
+concommand.Add("-vh_menu", function() HideMenu() end)
