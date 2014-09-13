@@ -40,17 +40,17 @@ function _V.FileLib.IncludeDir(Dir)
 	for a, b in ipairs(Files) do
 		if string.lower(string.Right(b, 4)) == ".lua" then
 			if string.lower(string.Left(b, 3)) == "cl_" then
-				vh.IncludeFile(Dir .. "/" .. b, _V.FileLib.Side.Client)
+				_V.FileLib.IncludeDir(Dir .. "/" .. b, _V.FileLib.Side.Client)
 			elseif string.lower(string.Left(b, 3)) == "sv_" then
-				vh.IncludeFile(Dir .. "/" .. b, _V.FileLib.Side.Server)
+				_V.FileLib.IncludeDir(Dir .. "/" .. b, _V.FileLib.Side.Server)
 			else
-				vh.IncludeFile(Dir .. "/" .. b, _V.FileLib.Side.Shared)
+				_V.FileLib.IncludeDir(Dir .. "/" .. b, _V.FileLib.Side.Shared)
 			end
 		end
 	end
 
 	for a, b in ipairs(Dirs) do
-		vh.IncludeFolder(Dir .. "/" .. b)
+		_V.FileLib.IncludeDir(Dir .. "/" .. b)
 	end
 end
 
