@@ -9,7 +9,7 @@ _V.FileLib.Side = {
 }
 
 function _V.FileLib.IncludeFile(Location, Side)
-	local File = file.Find(Location)
+	local File = file.Find(Location, "LUA")
 	if File then
 		if Side == _V.FileLib.Side.Client then
 			if SERVER then
