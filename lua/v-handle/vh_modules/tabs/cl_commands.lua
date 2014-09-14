@@ -28,6 +28,8 @@ function GetValidArguments(ArgType)
 	local ReturnTable = {}
 	if ArgType == "Player" then
 		table.insert(ReturnTable, "All")
+		table.insert(ReturnTable, "Me")
+		table.insert(ReturnTable, "Others")
 		table.insert(ReturnTable, "Admins")
 		table.insert(ReturnTable, "Non-Admins")
 		for _, v in pairs(player.GetAll()) do
@@ -35,7 +37,7 @@ function GetValidArguments(ArgType)
 		end
 	elseif ArgType == "Rank" then
 		for _, v in pairs(vh.RankTypes) do
-			table.insert(ReturnTable, v)
+			table.insert(ReturnTable, v.Name)
 		end
 	elseif ArgType == "String" then
 		ReturnTable = "String"
@@ -64,14 +66,14 @@ function OpenCommandView(Frame, Table, Command)
 	local Arguments = Command.Arguments
 	local CurrentArguments = 0
 	for i, v in pairs(Arguments) do
-		Table["Arguments"..i] = vgui.Create("DComboBox", Frame)
+		Table["Arguments"..i] = vgui.Create("DComboBox", Table.CommandPanel)
 		Table["Arguments"..i]:SetPos(Frame:GetWide() * 0.2 - (3 * CurrentArguments), 10 + (35 * CurrentArguments))
 		Table["Arguments"..i]:SetSize(Frame:GetWide() * 0.6, 30)
 		Table["Arguments"..i]:SetText("")
-		--[[Table["Arguments"..i].Paint = function()
+		Table["Arguments"..i].Paint = function()
 			_V.MenuLib.DrawTrapezoidFancy(0, 0, Table["Arguments"..i]:GetWide(), Table["Arguments"..i]:GetTall(), _V.MenuLib.GetSettings().Colors.MainButton, 2, 2)
 			draw.SimpleText(v, "VHUIFontSmall", Table["Arguments"..i]:GetWide()/2, Table["Arguments"..i]:GetTall()/2 - 4, Color(50, 50, 50, 255), 1, 1)
-		end]]
+		end
 		for _, a in pairs(GetValidArguments(v)) do
 			if type(a) == "string" then
 				Table["Arguments"..i]:AddChoice(a)

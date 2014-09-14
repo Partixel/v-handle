@@ -8,6 +8,7 @@ Module.Commands.Kick = {
 	Description = Module.Description,
 	Usage = "<Player> <Reason>",
 	Permission = "Kick",
+	MinArgs = 2,
 	Arguments = {"Player", "String"}
 }
 

@@ -12,6 +12,7 @@ Module.Commands.SetRank = {
 	Description = "Set a players rank",
 	Usage = "<Player> <Rank>",
 	Permission = "SetRank",
+	MinArgs = 2,
 	Arguments = {"Player", "Rank"}
 }
 

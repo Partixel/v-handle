@@ -8,6 +8,7 @@ Module.Commands.Cloak = {
 	Description = Module.Description,
 	Usage = "<Player>",
 	Permission = "Cloak",
+	MinArgs = 0,
 	Arguments = {"Player"}
 }
 

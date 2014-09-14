@@ -8,6 +8,7 @@ Module.Commands.Slay = {
 	Description = Module.Description,
 	Usage = "<Player>",
 	Permission = "Slay",
+	MinArgs = 1,
 	Arguments = {"Player"}
 }
 
