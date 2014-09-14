@@ -160,6 +160,13 @@ function _V.MenuLib.DrawTrapezoidFancy( x, y, w, h, col, a, b)
 	_V.MenuLib.DrawTrapezoid(b, b, w - b * 2, h - b * 2, Color(60, 60, 60, 100 * (col.a/255)), a)
 end
 
+function _V.MenuLib.DrawTrapezoidSemiFancy( x, y, w, h, col, a, b)
+	surface.SetMaterial(Settings.Textures.Normal)
+	_V.MenuLib.DrawTrapezoid(b, b, w - b * 2, h - b * 2, col, a)
+	surface.SetMaterial(Settings.Textures.GradientUp)
+	_V.MenuLib.DrawTrapezoid(b, b, w - b * 2, h - b * 2, Color(60, 60, 60, 100 * (col.a/255)), a)
+end
+
 function ShowMenu()
 	if (not GUI.MasterFrame) then CreateGui() end
 	if (not GUI.MasterFrame) then return end
@@ -182,9 +189,7 @@ function CreateGui()
 	GUI.MasterFrame:SetVisible(false)
 	GUI.MasterFrame:ShowCloseButton(false)
 	GUI.MasterFrame:MakePopup()
-	GUI.MasterFrame.Paint = function()
-		draw.RoundedBox(0, 0, 0, GUI.MasterFrame:GetWide(), GUI.MasterFrame:GetTall(), Color(0, 0, 0, 0))
-	end
+	GUI.MasterFrame.Paint = function() end
 	DrawTabs()
 end
 

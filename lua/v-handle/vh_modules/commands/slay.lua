@@ -8,9 +8,7 @@ Module.Commands.Slay = {
 	Description = Module.Description,
 	Usage = "<Player>",
 	Permission = "Slay",
-	MinArgs = 1,
-	MinPlayers = 1,
-	NonPlayerArgs = 0,
+	Arguments = {"Player"}
 }
 
 function Module.Commands.Slay.Run(Player, Args, Alias, RankID, Perm)

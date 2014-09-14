@@ -7,12 +7,12 @@ Module.PrecacheStrings = {
 }
 Module.Commands = {}
 Module.Commands.SetRank = {
-  Aliases = {},
-  Prefix = "!",
-  Description = "Set a players rank",
-  Usage = "<Player> <Rank>",
-  Permission = "SetRank",
-  MinArgs = 2
+	Aliases = {},
+	Prefix = "!",
+	Description = "Set a players rank",
+	Usage = "<Player> <Rank>",
+	Permission = "SetRank",
+	Arguments = {"Player", "Rank"}
 }
 
 function Module.Commands.SetRank.Run(Player, Args, Alias, RankID, Perm)
