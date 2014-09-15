@@ -1,4 +1,4 @@
-#V-Handle
+#V-Handle ![alt tag](https://travis-ci.org/Partixel/v-handle.svg)
 This project aims at making a new gmod moderation addon that features simplistic addon systems and a broad range of applications
 
 **DEVELOPERS** <br>
@@ -10,8 +10,6 @@ When typing a command keep these few tips in mind:
 * You do not need to type the players full name
 * Typing a players steam ID works too
 * if you want to target several players put / either side and seperate the names/ids with commas (NOT SPACES) e.g. /Partixel,Code/
-
-Test
 
 ##Modules
 ##Framework
