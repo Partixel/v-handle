@@ -11,6 +11,8 @@ When typing a command keep these few tips in mind:
 * Typing a players steam ID works too
 * if you want to target several players put / either side and seperate the names/ids with commas (NOT SPACES) e.g. /Partixel,Code/
 
+Test
+
 ##Modules
 ##Framework
 ##Core Files
