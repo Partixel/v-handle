@@ -1,4 +1,4 @@
-#V-Handle ![alt tag](https://travis-ci.org/Partixel/v-handle.svg)
+#V-Handle ![alt tag](https://travis-ci.org/Partixel/v-handle.svg?branch=master)
 This project aims at making a new gmod moderation addon that features simplistic addon systems and a broad range of applications
 
 **DEVELOPERS** <br>
