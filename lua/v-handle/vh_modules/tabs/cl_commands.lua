@@ -83,6 +83,6 @@ function OpenCommandView(Frame, Table, Command)
 	end
 end
 
-local CommandsTab = _V.MenuLib.VTab:new("Commands", RenderCall, 1)
+local CommandsTab = _V.MenuLib.VTab:new("Commands", RenderCall, Color(70, 140, 80), "commands", 1)
 
 vh.RegisterModule(Module)

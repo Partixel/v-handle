@@ -6,6 +6,8 @@ local RegisteredTabs = {}
 local ActiveTab = 1
 local TabsVisible = false
 
+local LastMouseDown = false
+
 Settings = {}
 Settings.Sizes = {}
 Settings.Sizes.Main = {x = 0.45, y = 0.6}
@@ -78,11 +80,13 @@ end
 _V.MenuLib.VTab = {
 	Name = nil, 		-- Name of the Tab
 	RenderCall = nil, 	-- Function to call on render
+	Colour = nil,		-- Colour to be used in rendering
+	Icon = nil,			-- Icon to be used in rendering
 	Position = nil		-- Forced position of the tab
 }
 
-function _V.MenuLib.VTab:new(Name, RenderCall, Position)
-	local Object = {Name = Name, RenderCall = RenderCall, Position = Position}
+function _V.MenuLib.VTab:new(Name, RenderCall, Colour, Icon, Position)
+	local Object = {Name = Name, RenderCall = RenderCall, Colour = Colour, Icon = Icon, Position = Position}
 	setmetatable(Object, self)
 	self.__index = self
 	_V.MenuLib.RegisterTab(Object)
@@ -141,6 +145,10 @@ function giveAlphaAlt(InitialColor)
 	return Color(InitialColor.r, InitialColor.g, InitialColor.b, math.max(InitialColor.a - 120, 0))
 end
 
+function giveAlphaAltAlt(InitialColor, Amount)
+	return Color(InitialColor.r, InitialColor.g, InitialColor.b, InitialColor.a - Amount)
+end
+
 function _V.MenuLib.DrawTrapezoid( x, y, w, h, col, a)
 	local t = {
 	{x = x + a, y = y, u = 0, v = 0},
@@ -190,8 +198,102 @@ function CreateGui()
 	GUI.MasterFrame:ShowCloseButton(false)
 	GUI.MasterFrame:MakePopup()
 	GUI.MasterFrame.Paint = function() end
+	
+	GUI.CircleFrame = GUI.CircleFrame or vgui.Create("DPanel", GUI.MasterFrame)
+	GUI.CircleFrame:SetPos(ScrW() * 0.7, ScrH() * 0.6)
+	GUI.CircleFrame:SetSize(ScrW() * 0.4, ScrH() * 0.4)
+	GUI.CircleFrame.Paint = function() end
+	
+	GUI.Circle = GUI.Circle or vgui.Create("VH_Circle", GUI.CircleFrame)
+	GUI.Circle:SetPos(0, 0)
+	GUI.Circle:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
+	GUI.Circle:SetRadius(115)
+	GUI.Circle:SetColor(Color(180, 180, 180))
+	
+	GUI.CircleClose = GUI.CircleClose or vgui.Create("VH_Circle", GUI.CircleFrame)
+	GUI.CircleClose:SetPos(0, 0)
+	GUI.CircleClose:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
+	GUI.CircleClose:SetRadius(32)
+	GUI.CircleClose:SetColor(giveAlphaAltAlt(Settings.Colors.TertiaryButton, 40))
+	
 	DrawTabs()
 end
+
+hook.Add("Think", "Think", function()
+	if not GUI or not GUI.MasterFrame or not GUI.MasterFrame:IsVisible() or not GUI.CircleFrame or not GUI.Circles then return end
+	local PanelX, PanelY = GUI.CircleFrame:GetPos()
+	local CenterX, CenterY = PanelX + GUI.CircleFrame:GetWide()/2, PanelY + GUI.CircleFrame:GetTall()/2
+	local Distance = math.Dist(CenterX, CenterY, gui.MouseX(), gui.MouseY())
+	if Distance < 35 then
+		GUI.CircleClose:SetColor(giveAlphaAltAlt(Settings.Colors.TertiaryButton, 10))
+		if LastMouseDown and not input.IsMouseDown(MOUSE_LEFT) then
+			HideMenu()
+		end
+	else
+		GUI.CircleClose:SetColor(giveAlphaAltAlt(Settings.Colors.TertiaryButton, 40))
+	end
+	if Distance < 40 or Distance > 112 then
+		for _, v in pairs(GUI.Circles) do
+			local Active = (v:GetStartAngle() == 210)
+			if Active then
+				v:SetOuterRadius(112)
+			else
+				v:SetOuterRadius(110)
+			end
+			v.Icon:SetColor(Color(255, 255, 255, 40))
+		end
+		LastMouseDown = input.IsMouseDown(MOUSE_LEFT)
+		return
+	end
+	local RadialAngle = 360 - (math.deg(math.atan2(gui.MouseX() - CenterX, gui.MouseY() - CenterY)) + 180) - 90
+	if RadialAngle < 0 then
+		RadialAngle = 360 - math.abs(RadialAngle)
+	end
+	local CircleFound = nil
+	for _, v in pairs(GUI.Circles) do
+		local From, To = v:GetStartAngle(), v:GetStartAngle() + v:GetRotation()
+		if To > 360 and From > 360 then
+			From = From - 360
+			To = To - 360
+		end
+		if To > 360 then
+			if RadialAngle > From or RadialAngle < To - 360 then
+				CircleFound = v
+				break
+			end
+		end
+		if RadialAngle > From and RadialAngle < To then
+			CircleFound = v
+			break
+		end
+	end
+	if not CircleFound then LastMouseDown = input.IsMouseDown(MOUSE_LEFT) return end
+	for _, v in pairs(GUI.Circles) do
+		local Active = (v:GetStartAngle() == 210)
+		if v == CircleFound then
+			v:SetOuterRadius(120 + (Active and 2 or 0))
+			v.Icon:SetColor(Color(255, 255, 255, 140))
+		else
+			if Active then
+				v:SetOuterRadius(112)
+			else
+				v:SetOuterRadius(110)
+			end
+			v.Icon:SetColor(Color(255, 255, 255, 40))
+		end
+	end
+	if LastMouseDown and not input.IsMouseDown(MOUSE_LEFT) then
+		for i, v in pairs(RegisteredTabs) do
+			if v.Name == CircleFound:GetName() then
+				local oldActiveTab = ActiveTab
+				ActiveTab = i
+				DrawTabs(oldActiveTab)
+				break
+			end
+		end
+	end
+	LastMouseDown = input.IsMouseDown(MOUSE_LEFT)
+end)
 
 function DrawTabs(OldActiveTab)
 	if GUI.Tabs then
@@ -207,12 +309,90 @@ function DrawTabs(OldActiveTab)
 			end
 		end
 	end
+	
 	GUI.Tabs = {}
 	GUI.Tabs.Active = {}
-	local ShownX = ScrW() * (1 - Settings.Sizes.Main.x)/2
-	local ShownY = ScrH() * (1 - Settings.Sizes.Main.y)/2
+	GUI.Circles = GUI.Circles or {}
 	if #RegisteredTabs == 0 then return end
 	if SERVER then return end
+	
+	local AlignedTabs = {}
+	for i = ActiveTab, #RegisteredTabs do
+		table.insert(AlignedTabs, RegisteredTabs[i])
+	end
+	for i = 1, ActiveTab - 1 do
+		table.insert(AlignedTabs, RegisteredTabs[i])
+	end
+	for i, v in pairs(AlignedTabs) do
+		local isActive = (i == 1)
+		local degsPerSlice = 240/(#AlignedTabs - 1)
+		GUI.Circles[v.Name] = GUI.Circles[v.Name] or vgui.Create("VH_HollowCircle", GUI.CircleFrame)
+		GUI.Circles[v.Name]:SetName(v.Name)
+		GUI.Circles[v.Name]:SetPos(0, 0)
+		GUI.Circles[v.Name]:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
+		GUI.Circles[v.Name]:SetInnerRadius(40)
+		GUI.Circles[v.Name]:SetOuterRadius(110)
+		GUI.Circles[v.Name]:SetColor(Color(180, 60, 60))
+		if (OldActiveTab or (ActiveTab - 1)) < ActiveTab then
+			GUI.Circles[v.Name]:SetDirection(-1)
+		else
+			GUI.Circles[v.Name]:SetDirection(1)
+		end
+		if ((OldActiveTab == #RegisteredTabs) and (ActiveTab == 1)) or ((OldActiveTab == 1) and (ActiveTab == #RegisteredTabs)) then
+			GUI.Circles[v.Name]:SetDirection(-GUI.Circles[v.Name]:GetDirection())
+		end
+		if isActive then
+			GUI.Circles[v.Name]:SetColor(v.Colour)
+			GUI.Circles[v.Name]:SetStartAngle(210)
+			GUI.Circles[v.Name]:SetRotation(120)
+			GUI.Circles[v.Name]:SetOuterRadius(112)
+		else
+			GUI.Circles[v.Name]:SetColor(giveAlphaAltAlt(v.Colour, 40))
+			GUI.Circles[v.Name]:SetStartAngle(330 + (degsPerSlice * (i - 2)))
+			GUI.Circles[v.Name]:SetRotation(degsPerSlice)
+		end
+		
+		local TextPosX, TextPosY = GUI.CircleFrame:GetPos()
+		TextPosX = TextPosX + GUI.CircleFrame:GetWide()/2
+		TextPosY = TextPosY + GUI.CircleFrame:GetTall()/2
+		GUI.Circles[v.Name].Text = GUI.Circles[v.Name].Text or vgui.Create("VH_Text", GUI.MasterFrame)
+		GUI.Circles[v.Name].Text:SetText(v.Name)
+		GUI.Circles[v.Name].Text:SetFont("VHUIFont")
+		GUI.Circles[v.Name].Text:SetColor(Color(50, 50, 50))
+		GUI.Circles[v.Name].Text:SetPosX(TextPosX)
+		GUI.Circles[v.Name].Text:SetPosY(TextPosY)
+		GUI.Circles[v.Name].Text:SetScaleX(1)
+		GUI.Circles[v.Name].Text:SetScaleY(1)
+		GUI.Circles[v.Name].Text:SetCenteredX(1)
+		GUI.Circles[v.Name].Text:SetCenteredY(1)
+		GUI.Circles[v.Name].Text:SetOffsetX(0)
+		GUI.Circles[v.Name].Text:SetOffsetY(-60)
+		GUI.Circles[v.Name].Text:SetPos(0, 0)
+		GUI.Circles[v.Name].Text:SetSize(GUI.MasterFrame:GetWide(), GUI.MasterFrame:GetTall())
+		if isActive then
+			GUI.Circles[v.Name].Text:SetColor(Color(50, 50, 50, 200))
+		else
+			GUI.Circles[v.Name].Text:SetColor(Color(50, 50, 50, 0))
+		end
+		
+		local Rotation = GUI.Circles[v.Name]:GetStartAngle() + GUI.Circles[v.Name]:GetRotation()/2
+		local IconPosX, IconPosY = GUI.CircleFrame:GetPos()
+		IconPosX = IconPosX + GUI.CircleFrame:GetWide()/2
+		IconPosY = IconPosY + GUI.CircleFrame:GetTall()/2
+		GUI.Circles[v.Name].Icon = GUI.Circles[v.Name].Icon or vgui.Create("VH_Icon", GUI.MasterFrame)
+		GUI.Circles[v.Name].Icon:SetPos(0, 0)
+		GUI.Circles[v.Name].Icon:SetSize(GUI.MasterFrame:GetWide(), GUI.MasterFrame:GetTall())
+		GUI.Circles[v.Name].Icon:SetIconSize(16)
+		GUI.Circles[v.Name].Icon:SetPosX(IconPosX)
+		GUI.Circles[v.Name].Icon:SetPosY(IconPosY)
+		GUI.Circles[v.Name].Icon:SetColor(Color(255, 255, 255, 40))
+		GUI.Circles[v.Name].Icon:SetRotation(Rotation)
+		GUI.Circles[v.Name].Icon:SetDirection(GUI.Circles[v.Name]:GetDirection())
+		GUI.Circles[v.Name].Icon:SetIcon("vhandle/"..v.Icon..".png")
+	end
+	
+	--[[local ShownX = ScrW() * (1 - Settings.Sizes.Main.x)/2
+	local ShownY = ScrH() * (1 - Settings.Sizes.Main.y)/2
 	for i, v in pairs(RegisteredTabs) do
 		local Active = i == ActiveTab
 		if not Active then
@@ -294,7 +474,7 @@ function DrawTabs(OldActiveTab)
 				end
 			end
 		end
-	end
+	end]]
 end
 
 concommand.Add("vh_menu", function() ShowMenu() end)
