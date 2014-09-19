@@ -3,7 +3,7 @@ Module.Name = "CommandsTab"
 Module.Description = "Tab containing all commands"
 
 function RenderCall(Frame, Table)
-	local CurrentCommands = 0
+	--[[local CurrentCommands = 0
 	for _, a in pairs(vh.Modules) do
 		if (!a["Commands"]) then continue end
 		for i, v in pairs(a.Commands) do
@@ -21,7 +21,7 @@ function RenderCall(Frame, Table)
 			end
 			CurrentCommands = CurrentCommands + 1
 		end
-	end
+	end]]
 end
 
 function GetValidArguments(ArgType)

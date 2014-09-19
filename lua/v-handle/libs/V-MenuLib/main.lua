@@ -9,13 +9,9 @@ local TabsVisible = false
 local LastMouseDown = false
 
 Settings = {}
-Settings.Sizes = {}
-Settings.Sizes.Main = {x = 0.45, y = 0.6}
 Settings.Colors = {}
-Settings.Colors.Active = Color(245, 245, 245, 255)
-Settings.Colors.Inactive = Color(215, 215, 215, 255)
-Settings.Colors.Main = Color(245, 245, 245, 255)
-Settings.Colors.MainButton = Color(225, 225, 225, 255)
+Settings.Colors.Primary = Color(245, 245, 245, 255)
+Settings.Colors.PrimaryButton = Color(225, 225, 225, 255)
 Settings.Colors.Secondary = Color(30, 140, 160, 255)
 Settings.Colors.SecondaryButton = Color(60, 170, 190, 255)
 Settings.Colors.Tertiary = Color(160, 30, 30, 255)
@@ -199,23 +195,6 @@ function CreateGui()
 	GUI.MasterFrame:MakePopup()
 	GUI.MasterFrame.Paint = function() end
 	
-	GUI.CircleFrame = GUI.CircleFrame or vgui.Create("DPanel", GUI.MasterFrame)
-	GUI.CircleFrame:SetPos(ScrW() * 0.7, ScrH() * 0.6)
-	GUI.CircleFrame:SetSize(ScrW() * 0.4, ScrH() * 0.4)
-	GUI.CircleFrame.Paint = function() end
-	
-	GUI.Circle = GUI.Circle or vgui.Create("VH_Circle", GUI.CircleFrame)
-	GUI.Circle:SetPos(0, 0)
-	GUI.Circle:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
-	GUI.Circle:SetRadius(115)
-	GUI.Circle:SetColor(Color(180, 180, 180))
-	
-	GUI.CircleClose = GUI.CircleClose or vgui.Create("VH_Circle", GUI.CircleFrame)
-	GUI.CircleClose:SetPos(0, 0)
-	GUI.CircleClose:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
-	GUI.CircleClose:SetRadius(32)
-	GUI.CircleClose:SetColor(giveAlphaAltAlt(Settings.Colors.TertiaryButton, 40))
-	
 	DrawTabs()
 end
 
@@ -295,26 +274,81 @@ hook.Add("Think", "Think", function()
 	LastMouseDown = input.IsMouseDown(MOUSE_LEFT)
 end)
 
-function DrawTabs(OldActiveTab)
-	if GUI.Tabs then
-		for _, v in pairs(GUI.Tabs) do
-			if v.Label then
-				v.Label:Remove()
-			end
-			if v.Panel then
-				v.Panel:Remove()
-			end
-			if v.Remove then
-				v:Remove()
-			end
+function Curve(Number)
+	return math.sqrt(1 - Number ^ 2)
+end
+
+function CreateCurve(CurveAmount, Detail, Direction)
+	local Vertices = {}
+	for i = 0, Detail do
+		if Direction then
+			table.insert(Vertices, {x = CurveAmount * (i/Detail), y = Curve(1 - i/Detail) * CurveAmount})
+		else
+			table.insert(Vertices, {x = CurveAmount * (i/Detail), y = Curve(i/Detail) * CurveAmount})
 		end
 	end
-	
-	GUI.Tabs = {}
-	GUI.Tabs.Active = {}
+	return Vertices
+end
+
+function DrawTabs(OldActiveTab)
+	GUI.Tabs = GUI.Tabs or {}
 	GUI.Circles = GUI.Circles or {}
 	if #RegisteredTabs == 0 then return end
 	if SERVER then return end
+	
+	for _, v in pairs(RegisteredTabs) do
+		GUI.Tabs[v.Name] = GUI.Tabs[v.Name] or {}
+	end
+	
+	GUI.TabPanel = vgui.Create("DPanel", GUI.MasterFrame)
+	GUI.TabPanel:SetSize(ScrW() * 0.6, ScrH() * 0.6)
+	GUI.TabPanel:SetPos(ScrW() - GUI.TabPanel:GetWide() - 55, ScrH() - GUI.TabPanel:GetTall() - 55)
+	local CurveAmount = 20
+	local CurveDetail = 8
+	local Vertices = {}
+	for _, v in ipairs(CreateCurve(CurveAmount, CurveDetail, true)) do
+		table.insert(Vertices, {x = v.x, y = CurveAmount - v.y})
+	end
+	for _, v in ipairs(CreateCurve(CurveAmount, CurveDetail)) do
+		table.insert(Vertices, {x = v.x + GUI.TabPanel:GetWide() - CurveAmount, y = CurveAmount - v.y})
+	end
+	table.insert(Vertices, {x = GUI.TabPanel:GetWide(), y = GUI.TabPanel:GetTall() - 115})
+	table.insert(Vertices, {x = GUI.TabPanel:GetWide() - 115, y = GUI.TabPanel:GetTall()})
+	for _, v in ipairs(CreateCurve(CurveAmount, CurveDetail)) do
+		table.insert(Vertices, {x = CurveAmount - v.x, y = GUI.TabPanel:GetTall() - CurveAmount + v.y})
+	end
+	GUI.TabPanel.Paint = function()
+		surface.SetDrawColor(Settings.Colors.Primary)
+		draw.NoTexture()
+		surface.DrawPoly(Vertices)
+	end
+	GUI.TabPanel.RenderPanel = vgui.Create("DPanel", GUI.TabPanel)
+	GUI.TabPanel.RenderPanel:SetPos(40, 40)
+	GUI.TabPanel.RenderPanel:SetSize(GUI.TabPanel:GetWide() - 310, GUI.TabPanel:GetTall() - 80)
+	GUI.TabPanel.RenderPanel.Paint = function() end
+	if RegisteredTabs[ActiveTab].RenderCall then
+		RegisteredTabs[ActiveTab].RenderCall(GUI.TabPanel.RenderPanel, GUI.Tabs[RegisteredTabs[ActiveTab].Name])
+	end
+	
+	GUI.CircleFrame = GUI.CircleFrame or vgui.Create("DPanel", GUI.MasterFrame)
+	GUI.CircleFrame:SetPos(ScrW() - 300, ScrH() - 300)
+	GUI.CircleFrame:SetSize(260, 260)
+	GUI.CircleFrame:SetZPos(2)
+	GUI.CircleFrame.Paint = function() end
+	
+	GUI.Circle = GUI.Circle or vgui.Create("VH_Circle", GUI.CircleFrame)
+	GUI.Circle:SetZPos(2)
+	GUI.Circle:SetPos(0, 0)
+	GUI.Circle:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
+	GUI.Circle:SetRadius(115)
+	GUI.Circle:SetColor(Color(180, 180, 180))
+	
+	GUI.CircleClose = GUI.CircleClose or vgui.Create("VH_Circle", GUI.CircleFrame)
+	GUI.CircleClose:SetZPos(3)
+	GUI.CircleClose:SetPos(0, 0)
+	GUI.CircleClose:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
+	GUI.CircleClose:SetRadius(32)
+	GUI.CircleClose:SetColor(giveAlphaAltAlt(Settings.Colors.TertiaryButton, 40))
 	
 	local AlignedTabs = {}
 	for i = ActiveTab, #RegisteredTabs do
@@ -327,6 +361,7 @@ function DrawTabs(OldActiveTab)
 		local isActive = (i == 1)
 		local degsPerSlice = 240/(#AlignedTabs - 1)
 		GUI.Circles[v.Name] = GUI.Circles[v.Name] or vgui.Create("VH_HollowCircle", GUI.CircleFrame)
+		GUI.Circles[v.Name]:SetZPos(3)
 		GUI.Circles[v.Name]:SetName(v.Name)
 		GUI.Circles[v.Name]:SetPos(0, 0)
 		GUI.Circles[v.Name]:SetSize(GUI.CircleFrame:GetWide(), GUI.CircleFrame:GetTall())
@@ -356,6 +391,7 @@ function DrawTabs(OldActiveTab)
 		TextPosX = TextPosX + GUI.CircleFrame:GetWide()/2
 		TextPosY = TextPosY + GUI.CircleFrame:GetTall()/2
 		GUI.Circles[v.Name].Text = GUI.Circles[v.Name].Text or vgui.Create("VH_Text", GUI.MasterFrame)
+		GUI.Circles[v.Name].Text:SetZPos(4)
 		GUI.Circles[v.Name].Text:SetText(v.Name)
 		GUI.Circles[v.Name].Text:SetFont("VHUIFont")
 		GUI.Circles[v.Name].Text:SetColor(Color(50, 50, 50))
@@ -380,6 +416,7 @@ function DrawTabs(OldActiveTab)
 		IconPosX = IconPosX + GUI.CircleFrame:GetWide()/2
 		IconPosY = IconPosY + GUI.CircleFrame:GetTall()/2
 		GUI.Circles[v.Name].Icon = GUI.Circles[v.Name].Icon or vgui.Create("VH_Icon", GUI.MasterFrame)
+		GUI.Circles[v.Name].Icon:SetZPos(4)
 		GUI.Circles[v.Name].Icon:SetPos(0, 0)
 		GUI.Circles[v.Name].Icon:SetSize(GUI.MasterFrame:GetWide(), GUI.MasterFrame:GetTall())
 		GUI.Circles[v.Name].Icon:SetIconSize(16)
@@ -390,91 +427,6 @@ function DrawTabs(OldActiveTab)
 		GUI.Circles[v.Name].Icon:SetDirection(GUI.Circles[v.Name]:GetDirection())
 		GUI.Circles[v.Name].Icon:SetIcon("vhandle/"..v.Icon..".png")
 	end
-	
-	--[[local ShownX = ScrW() * (1 - Settings.Sizes.Main.x)/2
-	local ShownY = ScrH() * (1 - Settings.Sizes.Main.y)/2
-	for i, v in pairs(RegisteredTabs) do
-		local Active = i == ActiveTab
-		if not Active then
-			local Offset = math.abs(i - ActiveTab) - 1
-			if Offset < 3 then
-				local OffsetOld = (i - (OldActiveTab or ActiveTab)) * 40
-				local OffsetNew = (i - ActiveTab) * 40
-				GUI.Tabs[i] = vgui.Create("DPanel", GUI.MasterFrame)
-				GUI.Tabs[i]:SetPos(ShownX + OffsetOld, ShownY - OffsetOld)
-				GUI.Tabs[i]:MoveTo(ShownX + OffsetNew, ShownY - OffsetNew, 0.5, 0, 1)
-				GUI.Tabs[i]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
-				GUI.Tabs[i].Paint = function()
-					_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[i]:GetWide(), GUI.Tabs[i]:GetTall(), giveAlpha(Settings.Colors.Inactive, Offset), 40, 5)
-				end
-			end
-		end
-	end
-	local Offset = ((ActiveTab - 1) - (#RegisteredTabs/2)) * 40
-	local OffsetOld = (ActiveTab - (OldActiveTab or ActiveTab)) * 40
-	GUI.Tabs[ActiveTab] = vgui.Create("DPanel", GUI.MasterFrame)
-	GUI.Tabs[ActiveTab]:SetPos(ShownX + OffsetOld, ShownY - OffsetOld)
-	GUI.Tabs[ActiveTab]:MoveTo(ShownX, ShownY, 0.5, 0, 1)
-	GUI.Tabs[ActiveTab]:SetSize(ScrW() * Settings.Sizes.Main.x, ScrH() * Settings.Sizes.Main.y)
-	GUI.Tabs[ActiveTab].Paint = function()
-		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab]:GetWide(), GUI.Tabs[ActiveTab]:GetTall(), Settings.Colors.Main, 40, 5)
-	end
-	GUI.Tabs[ActiveTab].Label = vgui.Create("DLabel", GUI.Tabs[ActiveTab])
-	GUI.Tabs[ActiveTab].Label:SetPos(0, 0)
-	GUI.Tabs[ActiveTab].Label:SetSize(GUI.Tabs[ActiveTab]:GetWide(), 40)
-	GUI.Tabs[ActiveTab].Label:SetText("")
-	GUI.Tabs[ActiveTab].Label.Paint = function()
-		draw.SimpleText(RegisteredTabs[ActiveTab].Name, "VHUIFont", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Color(50, 50, 50, 255), 1, 1)
-	end
-	GUI.Tabs[ActiveTab].CloseButton = vgui.Create("DButton", GUI.Tabs[ActiveTab])
-	GUI.Tabs[ActiveTab].CloseButton:SetPos(GUI.Tabs[ActiveTab]:GetWide() - 90, 10)
-	GUI.Tabs[ActiveTab].CloseButton:SetSize(80, 30)
-	GUI.Tabs[ActiveTab].CloseButton:SetText("")
-	GUI.Tabs[ActiveTab].CloseButton.Paint = function()
-		_V.MenuLib.DrawTrapezoidFancy(0, 0, GUI.Tabs[ActiveTab].CloseButton:GetWide(), GUI.Tabs[ActiveTab].CloseButton:GetTall(), Settings.Colors.TertiaryButton, 2, 2)
-		draw.SimpleText("x", "VHUIFont", GUI.Tabs[ActiveTab].CloseButton:GetWide()/2, GUI.Tabs[ActiveTab].CloseButton:GetTall()/2 - 4, Color(50, 50, 50, 255), 1, 1)
-	end
-	GUI.Tabs[ActiveTab].CloseButton.DoClick = function()
-		HideMenu()
-	end
-	GUI.Tabs[ActiveTab].Panel = vgui.Create("DPanel", GUI.Tabs[ActiveTab])
-	GUI.Tabs[ActiveTab].Panel:SetPos(50, 50)
-	GUI.Tabs[ActiveTab].Panel:SetSize(GUI.Tabs[ActiveTab]:GetWide() - 100, GUI.Tabs[ActiveTab]:GetTall() - 100)
-	GUI.Tabs[ActiveTab].Panel.Paint = function() end
-	if RegisteredTabs[ActiveTab].RenderCall then
-		RegisteredTabs[ActiveTab].RenderCall(GUI.Tabs[ActiveTab].Panel, GUI.Tabs.Active)
-	end
-	for i, v in pairs(RegisteredTabs) do
-		local Active = i == ActiveTab
-		if not Active then
-			local Offset = math.abs(i - ActiveTab) - 1
-			if Offset < 3 then
-				local OffsetOld = (i - (OldActiveTab or ActiveTab)) * 40
-				local OffsetNew = (i - ActiveTab) * 40
-				GUI.Tabs[i].Label = vgui.Create("DButton", GUI.MasterFrame)
-				GUI.Tabs[i].Label:SetSize(GUI.Tabs[ActiveTab]:GetWide(), 40)
-				GUI.Tabs[i].Label:SetText("")
-				if i < ActiveTab then
-					GUI.Tabs[i].Label:SetPos(ShownX + OffsetOld, ShownY - OffsetOld + GUI.Tabs[ActiveTab]:GetTall() - 40)
-					GUI.Tabs[i].Label:MoveTo(ShownX + OffsetNew, ShownY - OffsetNew + GUI.Tabs[ActiveTab]:GetTall() - 40, 0.5, 0, 1)
-					GUI.Tabs[i].Label.Paint = function()
-						draw.SimpleText(v.Name, "VHUIFontSmall", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Settings.Colors.Text, 1, 1)
-					end
-				else
-					GUI.Tabs[i].Label:SetPos(ShownX + OffsetOld, ShownY - OffsetOld)
-					GUI.Tabs[i].Label:MoveTo(ShownX + OffsetNew, ShownY - OffsetNew, 0.5, 0, 1)
-					GUI.Tabs[i].Label.Paint = function()
-						draw.SimpleText(v.Name, "VHUIFontSmall", GUI.Tabs[ActiveTab]:GetWide()/2, 20, Settings.Colors.Text, 1, 1)
-					end
-				end
-				GUI.Tabs[i].Label.DoClick = function()
-					local Old = ActiveTab
-					ActiveTab = i
-					DrawTabs(Old)
-				end
-			end
-		end
-	end]]
 end
 
 concommand.Add("vh_menu", function() ShowMenu() end)
