@@ -16,6 +16,8 @@ Settings.Colors.Secondary = Color(30, 140, 160, 255)
 Settings.Colors.SecondaryButton = Color(60, 170, 190, 255)
 Settings.Colors.Tertiary = Color(160, 30, 30, 255)
 Settings.Colors.TertiaryButton = Color(190, 60, 60, 255)
+Settings.Colors.Quad = Color(165, 165, 165, 255)
+Settings.Colors.QuadButton = Color(125, 125, 125, 255)
 Settings.Colors.Text = Color(50, 50, 50, 255)
 Settings.Textures = {}
 Settings.Textures.Normal = Material("vgui/white")
@@ -294,10 +296,16 @@ function DrawTabs(OldActiveTab)
 	GUI.Tabs = GUI.Tabs or {}
 	GUI.Circles = GUI.Circles or {}
 	if #RegisteredTabs == 0 then return end
+	if OldActiveTab == ActiveTab then return end
 	if SERVER then return end
 	
 	for _, v in pairs(RegisteredTabs) do
-		GUI.Tabs[v.Name] = GUI.Tabs[v.Name] or {}
+		if GUI.Tabs[v.Name] then
+			for _, v in pairs(GUI.Tabs[v.Name]) do
+				v:Remove()
+			end
+		end
+		GUI.Tabs[v.Name] = {}
 	end
 	
 	GUI.TabPanel = vgui.Create("DPanel", GUI.MasterFrame)
@@ -324,6 +332,7 @@ function DrawTabs(OldActiveTab)
 	end
 	GUI.TabPanel.RenderPanel = vgui.Create("DPanel", GUI.TabPanel)
 	GUI.TabPanel.RenderPanel:SetPos(40, 40)
+	GUI.TabPanel.RenderPanel:SetZPos(4)
 	GUI.TabPanel.RenderPanel:SetSize(GUI.TabPanel:GetWide() - 310, GUI.TabPanel:GetTall() - 80)
 	GUI.TabPanel.RenderPanel.Paint = function() end
 	if RegisteredTabs[ActiveTab].RenderCall then
