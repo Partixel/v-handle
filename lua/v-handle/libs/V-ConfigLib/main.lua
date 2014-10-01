@@ -82,7 +82,6 @@ function _V.ConfigLib.ConfigValue:new(Key, Container, Default, Desc, Category)
 	local Object = {Key = Key, Container = Container, Default = Default, Desc = Desc, Category = Category}
 	setmetatable(Object, self)
 	self.__index = self
-	Object:Get() -- Initializes the object
 	_V.ConfigLib.ConfigValues[Key] = Object
 	return Object
 end
@@ -117,14 +116,44 @@ function _V.ConfigLib.WriteConfig(Location, Data)
 	-- Writes the config to file and formats it correctly
 	local Formatted = ""
 	
+	local Sorted = {}
+	
 	for a, b in pairs(Data) do
 		local ConfigVal = _V.ConfigLib.ConfigValues[a]
-		if ConfigVal then
-			Formatted = Formatted .. ConfigVal:ToString(b) .. "\n"
+		if ConfigVal and ConfigVal.Category then
+			Sorted[ConfigVal.Category] = Sorted[ConfigVal.Category] or {}
+			Sorted[ConfigVal.Category][a] = b
 		else
-			Formatted = Formatted .. a .. " = " .. type(b) .. " = " .. _V.ConfigLib.ParseValue(b, type(b)) .. " --No valid ConfigValue found\n"
+			Sorted["None"] = Sorted["None"] or {}
+			Sorted["None"][a] = b
 		end
 	end
+	
+	for a, b in pairs(Sorted) do
+		local Category = _V.ConfigLib.CategoryObjects[a]
+		if Category then
+			Formatted = Formatted .. "\n-- " .. Category.Name .. " - " .. Category.Desc .. " --\n\n"
+			for c, d in pairs(b) do
+				local ConfigVal = _V.ConfigLib.ConfigValues[c]
+				if ConfigVal then
+					Formatted = Formatted .. ConfigVal:ToString(d) .. "\n"
+				else
+					Formatted = Formatted .. c .. " = " .. type(d) .. " = " .. _V.ConfigLib.ParseValue(d, type(d)) .. " --No valid ConfigValue found\n"
+				end
+			end
+		else
+			Formatted = Formatted .. "\n-- No Category --\n\n"
+			for c, d in pairs (b) do
+				local ConfigVal = _V.ConfigLib.ConfigValues[c]
+				if ConfigVal then
+					Formatted = Formatted .. ConfigVal:ToString(d) .. "\n"
+				else
+					Formatted = Formatted .. c .. " = " .. type(d) .. " = " .. _V.ConfigLib.ParseValue(d, type(d)) .. " --No valid ConfigValue found\n"
+				end
+			end
+		end
+	end
+	
 	file.Write(_V.ConfigLib.ConfigLocation .. "/" .. Location .. ".txt", Formatted)
 end
 
@@ -173,3 +202,11 @@ function _V.ConfigLib.Get(Key, ConKey, Default, ConfigValue)
 		end
 	end
 end
+
+hook.Run( "_V-PostConfig" )
+
+hook.Add( "_V-PostModule", "_V-ConfigInitialisation", function( )
+	for a, b in pairs(_V.ConfigLib.ConfigValues) do
+		b:Get()
+	end
+end )

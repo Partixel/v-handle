@@ -1,7 +1,5 @@
 _V = _V or {}
 
-_V.FileLib.RequireLib("ConfigLib")
-
 _V.LogLib = {}
 
 _V.LogLib.LogLocation = _V.ConfigLib.ConfigValue:new("LogLocation", "LibConfig", "_V/Logs", "Desc!", _V.ConfigLib.Categories.TEST)

@@ -14,6 +14,8 @@ _V.LogLib.Log("Hia", _V.LogLib.Type.DEBUG)
 _V.LogLib.Log("Hia", _V.LogLib.Type.CONFIG)
 vh.ConsoleMessage("_lcore_")
 
+hook.Run( "_V-PreModule" )
+
 -- Handle Modules --
 vh.ModuleHooks = {}
 vh.Modules = {}
@@ -63,3 +65,5 @@ function vh.RegisterModule( Module )
 end
 
 _V.FileLib.IncludeDir("vh_modules")
+
+hook.Run( "_V-PostModule" )
