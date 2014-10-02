@@ -248,16 +248,13 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 	end
 end
 
-function _V.CommandLib.Command:new(Key, Callback, Category, Desc, ...)
+function _V.CommandLib.Command:new(LKey, LCallback, LCategory, LDesc)
 	-- Creates a new command object and adds it to the command list
 	-- Requires key to be valid
-	local Object = {Key = Key, Callback = Callback, Category = Category, Desc = Desc}
+	local Object = {Key = LKey, Callback = LCallback, Category = LCategory, Desc = LDesc}
 	setmetatable(Object, self)
 	self.__index = self
 	table.insert(_V.CommandLib.Commands, Object)
-	if ... then
-		Object:addAlias(unpack({...}))
-	end
 	return Object
 end
 
