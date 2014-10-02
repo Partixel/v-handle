@@ -45,12 +45,16 @@ function _V.CommandLib.PlayerFromString(String)
 	end
 end
 
-function _V.CommandLib.PlayerFromSID(SID)
-	for a, b in ipairs(player.GetAll()) do
-		if b:SteamID() == SID then
-			return b
+function _V.CommandLib.PlayerFromSID(...)
+	local Players = {}
+	for a, b in ipairs(arg) do
+		for c, d in ipairs(player.GetAll()) do
+			if d:SteamID() == b then
+				table.insert(Players, d)
+			end
 		end
 	end
+	return unpack(Players)
 end
 
 _V.CommandLib.ArgTypes = {
