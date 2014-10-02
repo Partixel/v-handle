@@ -46,6 +46,11 @@ function _V.CommandLib.PlayerFromString(String)
 end
 
 function _V.CommandLib.PlayerFromSID(...)
+
+	if type(arg[1]) == "table" then
+		arg = arg[1]
+	end
+	
 	local Players = {}
 	for a, b in ipairs(arg) do
 		for c, d in ipairs(player.GetAll()) do
@@ -54,6 +59,7 @@ function _V.CommandLib.PlayerFromSID(...)
 			end
 		end
 	end
+	
 	return unpack(Players)
 end
 
