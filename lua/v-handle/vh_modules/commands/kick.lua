@@ -9,7 +9,7 @@ Command.Callback = function(Sender, Alias, Target, Reason)
 		Nick = Player:Nick()
 	end
 	
-	ply:Kick(Reason)
+	_V.CommandLib.PlayerFromSID(Target):Kick(Reason)
 	
-	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. Target:Nick() .. " _white_ for the reason: _red_ " .. Args[2])
+	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. _V.CommandLib.PlayerFromSID(Target):Nick() .. " _white_ for the reason: _red_ " .. Reason)
 end
