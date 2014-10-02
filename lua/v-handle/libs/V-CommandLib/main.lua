@@ -85,22 +85,22 @@ _V.CommandLib.ArgTypes = {
 			return "INC_TYPE"
 		end
 		
-		if self.canTarget and not SENDERCANTARGETPLAYER then
+		if self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
 		return Player
-	end, Name = "Player", canTarget = false}, -- A player ( If canTarget then the sender must be able to target the player )
+	end, Name = "Player", requireTarget = true}, -- A player ( If canTarget then the sender must be able to target the player )
 	Players = {Parser = function(String, Sender)
 		local Player = _V.CommandLib.PlayerFromString(String)
 		if Player == nil then
 			return "INC_TYPE"
 		end
 		
-		if self.canTarget and not SENDERCANTARGETPLAYER then
+		if self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
 		return Player
-	end, Name = "Player", canTarget = false}, -- A table of players ( If canTarget then the sender must be able to target the players )
+	end, Name = "Player", requireTarget = true}, -- A table of players ( If canTarget then the sender must be able to target the players )
 	SteamID = {Parser = function(String, Sender)
 		if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 			return String
@@ -166,7 +166,7 @@ function _V.CommandLib.Command:addArg(ArgType, ArgRequirement, Position)
 	local Arg = table.Copy(ArgType)
 	Arg.required = ArgRequirement or true
 	table.insert(self.Args, Position, Arg)
-	return self
+	return self, Arg
 end
 
 function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
