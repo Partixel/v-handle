@@ -1,46 +1,15 @@
-local Module = {}
-Module.Name = "Kick"
-Module.Description = "Kick a player"
-Module.Commands = {}
-Module.Commands.Kick = {
-	Aliases = {},
-	Prefix = "!",
-	Description = Module.Description,
-	Usage = "<Player> <Reason>",
-	Permission = "Kick",
-	MinArgs = 2,
-	Arguments = {"Player", "String"}
-}
+local Command = _V.CommandLib.Command:new("Kick", nil, "", "Kick a player off the server.")
+Command:addArg(_V.CommandLib.ArgTypes.TargetPlayer, true)
+Command:addArg(_V.CommandLib.ArgTypes.String, true)
+Command:addAlias("!kick")
 
-function Module.Commands.Kick.Run(Player, Args, Alias, RankID, Perm)
-	local Players = vh.ArgsUtil.GetPlayer(Args[1])
-	if (not Players or #Players == 0) then
-		vh.ChatUtil.SendMessage("nplr", Player)
-		return
-	end
-	
+Command.Callback = function(Sender, Alias, Target, Reason)
 	local Nick = "Console"
 	if Player:IsValid() then
 		Nick = Player:Nick()
 	end
 	
-	for _, ply in ipairs(Players) do
-		ply:Kick(Args[2])
-	end
+	ply:Kick(Reason)
 	
-	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. vh.ArgsUtil.PlayersToString(Players) .. " _white_ because _red_ " .. Args[2])
-	return
+	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has kicked _reset_ " .. Target:Nick() .. " _white_ for the reason: _red_ " .. Args[2])
 end
-
-function Module.Commands.Kick.Vars(ArgNumber)
-	if (ArgNumber == 1) then
-		local playerList = {}
-		for _, v in pairs(player.GetAll()) do
-			table.insert(playerList, v:Nick())
-		end
-		return playerList
-	end
-	return
-end
-
-vh.RegisterModule(Module)
