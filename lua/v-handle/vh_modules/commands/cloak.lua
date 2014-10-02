@@ -3,7 +3,7 @@ Command:addArg(_V.CommandLib.ArgTypes.MultiTargetPlayer, false)
 Command:addAlias("!cloak", "!uncloak", "!tcloak")
 
 Command.Callback = function(Sender, Alias, Targets)
-	local Targets = _V.CommandLib.PlayersFromSID(Targets) or {Sender}
+	local Targets = Targets or {Sender}
 	local Success = false
 	local Toggle = false
 	
