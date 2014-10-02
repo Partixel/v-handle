@@ -69,7 +69,7 @@ function _V.CommandLib.PlayerFromString(String)
 		if string.lower(b:Nick()) == string.lower(String) then
 			return b
 		elseif string.sub(string.lower(b:Nick()), 1, string.len(String)) == string.lower(String) then
-			table.insert(Found, b))
+			table.insert(Found, b)
 		end
 	end
 	
@@ -153,7 +153,7 @@ end
 
 function _V.CommandLib.Command:addAlias(...)
 	-- Adds the specified alias ( or aliases if multiple are supplied ) to the command
-	for a, b in pairs(arg) do
+	for a, b in ipairs({...}) do
 		if not table.HasValue(self.Alias, b) then
 			table.insert(self.Alias, b)
 		end
@@ -165,7 +165,11 @@ function _V.CommandLib.Command:addArg(ArgType, ArgRequirement, Position)
 	-- Adds the specified arg type and requirement into the commands args at the specified position
 	local Arg = table.Copy(ArgType)
 	Arg.required = ArgRequirement or true
-	table.insert(self.Args, Position, Arg)
+	if Position then
+		table.insert(self.Args, Position, Arg)
+	else
+		table.insert(self.Args, Arg)
+	end
 	return self, Arg
 end
 
@@ -180,7 +184,7 @@ function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
 	-- Check if the args contain the commands alias
 	local AliasUsed = ""
 	for a, b in ipairs(self.Alias) do
-		if string.lower(Args[1]) == string.lower(b) do
+		if string.lower(Args[1]) == string.lower(b) then
 			AliasUsed = b
 			break
 		end
@@ -240,7 +244,7 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 				Usage = Usage .. " [" .. b.Name .. "]"
 			end
 		end
-1		return Usage
+		return Usage
 	end
 end
 
@@ -251,7 +255,9 @@ function _V.CommandLib.Command:new(Key, Callback, Category, Desc, ...)
 	setmetatable(Object, self)
 	self.__index = self
 	table.insert(_V.CommandLib.Commands, Object)
-	Object:addAlias(unpack(arg))
+	if ... then
+		Object:addAlias(unpack({...}))
+	end
 	return Object
 end
 
