@@ -1,5 +1,5 @@
 local Command = _V.CommandLib.Command:new("Kick", nil, "", "Kick a player off the server.")
-Command:addArg(_V.CommandLib.ArgTypes.TargetPlayer, true)
+Command:addArg(_V.CommandLib.ArgTypes.Player, true)
 Command:addArg(_V.CommandLib.ArgTypes.String, true)
 Command:addAlias("!kick")
 
