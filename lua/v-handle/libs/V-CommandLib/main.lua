@@ -7,6 +7,7 @@ _V.CommandLib = {}
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
 
+--[[
 function _V.CommandLib.PlayerFromString(String)
 	if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 		return String
@@ -44,62 +45,73 @@ function _V.CommandLib.PlayerFromString(String)
 		return Found
 	end
 end
+]]--
 
-function _V.CommandLib.PlayerFromSID(...)
+function _V.CommandLib.PlayerFromSID(String)
+	if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
+		for a, b in pairs(player.GetAll()) do
+			if b:SteamID() == String then
+				return b
+			end
+		end
+		return
+	end
+end
 
-	if type(arg[1]) == "table" then
-		arg = arg[1]
+function _V.CommandLib.PlayerFromString(String)
+	local PlrSID = _V.CommandLib.PlayerFromSID(String)
+	if PlrSID then
+		return PlrSID
 	end
 	
-	local Players = {}
-	for a, b in ipairs(arg) do
-		for c, d in ipairs(player.GetAll()) do
-			if d:SteamID() == b then
-				table.insert(Players, d)
-			end
+	local Found = {}
+	for a, b in ipairs(player.GetAll()) do
+		if string.lower(b:Nick()) == string.lower(String) then
+			return b
+		elseif string.sub(string.lower(b:Nick()), 1, string.len(String)) == string.lower(String) then
+			table.insert(Found, b))
 		end
 	end
 	
-	return unpack(Players)
+	if #Found == 1 then
+		return Found[1]
+	end
 end
 
 _V.CommandLib.ArgTypes = {
-	TargetPlayer = {Parser = function(String, Sender)
-		local Players = _V.CommandLib.PlayerFromString(String)
-		if #Players > 1 or #Players == 0 then
-			return "INC_TYPE"
-		end
-		--if SENDERCANTARGETPLAYER then
-			return Players[1]
-		--end
-	end, Name = "Targetable Player (Singular)"}, -- A player that the sender can target
-	MultiTargetPlayer = {Parser = function(String, Sender)
-		local Players = _V.CommandLib.PlayerFromString(String)
-		local Targets = {}
-		for a, b in pairs(Players) do
-			--if SENDERCANTARGETB then
-				table.insert(Targets, b)
-			--end
-		end
-		if #Targets == 0 then
-			return "INC_TYPE"
-		end
-		return Targets
-	end, Name = "Targetable Players (Multiple)"}, -- A list of players that the sender can target
 	Player = {Parser = function(String, Sender)
-		local Players = _V.CommandLib.PlayerFromString(String)
-		if #Players > 1 or #Players == 0 then
+		local Player = _V.CommandLib.PlayerFromString(String)
+		if Player == nil then
 			return "INC_TYPE"
 		end
-		return Players[1]
-	end, Name = "Player (Singular)"}, -- A player ( doesn't require targetability )
-	MultiPlayer = {Parser = function(String, Sender)
-		local Players = _V.CommandLib.PlayerFromString(String)
-		if #Players == 0 then
+		
+		if self.canTarget and not SENDERCANTARGETPLAYER then
+			return
+		end
+		return Player
+	end, Name = "Player", canTarget = false}, -- A player ( If canTarget then the sender must be able to target the player )
+	Players = {Parser = function(String, Sender)
+		local Player = _V.CommandLib.PlayerFromString(String)
+		if Player == nil then
 			return "INC_TYPE"
 		end
-		return Players
-	end, Name = "Players (Multiple)"}, -- A list of players ( doesn't require targetability )
+		
+		if self.canTarget and not SENDERCANTARGETPLAYER then
+			return
+		end
+		return Player
+	end, Name = "Player", canTarget = false}, -- A table of players ( If canTarget then the sender must be able to target the players )
+	SteamID = {Parser = function(String, Sender)
+		if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
+			return String
+		else
+			local Player = _V.CommandLib.PlayerFromString(String)
+			if Player == nil then
+				return "INC_TYPE"
+			end
+			return Player:SteamID()
+		end
+	end, Name = "SteamID"}, -- A list of players ( doesn't require targetability )
 	String = {Parser = function(String)
 		return String
 	end, Name = "String"}, -- A string
