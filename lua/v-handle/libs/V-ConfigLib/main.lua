@@ -79,9 +79,12 @@ function _V.ConfigLib.ConfigValue:new(Key, Container, Default, Desc, Category)
 	-- Makes a new config value and initializes it. USE THIS FOR NEW CONFIGVALUES
 	-- Desc and category are option
 	-- Category should be the number relative to the CategoryObjects position within the table
-	local Object = {Key = Key, Container = Container, Default = Default, Desc = Desc, Category = Category}
-	setmetatable(Object, self)
-	self.__index = self
+	local Object = table.Copy(self)
+	Object.Key = Key or Object.Key
+	Object.Container = Container or Object.Container
+	Object.Default = Default or Object.Default
+	Object.Desc = Desc or Object.Desc
+	Object.Category = Category or Object.Category
 	_V.ConfigLib.ConfigValues[Key] = Object
 	return Object
 end

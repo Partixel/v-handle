@@ -79,28 +79,28 @@ function _V.CommandLib.PlayerFromString(String)
 end
 
 _V.CommandLib.ArgTypes = {
-	Player = {Parser = function(String, Sender)
+	Player = {Parser = function(String, Sender, Self)
 		local Player = _V.CommandLib.PlayerFromString(String)
 		if Player == nil then
 			return "INC_TYPE"
 		end
 		
-		if self.requireTarget and not SENDERCANTARGETPLAYER then
+		if Self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
 		return Player
-	end, Name = "Player", requireTarget = true}, -- A player ( If canTarget then the sender must be able to target the player )
-	Players = {Parser = function(String, Sender)
+	end, Name = "Player", requireTarget = false}, -- A player ( If canTarget then the sender must be able to target the player )
+	Players = {Parser = function(String, Sender, Self)
 		local Player = _V.CommandLib.PlayerFromString(String)
 		if Player == nil then
 			return "INC_TYPE"
 		end
 		
-		if self.requireTarget and not SENDERCANTARGETPLAYER then
+		if Self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
-		return Player
-	end, Name = "Player", requireTarget = true}, -- A table of players ( If canTarget then the sender must be able to target the players )
+		return {Player}
+	end, Name = "Player", requireTarget = false}, -- A table of players ( If canTarget then the sender must be able to target the players )
 	SteamID = {Parser = function(String, Sender)
 		if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 			return String
@@ -183,7 +183,9 @@ function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
 
 	-- Check if the args contain the commands alias
 	local AliasUsed = ""
+	print("HIA :P -------------")
 	for a, b in ipairs(self.Alias) do
+		print(b, Args[1])
 		if string.lower(Args[1]) == string.lower(b) then
 			AliasUsed = b
 			break
@@ -211,15 +213,15 @@ function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
 	-- Convert the args into the correct types
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
-		local Arg = b.Parser(Args[a], Sender)
+		local Arg = b.Parser(Args[a], Sender, b)
 		if Arg != nil and Arg != "INC_TYPE" then
 			table.insert(FinalArgs, Arg)
 		elseif Arg == "INC_TYPE" then
 			// "Arguement " .. a .. " was incorrect!" .. usage(?)
-			return ""
+			return "inc_type"
 		elseif b.required then
 			// "Arguement " .. a .. " was missing" .. usage(?)
-			return ""
+			return "missing"
 		else
 			table.insert(FinalArgs, "nil")
 		end
@@ -248,18 +250,20 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 	end
 end
 
-function _V.CommandLib.Command:new(LKey, LCallback, LCategory, LDesc)
+function _V.CommandLib.Command:new(Key, Callback, Category, Desc)
 	-- Creates a new command object and adds it to the command list
 	-- Requires key to be valid
-	local Object = {Key = LKey, Callback = LCallback, Category = LCategory, Desc = LDesc}
-	setmetatable(Object, self)
-	self.__index = self
+	local Object = table.Copy(self)
+	Object.Key = Key or Object.Key
+	Object.Callback = Callback or Object.Callback
+	Object.Category = Category or Object.Category
+	Object.Desc = Desc or Object.Desc
 	table.insert(_V.CommandLib.Commands, Object)
 	return Object
 end
 
 hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", function(Sender, Message, teamChat)
-	local Args = string.Explode(Message, " ")
+	local Args = string.Explode(" ", Message)
 	local FinalMessage = nil
 	for a, b in ipairs(_V.CommandLib.Commands) do
 		if b.preCall then

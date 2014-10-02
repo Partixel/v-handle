@@ -32,8 +32,10 @@ Command.Callback = function(Sender, Alias, Targets)
 	end
 	
 	if Toggle then
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+		return ""
 	else
-		vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+		return ""
 	end
 end
