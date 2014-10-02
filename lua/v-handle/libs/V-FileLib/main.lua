@@ -29,10 +29,10 @@ function _V.FileLib.IncludeFile(Location, Side)
 				include(Location)
 			end
 		else
-			_V.FileLib.Logger("Invalid side for file " .. Location, _V.LogLib.Type.Error)
+			print("_V-LogLib - Invalid side for file " .. Location)
 		end
 	else
-		_V.FileLib.Logger("File not found: " .. Location, _V.LogLib.Type.Error)
+		print("_V-LogLib - File not found: " .. Location)
 	end
 end
 
@@ -53,13 +53,5 @@ function _V.FileLib.IncludeDir(Dir)
 
 	for a, b in ipairs(Dirs) do
 		_V.FileLib.IncludeDir(Dir .. "/" .. b)
-	end
-end
-
-function _V.FileLib.Logger(Message, Type)
-	if _V.LogLib then
-		_V.LogLib.Log(Message, Type)
-	else
-		print("Log lib missing - " .. Message)
 	end
 end
