@@ -7,11 +7,11 @@ local MaxWordLength = _V.ConfigLib.ConfigValue:new("MaxWordLength", "SpamFilter"
 local CapsPercentage = _V.ConfigLib.ConfigValue:new("CapsPercentage", "SpamFilter", 70, "Maximum percentage of capitals per word.")
 local CensorPercentage = _V.ConfigLib.ConfigValue:new("CensorPercentage", "SpamFilter", 70, "Maximum percentage of censoring per word.")
 local LetterDragging = _V.ConfigLib.ConfigValue:new("LetterDragging", "SpamFilter", 3, "Maximum letters in a row.")
-local AdvancedFiltering = _V.ConfigLib.ConfigValue:new("AdvancedFiltering", "SpamFilter", true, "Enable advanced filtering, checks for common word changes to bypass filters, e.g using @ instead of a.")
+local AdvancedFiltering = _V.ConfigLib.ConfigValue:new("AdvancedFiltering", "SpamFilter", true, "Enable advanced filtering, checks for common letter changes to bypass filters, e.g using @ instead of a.")
 
 local CapitalLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
-local AdvancedFilters = {{"a", "@"}, {"i", "1", "!"}, {"o", "0"}, {"8", "ate"}, {"e", "3"}}
+local AdvancedFilters = {{"a", "@", "2"}, {"3", "#"}, {"s", "$", "4"}, {"5", "%"}, {"6", "^"}, {"7", "&"}, {"8", "*"}, {"9", "("}, {"0", ")"}, {"i", "1", "!", "|"}, {"o", "0"}, {"ate", "8"}, {"e", "3"}, {"l", "|"}}
 
 local function WordSimilar(WordA, WordB)
 	local WordA = string.lower(WordA)
@@ -19,18 +19,20 @@ local function WordSimilar(WordA, WordB)
 	if WordA == WordB then
 		return true
 	end
-	if string.len(WordA) == string.len(WordB) then
-		local NewWordA = WordA
-		local NewWordB = WordB
-		for _, v in ipairs(AdvancedFilters) do
-			for i, x in ipairs(v) do
-				if i == 1 then continue end
-				NewWordA = string.Replace(NewWordA, v[i], v[1])
-				NewWordB = string.Replace(NewWordB, v[i], v[1])
+	if AdvancedFiltering:Get() then
+		if string.len(WordA) == string.len(WordB) then
+			local NewWordA = WordA
+			local NewWordB = WordB
+			for _, v in ipairs(AdvancedFilters) do
+				for i, x in ipairs(v) do
+					if i == 1 then continue end
+					NewWordA = string.Replace(NewWordA, v[i], v[1])
+					NewWordB = string.Replace(NewWordB, v[i], v[1])
+				end
 			end
-		end
-		if NewWordA == NewWordB then
-			return true
+			if NewWordA == NewWordB then
+				return true
+			end
 		end
 	end
 	return false
@@ -73,7 +75,7 @@ local function PlayerSay(Player, Message, TeamChat)
 				Return = string.Replace(Return, word, string.lower(word))
 			end
 			for _, v in pairs(BlacklistTable) do
-				if WordSimilar(word, v) and AdvancedFiltering:Get() then
+				if WordSimilar(word, v) then
 					Return = string.Replace(Return, word, "****")
 					TotalCensored = TotalCensored + string.len(word)
 				end
