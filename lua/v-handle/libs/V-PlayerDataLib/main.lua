@@ -12,7 +12,7 @@ if SERVER then
 	
 	hook.Add("PlayerInitialSpawn", "_V-PlayerDataLib-Initial", function(Player)
 		_V.PlayerDataLib.updatePlayerData(Player:SteamID())
-	end
+	end)
 	
 	function _V.PlayerDataLib.updatePlayerData(SID)
 		local Player = _V.PlayerDataLib.PlayerFromSID(SID)

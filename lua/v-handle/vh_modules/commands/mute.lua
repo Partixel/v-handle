@@ -42,7 +42,7 @@ Command.Callback = function(Sender, Alias, Targets)
 end
 
 hook.Add("PlayerStartVoice", "PlayerStartVoice", function(Player)
-	if (Player:GetNWBool("Muted")) then
+	if Player:GetNWBool("Muted") then
 		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 	end
-end
+end)
