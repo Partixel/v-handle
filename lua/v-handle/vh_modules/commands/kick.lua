@@ -1,6 +1,6 @@
-local Command = _V.CommandLib.Command:new("Kick", nil, "", "Kick a player off the server.")
-Command:addArg(_V.CommandLib.ArgTypes.Player, true)
-Command:addArg(_V.CommandLib.ArgTypes.String, true)
+local Command = _V.CommandLib.Command:new("Kick", _V.CommandLib.UserTypes.Admin, "Kick a player off the server.", "")
+Command:addArg(_V.CommandLib.ArgTypes.Player)
+Command:addArg(_V.CommandLib.ArgTypes.String)
 Command:addAlias("!kick")
 
 Command.Callback = function(Sender, Alias, Target, Reason)
