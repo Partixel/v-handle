@@ -32,7 +32,6 @@ local Modifiers = {
 }
 
 Command.Callback = function(Sender, Alias, Target, Reason)
-
 	local Nick = "Console"
 	if Sender:IsValid() then
 		Nick = Sender:Nick()
