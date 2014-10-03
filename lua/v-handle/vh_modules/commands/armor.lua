@@ -1,7 +1,7 @@
-local Command = _V.CommandLib.Command:new("Armour", _V.CommandLib.UserTypes.Admin, "Sets the player(s) armour.", "")
+local Command = _V.CommandLib.Command:new("Armor", _V.CommandLib.UserTypes.Admin, "Sets the player(s) armor.", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, false)
 Command:addArg(_V.CommandLib.ArgTypes.Number, true)
-Command:addAlias("!armour", "!armor", "!shield")
+Command:addAlias("!armor", "!shield")
 
 Command.Callback = function(Sender, Alias, Targets, Amount)
 	local Targets = Targets or {Sender}
@@ -15,6 +15,6 @@ Command.Callback = function(Sender, Alias, Targets, Amount)
 		Nick = Sender:Nick()
 	end
 	
-	--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the armour of _reset_ " .. vh.ArgsUtil.PlayersToString(Targets) .. " _white_ to _reset_ ".. Amount)
+	--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has set the armor of _reset_ " .. vh.ArgsUtil.PlayersToString(Targets) .. " _white_ to _reset_ ".. Amount)
 	return ""
 end
