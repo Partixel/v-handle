@@ -18,20 +18,13 @@ When typing a command keep these few tips in mind:
 This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to handle serialising data<br>
 
 ##Todo
-- [ ] Menu GUI
 - [ ] Finish more commands
   - [ ] Arm
-  - [ ] Armor
-  - [ ] Ban
-  - [ ] Freeze
   - [ ] Gag
   - [ ] Give
-  - [ ] God
   - [ ] Goto, bring, teleport and return
   - [ ] Heal and health
   - [ ] Mute
   - [ ] Noclip
   - [ ] Strip
-- [ ] Make list of targetted players default, and options within commands to control it
 - [ ] Player data Lib
-- [ ] GUI Lib
