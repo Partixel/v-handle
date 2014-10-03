@@ -1,28 +1,30 @@
-local Command = _V.CommandLib.Command:new("Freeze", _V.CommandLib.UserTypes.Admin, "Freeze or thaw the player(s).", "")
+local Command = _V.CommandLib.Command:new("Strip", _V.CommandLib.UserTypes.Admin, "Strips the weapons from the player(s).", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, false)
-Command:addAlias("!freeze", "!unfreeze", "!thaw", "!tfreeze")
+Command:addAlias("!mute", "!unmute", "!tmute")
 
 Command.Callback = function(Sender, Alias, Targets)
 	local Targets = Targets or {Sender}
 	local Success = false
 	local Toggle = false
 	
-	if string.lower(Alias) == "!freeze" then
+	if string.lower(Alias) == "!mute" then
 		Success = true
 		for _, ply in ipairs(Targets) do
-			ply:Freeze(true)
+			ply:SetNWBool("Muted", true)
+			ply:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 		end
 	end
-	if string.lower(Alias) == "!unfreeze" or string.lower(Alias) == "!thaw" then
+	if string.lower(Alias) == "!unmute" then
 		Success = false
 		for _, ply in ipairs(Targets) do
-			ply:Freeze(false)
+			ply:SetNWBool("Muted", false)
 		end
 	end
-	if (string.lower(Alias) == "!tfreeze") then
+	if (string.lower(Alias) == "!tmute") then
 		Toggle = true
 		for _, ply in ipairs(Targets) do
-			ply:Freeze(!ply:IsFrozen())
+			ply:SetNWBool("Muted", ply:GetNWBool("Muted"))
+			ply:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 		end
 	end
 
@@ -33,10 +35,14 @@ Command.Callback = function(Sender, Alias, Targets)
 	
 	if Toggle then
 		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled freeze on _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
-		return ""
 	else
 		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "thawed" or "frozen") .. " _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
-		return ""
 	end
 	return ""
+end
+
+hook.Add("PlayerStartVoice", "PlayerStartVoice", function(Player)
+	if (Player:GetNWBool("Muted")) then
+		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
+	end
 end
