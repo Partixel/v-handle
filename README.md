@@ -16,15 +16,3 @@ When typing a command keep these few tips in mind:
 ##Core Files
 ##Credits
 This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to handle serialising data<br>
-
-##Todo
-- [ ] Finish more commands
-  - [ ] Arm
-  - [ ] Gag
-  - [ ] Give
-  - [ ] Goto, bring, teleport and return
-  - [ ] Heal and health
-  - [ ] Mute
-  - [ ] Noclip
-  - [ ] Strip
-- [ ] Player data Lib
