@@ -14,5 +14,6 @@ Command.Callback = function(Sender, Alias, Targets)
 		Nick = Sender:Nick()
 	end
 	
-	vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has slain _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+	--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has slain _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
+	return ""
 end

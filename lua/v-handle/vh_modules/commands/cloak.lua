@@ -7,19 +7,19 @@ Command.Callback = function(Sender, Alias, Targets)
 	local Success = false
 	local Toggle = false
 	
-	if (string.lower(Alias) == "!cloak") then
+	if string.lower(Alias) == "!cloak" then
 		Success = true
 		for _, ply in ipairs(Targets) do
 			ply:SetNoDraw(true)
 		end
 	end
-	if (string.lower(Alias) == "!uncloak") then
+	if string.lower(Alias) == "!uncloak" then
 		Success = false
 		for _, ply in ipairs(Targets) do
 			ply:SetNoDraw(false)
 		end
 	end
-	if (string.lower(Alias) == "!tcloak") then
+	if string.lower(Alias) == "!tcloak" then
 		Toggle = true
 		for _, ply in ipairs(Targets) do
 			ply:SetNoDraw(!ply:GetNoDraw())
@@ -33,9 +33,8 @@ Command.Callback = function(Sender, Alias, Targets)
 	
 	if Toggle then
 		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has toggled cloak on _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
-		return ""
 	else
 		--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has " .. (!Success and "un" or "") .. "cloaked _reset_ " .. vh.ArgsUtil.PlayersToString(Targets))
-		return ""
 	end
+	return ""
 end
