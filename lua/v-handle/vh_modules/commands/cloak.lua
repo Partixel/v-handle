@@ -1,4 +1,4 @@
-local Command = _V.CommandLib.Command:new("Cloak", nil, "", "Cloak or uncloak the player(s).")
+local Command = _V.CommandLib.Command:new("Cloak", _V.CommandLib.UserTypes.Admin, "Cloak or uncloak the player(s).", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, false)
 Command:addAlias("!cloak", "!uncloak", "!tcloak")
 
