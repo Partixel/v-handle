@@ -2,8 +2,6 @@ _V = _V or {}
 
 _V.CommandLib = {}
 
--- Arg handling --
-
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
 
@@ -78,25 +76,31 @@ function _V.CommandLib.PlayerFromString(String)
 	end
 end
 
+_V.CommandLib.UserTypes = {
+	User = function(Player) return true end,
+	Admin = function(Player) return Player:IsAdmin() or Player:IsSuperAdmin() end,
+	SuperAdmin = function(Player) return Player:IsSuperAdmin() end,
+}
+
 _V.CommandLib.ArgTypes = {
-	Player = {Parser = function(String, Sender, Self)
+	Player = {Parser = function(String, Sender)
 		local Player = _V.CommandLib.PlayerFromString(String)
 		if Player == nil then
 			return "INC_TYPE"
 		end
 		
-		if Self.requireTarget and not SENDERCANTARGETPLAYER then
+		if self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
 		return Player
 	end, Name = "Player", requireTarget = false}, -- A player ( If canTarget then the sender must be able to target the player )
-	Players = {Parser = function(String, Sender, Self)
+	Players = {Parser = function(String, Sender)
 		local Player = _V.CommandLib.PlayerFromString(String)
 		if Player == nil then
 			return "INC_TYPE"
 		end
 		
-		if Self.requireTarget and not SENDERCANTARGETPLAYER then
+		if self.requireTarget and not SENDERCANTARGETPLAYER then
 			return
 		end
 		return {Player}
@@ -135,6 +139,7 @@ _V.CommandLib.Commands = {}
 _V.CommandLib.Command = {
 	Key = "", -- Key of the command ( Must be unique ) ( Recommended to be the name of the command )
 	Callback = function(Sender, Alias, ...) end, -- The function to run when command is ran ( Overide this )
+	UserType = function() end, -- The type of user that can use the command
 	Category = "", -- The category to list this command under
 	Desc = "", -- Brief description of the command
 	Alias = {}, -- A list of aliases the command uses
@@ -173,6 +178,10 @@ function _V.CommandLib.Command:addArg(ArgType, ArgRequirement, Position)
 	return self, Arg
 end
 
+function _V.CommandLib.Command:canUse(Sender)
+	return self.UserType(Sender)
+end
+
 function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
 	-- This is called by the playersay hook to handle args and alias
 	
@@ -199,21 +208,19 @@ function _V.CommandLib.Command:preCall(Sender, Args, teamChat)
 	-- Make sure there isn't any extra args
 	if #Args > #self.Args then
 		// ERROR INCORRECT USAGE
-		return ""
+		return "badusage"
 	end
 	
-	--[[
 	-- Make sure the sender can run the command
-	if not Sender:HASPERM(self.Key) then
+	if not self:CanUse(Sender) then
 		// ERROR INCORRECT PERMS
-		return ""
+		return "noperms"
 	end
-	--]]
 	
 	-- Convert the args into the correct types
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
-		local Arg = b.Parser(Args[a], Sender, b)
+		local Arg = b:Parser(Args[a], Sender)
 		if Arg != nil and Arg != "INC_TYPE" then
 			table.insert(FinalArgs, Arg)
 		elseif Arg == "INC_TYPE" then
@@ -250,19 +257,20 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 	end
 end
 
-function _V.CommandLib.Command:new(Key, Callback, Category, Desc)
+function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	-- Creates a new command object and adds it to the command list
 	-- Requires key to be valid
 	local Object = table.Copy(self)
-	Object.Key = Key or Object.Key
-	Object.Callback = Callback or Object.Callback
-	Object.Category = Category or Object.Category
-	Object.Desc = Desc or Object.Desc
+	Object.Key = Key
+	Object.UserType = UserType
+	Object.Desc = Desc
+	Object.Category = Category
+	Object.Callback = Callback
 	table.insert(_V.CommandLib.Commands, Object)
 	return Object
 end
 
-hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", function(Sender, Message, teamChat)
+function _V.CommandLib.PlayerSay(Sender, Message, teamChat)
 	local Args = string.Explode(" ", Message)
 	local FinalMessage = nil
 	for a, b in ipairs(_V.CommandLib.Commands) do
@@ -274,4 +282,6 @@ hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", function(Sender, Message, teamC
 		end
 	end
 	return FinalMessage
-end)
+end
+
+hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
