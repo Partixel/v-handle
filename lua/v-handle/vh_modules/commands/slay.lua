@@ -1,4 +1,4 @@
-local Command = _V.CommandLib.Command:new("Slay", nil, "", "Slays the player(s).")
+local Command = _V.CommandLib.Command:new("Slay", _V.CommandLib.UserTypes.Admin, "Slays the player(s).", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, false)
 Command:addAlias("!kill", "!slay")
 
