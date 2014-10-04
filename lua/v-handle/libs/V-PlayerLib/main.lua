@@ -87,12 +87,12 @@ local PlrLock = Registry.Player.Lock
 local PlrUnLock = Registry.Player.UnLock
 
 function Registry.Player:Lock()
-	PlrLock()
+	PlrLock(self)
 	self.PLLocked = true
 end
 
 function Registry.Player:UnLock()
-	PlrUnLock()
+	PlrUnLock(self)
 	self.PLLocked = false
 end
 
