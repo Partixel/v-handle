@@ -45,6 +45,16 @@ function _V.CommandLib.PlayerFromString(String)
 end
 ]]--
 
+function _V.CommandLib.DoToggleableCommand(Command, On, Off, Toggle)
+	if table.HasValue(On, Command) then
+		return true, false
+	elseif table.HasValue(Off, Command) then
+		return false, false
+	elseif table.HasValue(On, Command) then
+		return false, true
+	end
+end
+
 function _V.CommandLib.PlayerFromSID(String)
 	if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 		for a, b in pairs(player.GetAll()) do

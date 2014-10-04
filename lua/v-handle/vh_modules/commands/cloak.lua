@@ -4,16 +4,8 @@ Command:addAlias("!cloak", "!uncloak", "!tcloak")
 
 Command.Callback = function(Sender, Alias, Targets)
 	local Targets = Targets or {Sender}
-	local Success = false
-	local Toggle = false
+	local Success, Toggle = _V.CommandLib.DoToggleableCommand(Alias, {"!cloak"}, {"!uncloak"}, {"!tcloak"})
 	
-	if string.lower(Alias) == "!cloak" then
-		Success = true
-	elseif string.lower(Alias) == "!uncloak" then
-		Success = false
-	elseif string.lower(Alias) == "!tcloak" then
-		Toggle = true
-	end
 	for _, ply in ipairs(Targets) do
 		if Toggle then
 			ply:SetNoDraw(!ply:GetNoDraw())
