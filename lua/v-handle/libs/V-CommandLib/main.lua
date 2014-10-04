@@ -5,46 +5,6 @@ _V.CommandLib = {}
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
 
---[[
-function _V.CommandLib.PlayerFromString(String)
-	if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
-		return String
-	elseif String == "*" then
-		local Found = {}
-		for a, b in ipairs(player.GetAll()) do
-			table.insert(Found, player:SteamID())
-		end
-		return Found
-	elseif String == "@" then
-		local Found = {}
-		for a, b in ipairs(player.GetAll()) do
-			if b:IsAdmin() then
-				table.insert(Found, b:SteamID())
-			end
-		end
-		return Found
-	elseif String == "!@" then
-		local Found = {}
-		for a, b in ipairs(player.GetAll()) do
-			if !b:IsAdmin() then
-				table.insert(Found, b:SteamID())
-			end
-		end
-		return Found
-	else
-		local Found = {}
-		for a, b in ipairs(player.GetAll()) do
-			if string.lower(b:Nick()) == string.lower(String) then
-				return {b:SteamID()}
-			elseif string.sub(string.lower(b:Nick()), 1, string.len(String)) == string.lower(String) then
-				table.insert(Found, b:SteamID())
-			end
-		end
-		return Found
-	end
-end
-]]--
-
 function _V.CommandLib.DoToggleableCommand(Command, On, Off, Toggle)
 	if table.HasValue(On, Command) then
 		return true, false
@@ -116,23 +76,49 @@ _V.CommandLib.ArgTypes = {
 			return
 		end
 		
-		if self.requireTarget and not SENDERCANTARGETPLAYER then
+		if self.requireTarget and not Player:PLCanTarget(Sender) then
 			return
 		end
 		return Player
-	end, Name = "Player", requireTarget = false}, -- A player ( If canTarget then the sender must be able to target the player )
+	end, Name = "Player", requireTarget = true}, -- A player ( If canTarget then the sender must be able to target the player )
 	Players = {Parser = function(self, Args, Sender)
-		local Player = _V.CommandLib.PlayerFromString(Args[1])
-		table.remove(Args, 1)
-		if Player == nil then
+		local Players = {}
+		if Args[1] == "*" then
+			Players = player.GetAll()
+			table.remove(Args, 1)
+		elseif Args[1] == "@" then
+			for a, b in ipairs(player.GetAll()) do
+				if b:IsAdmin() then
+					table.insert(Players, b)
+				end
+			end
+			table.remove(Args, 1)
+		elseif Args[1] == "!@" then
+			for a, b in ipairs(player.GetAll()) do
+				if not b:IsAdmin() then
+					table.insert(Players, b)
+				end
+			end
+			table.remove(Args, 1)
+		else
+			Players = {_V.CommandLib.PlayerFromString(Args[1])}
+			table.remove(Args, 1)
+		end
+		
+		local Targets = {}
+		for a, b in ipairs(Players) do
+			if self.requireTarget and not b:PLCanTarget(Sender) then
+				continue
+			end
+			table.insert(Targets, b)
+		end
+		
+		if #Targets == 0 then
 			return
 		end
 		
-		if self.requireTarget and not SENDERCANTARGETPLAYER then
-			return
-		end
-		return {Player}
-	end, Name = "Player", requireTarget = false}, -- A table of players ( If canTarget then the sender must be able to target the players )
+		return Targets
+	end, Name = "Players", requireTarget = true}, -- A table of players ( If canTarget then the sender must be able to target the players )
 	SteamID = {Parser = function(self, Args, Sender)
 		local String = Args[1]
 		table.remove(Args, 1)
@@ -160,10 +146,13 @@ _V.CommandLib.ArgTypes = {
 		end
 	end, Name = "IPAddress"}, -- An IP Address of a player (From string or player name or SteamID)
 	String = {Parser = function(self, Args)
-		local String = table.concat(Args, " ")
-		Args = {}
+		local Amount = self.argAmount or #Args
+		local String = table.concat(Args, " ", 1, Amount)
+		for a = 1, Amount do
+			table.remove(Args, 1)
+		end
 		return String
-	end, Name = "String"}, -- A string
+	end, Name = "String", argAmount = nil}, -- A string, ArgAmount is how many args it will concat into the string, nil for all
 	Number = {Parser = function(self, Args)
 		local String = Args[1]
 		table.remove(Args, 1)

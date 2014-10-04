@@ -220,3 +220,13 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
 	return false, "You are banned for " .. TimeLeft .. " second(s):\n" .. Data.Reason
 end)
+
+function Registry.Player:PLCanTarget(Target)
+	if self:IsSuperAdmin() then
+		return true
+	elseif self:IsAdmin() then
+		return not Target:IsSuperAdmin()
+	else
+		return not Target:IsAdmin()
+	end
+end
