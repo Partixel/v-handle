@@ -83,16 +83,27 @@ hook.Add("PlayerDisconnected", "PL_HandleLeave", function(Player)
 	table.RemoveByValue(PreventSuicide, Player:SteamID())
 end)
 
+local PlrLock = Registry.Player.Lock
+local PlrUnLock = Registry.Player.UnLock
+
+function Registry.Player:Lock()
+	PlrLock()
+	self.PLLocked = true
+end
+
+function Registry.Player:UnLock()
+	PlrUnLock()
+	self.PLLocked = false
+end
+
 function Registry.Player:PLLock(State)
 	if State then
 		self:Lock()
 		self:PLGod(State)
 		self:PLPreventSuicide(State)
-		self.PLLocked = true
 	else
 		self:UnLock()
 		self:PLGod(State)
 		self:PLPreventSuicide(State)
-		self.PLLocked = false
 	end
 end
