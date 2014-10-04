@@ -13,6 +13,10 @@ function Registry.Player:PLPreventSuicide(State)
 	self.PLPreventSuicide = State
 end
 
+function Registry.Player:PLGetPreventSuicide()
+	return self.PL.PreventSuicide or false
+end
+
 hook.Add("CanPlayerSuicide", "PLPreventSuicide", function(Player)
 	if Player.PLPreventSuicide then
 		return false
@@ -96,6 +100,10 @@ function Registry.Player:UnLock()
 	self.PLLocked = false
 end
 
+function Registry.Player:PLGetLocked()
+	return self.PLLocked or false
+end
+
 function Registry.Player:PLLock(State)
 	if State then
 		self:Lock()
@@ -107,3 +115,42 @@ function Registry.Player:PLLock(State)
 		self:PLPreventSuicide(State)
 	end
 end
+
+local PlrSetPos = Registry.Player.SetPos
+
+function Registry.Player:SetPos(pos)
+	self.PLLastPos = self:GetPos()
+	PlrSetPos(self, pos)
+end
+
+function Registry.Player:PLGetLastPos()
+	return self.PLLastPos
+end
+
+function Registry.Player:PLMuteChat(State)
+	self.PLChatMuted = State
+end
+
+function Registry.Player:PLGetChatMuted()
+	return self.PLChatMuted or false
+end
+
+function Registry.Player:PLMuteMic(State)
+	self.PLMicMuted = State
+end
+
+function Registry.Player:PLGetMicMuted()
+	return self.PLMicMuted or false
+end
+
+hook.Add("PlayerSay", "PLChatMuted", function(Player, Message, TeamChat)
+	if Player:GetChatMuted() then
+		return true
+	end
+end)
+
+hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
+	if Player:GetMicMuted() then
+		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
+	end
+end)

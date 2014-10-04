@@ -8,7 +8,7 @@ Command.Callback = function(Sender, Alias, Targets)
 	
 	for _, ply in ipairs(Targets) do
 		if Toggle then
-			ply:PLLock(!ply.PLLocked)
+			ply:PLLock(!ply:PLGetLocked())
 		else
 			ply:PLLock(Success)
 		end
