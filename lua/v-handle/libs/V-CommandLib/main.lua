@@ -228,7 +228,7 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
 		if Args[1] and string.lower(Args[1]) != "nil" then
-			local Arg = b.Parser(Args, Sender, b)
+			local Arg = b:Parser(Args, Sender)
 			
 			if Arg != nil then
 				table.insert(FinalArgs, Arg)
