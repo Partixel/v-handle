@@ -50,7 +50,7 @@ function _V.CommandLib.DoToggleableCommand(Command, On, Off, Toggle)
 		return true, false
 	elseif table.HasValue(Off, Command) then
 		return false, false
-	elseif table.HasValue(On, Command) then
+	elseif table.HasValue(Toggle, Command) then
 		return false, true
 	end
 end
