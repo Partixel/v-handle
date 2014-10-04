@@ -1,5 +1,5 @@
 local Command = _V.CommandLib.Command:new("Spectate", _V.CommandLib.UserTypes.Admin, "Spectates the player.", "")
-Command:addArg(_V.CommandLib.ArgTypes.Player, true)
+Command:addArg(_V.CommandLib.ArgTypes.Player, {required = true})
 Command:addAlias("!spectate")
 
 Command.Callback = function(Sender, Alias, Target)

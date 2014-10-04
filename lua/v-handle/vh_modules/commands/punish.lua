@@ -1,6 +1,6 @@
 local Command = _V.CommandLib.Command:new("Punish", _V.CommandLib.UserTypes.Admin, "Punish the player according to the reason.", "")
-Command:addArg(_V.CommandLib.ArgTypes.Player, true)
-Command:addArg(_V.CommandLib.ArgTypes.String, true)
+Command:addArg(_V.CommandLib.ArgTypes.Player, {required = true})
+Command:addArg(_V.CommandLib.ArgTypes.String, {required = true})
 Command:addAlias("!punish")
 
 local Reasons = {

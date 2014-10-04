@@ -1,5 +1,5 @@
 local Command = _V.CommandLib.Command:new("Cloak", _V.CommandLib.UserTypes.Admin, "Set the invisibility of the player(s).", "")
-Command:addArg(_V.CommandLib.ArgTypes.Players, false)
+Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
 Command:addAlias("!cloak", "!uncloak", "!tcloak")
 
 Command.Callback = function(Sender, Alias, Targets)

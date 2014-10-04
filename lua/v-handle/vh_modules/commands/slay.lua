@@ -1,5 +1,5 @@
 local Command = _V.CommandLib.Command:new("Slay", _V.CommandLib.UserTypes.Admin, "Kills the player(s).", "")
-Command:addArg(_V.CommandLib.ArgTypes.Players, false)
+Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
 Command:addAlias("!kill", "!slay")
 
 Command.Callback = function(Sender, Alias, Targets)
