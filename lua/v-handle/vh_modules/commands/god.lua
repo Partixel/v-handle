@@ -8,9 +8,9 @@ Command.Callback = function(Sender, Alias, Targets)
 	
 	for _, ply in ipairs(Targets) do
 		if Toggle then
-			ply:PUGod(!ply:HasGodMode())
+			ply:PLGod(!ply:HasGodMode())
 		else
-			ply:PUGod(Success)
+			ply:PLGod(Success)
 		end
 	end
 	
