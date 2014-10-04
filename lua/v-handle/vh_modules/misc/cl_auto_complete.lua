@@ -29,13 +29,16 @@ end
 function TextChanged(Text)
 	Suggestions = {}
 	if #Text == 0 then return end
+	local AliasLength = #string.Explode(" ", Text)[1]
 	for _, Command in pairs(_V.CommandLib.Commands) do
 		for _, Alias in pairs(Command.Alias) do
 			if string.StartWith(string.lower(Text), string.lower(string.sub(Alias, 1, #Text))) then
-				table.insert(Suggestions, {
-					name = Alias,
-					usage = Command:getUsage(Alias)
-				})
+				if #Alias >= AliasLength then
+					table.insert(Suggestions, {
+						name = Alias,
+						usage = Command:getUsage(Alias)
+					})
+				end
 			end
 		end
 	end
