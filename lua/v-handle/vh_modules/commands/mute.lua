@@ -19,7 +19,7 @@ end
 
 local Command = _V.CommandLib.Command:new("MuteChat", _V.CommandLib.UserTypes.Admin, "Mute or unmute the player(s) chat.", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
-Command:addAlias("!mutechat", "!unmutechat" "!tmutechat")
+Command:addAlias("!mutechat", "!unmutechat", "!tmutechat")
 
 Command.Callback = function(Sender, Alias, Targets)
 	local Targets = Targets or {Sender}
@@ -38,7 +38,7 @@ end
 
 local Command = _V.CommandLib.Command:new("Mute", _V.CommandLib.UserTypes.Admin, "Mute or unmute the player(s) chat and and microphone.", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
-Command:addAlias("!mute", "!unmute" "!tmute")
+Command:addAlias("!mute", "!unmute", "!tmute")
 
 Command.Callback = function(Sender, Alias, Targets)
 	local Targets = Targets or {Sender}

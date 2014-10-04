@@ -66,10 +66,26 @@ function _V.CommandLib.PlayerFromSID(String)
 	end
 end
 
+function _V.CommandLib.PlayerFromIP(String)
+	if string.match(String, "(%d+)%.(%d+)%.(%d+)%.(%d+)") then
+		for a, b in pairs(player.GetAll()) do
+			if b:IPAddress() == String then
+				return b
+			end
+		end
+		return
+	end
+end
+
 function _V.CommandLib.PlayerFromString(String)
-	local PlrSID = _V.CommandLib.PlayerFromSID(String)
-	if PlrSID then
-		return PlrSID
+	local PlrSpec = _V.CommandLib.PlayerFromSID(String)
+	if PlrSpec then
+		return PlrSpec
+	end
+	
+	PlrSpec = _V.CommandLib.PlayerFromIP(String)
+	if PlrSpec then
+		return PlrSpec
 	end
 	
 	local Found = {}
@@ -129,7 +145,20 @@ _V.CommandLib.ArgTypes = {
 			end
 			return Player:SteamID()
 		end
-	end, Name = "SteamID"}, -- A list of players ( doesn't require targetability )
+	end, Name = "SteamID"}, -- A steamID of a player (From string or player name or IP)
+	IPAddress = {Parser = function(self, Args, Sender)
+		local String = Args[1]
+		table.remove(Args, 1)
+		if string.match(String, "(%d+)%.(%d+)%.(%d+)%.(%d+)") then
+			return String
+		else
+			local Player = _V.CommandLib.PlayerFromString(String)
+			if Player == nil then
+				return
+			end
+			return Player:IPAddress()
+		end
+	end, Name = "IPAddress"}, -- An IP Address of a player (From string or player name or SteamID)
 	String = {Parser = function(self, Args)
 		local String = table.concat(Args, " ")
 		Args = {}
@@ -199,9 +228,13 @@ function _V.CommandLib.Command:addArg(ArgType, CustomTable, Position)
 	end
 	
 	if Position then
-		table.insert(self.Args, Position, Arg)
+		if self.Args[Position] then
+			table.insert(self.Args[Position], Arg)
+		else
+			table.insert(self.Args, Position, {Arg})
+		end
 	else
-		table.insert(self.Args, Arg)
+		table.insert(self.Args, {Arg})
 	end
 	
 	return self, Arg
@@ -228,7 +261,13 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
 		if Args[1] and string.lower(Args[1]) != "nil" then
-			local Arg = b:Parser(Args, Sender)
+			local Arg = nil
+			for c, d in ipairs(b) do
+				Arg = d:Parser(Args, Sender)
+				if Arg then
+					break
+				end
+			end
 			
 			if Arg != nil then
 				table.insert(FinalArgs, Arg)

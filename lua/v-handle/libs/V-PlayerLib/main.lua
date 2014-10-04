@@ -1,3 +1,8 @@
+if CLIENT then return end
+
+_V = _V or {}
+
+_V.PlayerLib = {}
 
 local Registry = debug.getregistry()
 
@@ -83,10 +88,6 @@ hook.Add("CanDrive", "PLLock_CanDrive", function(Player, Trace, Tool)
 	end
 end)
 
-hook.Add("PlayerDisconnected", "PL_HandleLeave", function(Player)
-	table.RemoveByValue(PreventSuicide, Player:SteamID())
-end)
-
 local PlrLock = Registry.Player.Lock
 local PlrUnLock = Registry.Player.UnLock
 
@@ -120,6 +121,7 @@ local PlrSetPos = Registry.Player.SetPos
 
 function Registry.Player:SetPos(pos)
 	self.PLLastPos = self:GetPos()
+	self:ExitVehicle()
 	PlrSetPos(self, pos)
 end
 
@@ -153,4 +155,68 @@ hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
 	if Player:GetMicMuted() then
 		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 	end
+end)
+
+function _V.PlayerLib.PLBan(SID, Length, Reason)
+	_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = os.time(), BanLength = Length, Reason = Reason})
+	for a, b in ipairs(player.GetAll()) do
+		if b:SteamID() == SID then
+			b:Kick("\nYou have been banned for " .. Length .. " second(s):\n" .. Reason)
+		end
+	end
+end
+
+function _V.PlayerLib.PLUpdateBan(SID)
+	local Data = _V.PlayerDataLib.getPlayerData(SID, "PLBan")
+	if Data then
+		if Data.Start and Data.BanLength and Data.Reason then
+			if Data.Start + Data.BanLength <= os.time() then
+				_V.PlayerLib.PLUnBan(SID)
+				return true
+			else
+				return false, Data
+			end
+		else
+			_V.PlayerLib.PLUnBan(SID)
+			return true
+		end
+	end
+	return true
+end
+
+function _V.PlayerLib.PLEditBan(SID, Length, Reason)
+	local Data = _V.PlayerDataLib.getPlayerData(SID, "PLBan")
+	if Data then
+		local Start = Data.Start
+		if Start + Length <= os.time() then
+			_V.PLUnBan(SID)
+			return true
+		else
+			_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = Start, BanLength = Length, Reason = Reason})
+			return false
+		end
+	end
+end
+
+function _V.PlayerLib.PLUnBan(SID)
+	_V.PlayerDataLib.setPlayerData(SID, "PLBan", nil)
+end
+
+function Registry.Player:PLBan(Length, Reason)
+	_V.PlayerLib.PLBan(self:SteamID(), Length, Reason)
+end
+
+hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
+	SID = util.SteamIDFrom64(SID)
+	local Banned, Data = _V.PlayerLib.PLUpdateBan(SID)
+	
+	if not Banned then
+		Banned, Data = _V.PlayerLib.PLUpdateBan(IP)
+		if not Banned then
+			return
+		end
+	end
+	
+	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
+	return false, "You are banned for " .. TimeLeft .. " second(s):\n" .. Data.Reason
 end)
