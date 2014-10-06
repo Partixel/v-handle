@@ -146,7 +146,7 @@ function Registry.Player:PLGetMicMuted()
 end
 
 hook.Add("PlayerSay", "PLChatMuted", function(Player, Message, TeamChat)
-	if Player:GetChatMuted() then
+	if Player and Player:GetChatMuted() then
 		return true
 	end
 end)
