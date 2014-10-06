@@ -11,5 +11,7 @@ Command.Callback = function(Sender, Alias, Target)
 	Target:SetPos(Sender:GetNWVector("VH_ReturnPosition"))
 	Target:SetNWVector("VH_ReturnPosition", CurrentPosition)
 	
+	_V.CommandLib.SendCommandMessage(Sender, "returned", Targets, "to their last position")
+	
 	return ""
 end

@@ -9,5 +9,7 @@ Command.Callback = function(Sender, Alias, Targets)
 		ply:StripWeapons()
 	end
 	
+	_V.CommandLib.SendCommandMessage(Sender, "stripped the weapons from", Targets, "")
+	
 	return ""
 end

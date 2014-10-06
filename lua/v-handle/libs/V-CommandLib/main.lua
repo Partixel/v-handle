@@ -5,6 +5,48 @@ _V.CommandLib = {}
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
 
+function _V.CommandLib.FormatList(List)
+	for i, v in ipairs(List) do
+		if i == #List - 1 then
+			List[i] = v .. " and "
+		elseif i != #List then
+			List[i] = v .. ", "
+		end
+	end
+	return List
+end
+
+function _V.CommandLib.FormatPlayer(Caller, Receiver, Player)
+	if Caller == Receiver and Caller == Player then
+		return "Yourself"
+	elseif Caller == Player then
+		return "Themselves"
+	elseif Receiver == Player then
+		return "You"
+	else
+		return Player:Nick()
+	end
+end
+
+function _V.CommandLib.PlayersToString(Caller, Player, Players)
+	local Names = {}
+	for _, v in ipairs(Players) do
+		table.insert(Names, _V.CommandLib.FormatPlayer(Caller, Player, v))
+	end
+	return table.concat(_V.CommandLib.FormatList(Names))
+end
+
+function _V.CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlayers)
+	for _, Player in ipairs(player.GetAll()) do
+		local NewCaller = Caller:Nick()
+		if Caller == Player then
+			NewCaller = "You"
+		end
+		local NewPlayers = _V.CommandLib.PlayersToString(Caller, Player, Players)
+		vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers, Player)
+	end
+end
+
 function _V.CommandLib.DoToggleableCommand(Command, On, Off, Toggle)
 	if table.HasValue(On, Command) then
 		return true, false

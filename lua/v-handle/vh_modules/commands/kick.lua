@@ -6,5 +6,6 @@ Command:addAlias("!kick")
 Command.Callback = function(Sender, Alias, Target, Reason)
 	Target:Kick(Reason)
 	
+	_V.CommandLib.SendCommandMessage(Sender, "kicked", Targets, "for the reason _reset_ "..Reason)
 	return ""
 end

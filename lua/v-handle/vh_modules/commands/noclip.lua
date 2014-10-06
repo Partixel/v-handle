@@ -22,5 +22,11 @@ Command.Callback = function(Sender, Alias, Targets)
 		end
 	end
 	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled noclip on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "noclipped" or "clipped"), Targets, "")
+	end
+	
 	return ""
 end

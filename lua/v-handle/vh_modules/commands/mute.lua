@@ -14,6 +14,12 @@ Command.Callback = function(Sender, Alias, Targets)
 		end
 	end
 	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled microphone mute on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "" or "un-").."microphone muted", Targets, "")
+	end
+	
 	return ""
 end
 
@@ -31,6 +37,12 @@ Command.Callback = function(Sender, Alias, Targets)
 		else
 			ply:PLMuteChat(Success)
 		end
+	end
+	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled chat mute on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "" or "un-").."chat muted", Targets, "")
 	end
 	
 	return ""
@@ -52,6 +64,12 @@ Command.Callback = function(Sender, Alias, Targets)
 			ply:PLMuteChat(Success)
 			ply:PLMuteMic(Success)
 		end
+	end
+	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled mute on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "" or "un").."muted", Targets, "")
 	end
 	
 	return ""

@@ -32,11 +32,5 @@ local Modifiers = {
 }
 
 Command.Callback = function(Sender, Alias, Target, Reason)
-	local Nick = "Console"
-	if Sender:IsValid() then
-		Nick = Sender:Nick()
-	end
-	
-	--vh.ChatUtil.SendMessage("_lime_ " .. Nick .. " _white_ has armed _reset_ " .. vh.ArgsUtil.PlayersToString(Targets) .. " _white_ to _reset_ ".. Amount)
 	return ""
 end

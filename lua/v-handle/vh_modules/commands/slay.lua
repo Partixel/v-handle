@@ -9,5 +9,7 @@ Command.Callback = function(Sender, Alias, Targets)
 		ply:Kill()
 	end
 	
+	_V.CommandLib.SendCommandMessage(Sender, "killed", Targets, "")
+	
 	return ""
 end

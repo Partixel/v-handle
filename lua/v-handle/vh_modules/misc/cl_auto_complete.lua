@@ -36,7 +36,7 @@ function TextChanged(Text)
 				if #Alias >= AliasLength then
 					table.insert(Suggestions, {
 						name = Alias,
-						usage = Command:getUsage(Alias)
+						usage = "test" --Command:getUsage(Alias)
 					})
 				end
 			end
