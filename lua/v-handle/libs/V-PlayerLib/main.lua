@@ -117,12 +117,32 @@ function Registry.Player:PLLock(State)
 	end
 end
 
+function Registry.Player:ForceMoveable()
+	self:ExitVehicle()
+	if not self:Alive() then
+		self:Spawn()
+	end
+	self:PLLock(false)
+	self:Freeze(false)
+end
+
 local PlrSetPos = Registry.Player.SetPos
 
-function Registry.Player:SetPos(pos)
+function Registry.Player:SetPos(Pos)
 	self.PLLastPos = self:GetPos()
-	self:ExitVehicle()
-	PlrSetPos(self, pos)
+	PlrSetPos(self, Pos)
+end
+
+function Registry.Player:PLForceTeleport(Pos)
+	self:ForceMoveable()
+	self:SetPos(Pos)
+end
+
+function Registry.Player:PLSafeTeleport(Pos)
+	self:ForceMoveable()
+	local SafePos = Pos
+	-- Do checks here
+	self:SetPos(SafePos)
 end
 
 function Registry.Player:PLGetLastPos()
@@ -157,11 +177,11 @@ hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
 	end
 end)
 
-function _V.PlayerLib.PLBan(SID, Length, Reason)
-	_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = os.time(), BanLength = Length, Reason = Reason})
+function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
+	_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = os.time(), BanLength = Length, Banner = Banner, Reason = Reason})
 	for a, b in ipairs(player.GetAll()) do
 		if b:SteamID() == SID then
-			b:Kick("\nYou have been banned for " .. Length .. " second(s):\n" .. Reason)
+			b:Kick("\nYou have been banned by " .. Banner .. " for " .. Length .. " second(s):\n" .. Reason)
 		end
 	end
 end
@@ -172,19 +192,19 @@ function _V.PlayerLib.PLUpdateBan(SID)
 		if Data.Start and Data.BanLength and Data.Reason then
 			if Data.Start + Data.BanLength <= os.time() then
 				_V.PlayerLib.PLUnBan(SID)
-				return true
+				return false
 			else
-				return false, Data
+				return true, Data
 			end
 		else
 			_V.PlayerLib.PLUnBan(SID)
-			return true
+			return false
 		end
 	end
-	return true
+	return false
 end
 
-function _V.PlayerLib.PLEditBan(SID, Length, Reason)
+function _V.PlayerLib.PLEditBan(SID, Length, Banner, Reason)
 	local Data = _V.PlayerDataLib.getPlayerData(SID, "PLBan")
 	if Data then
 		local Start = Data.Start
@@ -192,7 +212,9 @@ function _V.PlayerLib.PLEditBan(SID, Length, Reason)
 			_V.PLUnBan(SID)
 			return true
 		else
-			_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = Start, BanLength = Length, Reason = Reason})
+			local Edits = Data.Edits or {}
+			table.insert(Edits, Banner)
+			_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = Start, Banner = Data.Banner, Edits = Edits, BanLength = Length, Reason = Reason})
 			return false
 		end
 	end
@@ -202,8 +224,8 @@ function _V.PlayerLib.PLUnBan(SID)
 	_V.PlayerDataLib.setPlayerData(SID, "PLBan", nil)
 end
 
-function Registry.Player:PLBan(Length, Reason)
-	_V.PlayerLib.PLBan(self:SteamID(), Length, Reason)
+function Registry.Player:PLBan(Length, Banner, Reason)
+	_V.PlayerLib.PLBan(self:SteamID(), Length, Banner, Reason)
 end
 
 hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
@@ -218,15 +240,5 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 	end
 	
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
-	return false, "You are banned for " .. TimeLeft .. " second(s):\n" .. Data.Reason
+	return false, "You have been banned by " .. Data.Banner .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason
 end)
-
-function Registry.Player:PLCanTarget(Target)
-	if self:IsSuperAdmin() then
-		return true
-	elseif self:IsAdmin() then
-		return not Target:IsSuperAdmin()
-	else
-		return not Target:IsAdmin()
-	end
-end

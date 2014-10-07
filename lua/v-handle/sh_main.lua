@@ -1,8 +1,8 @@
--- Load libs --
-_V.FileLib.IncludeDir("libs")
-
 -- Loading external files --
 _V.FileLib.IncludeDir("external")
+
+-- Load libs --
+_V.FileLib.IncludeDir("libs")
 
 -- Loading core files --
 _V.FileLib.IncludeDir("vh_core")
