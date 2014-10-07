@@ -117,7 +117,6 @@ function Registry.Player:PLLock(State)
 	end
 end
 
-<<<<<<< HEAD
 function Registry.Player:ForceMoveable()
 	self:ExitVehicle()
 	if not self:Alive() then
@@ -128,9 +127,6 @@ function Registry.Player:ForceMoveable()
 end
 
 local PlrSetPos = Registry.Player.SetPos
-=======
-local PlrSetPos = Registry.Entity.SetPos
->>>>>>> origin/master
 
 function Registry.Player:SetPos(Pos)
 	self.PLLastPos = self:GetPos()
@@ -247,8 +243,6 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 			return
 		end
 	end
-	
-	if not Data then return end
 	
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
 	return false, "You have been banned by " .. Data.Banner .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason
