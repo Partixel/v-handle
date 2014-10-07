@@ -5,7 +5,7 @@ Command:addAlias("!goto")
 Command.Callback = function(Sender, Alias, Target)
 	Sender:Teleport(Target)
 	
-	_V.CommandLib.SendCommandMessage(Sender, "sent themselves to", {Target}, "")
+	_V.CommandLib.SendCommandMessage(Sender, "teleported to", {Target}, "")
 	
 	return ""
 end

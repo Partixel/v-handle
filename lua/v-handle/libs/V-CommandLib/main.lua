@@ -45,9 +45,9 @@ function _V.CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlaye
 		local NewPlayers = _V.CommandLib.PlayersToString(Caller, Player, Players)
 		if ExtraPlayers then
 			local NewExtraPlayers = _V.CommandLib.PlayersToString(Caller, Player, ExtraPlayers)
-			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers.." _reset_ "..ExtraPlayers, Player)
+			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers.." _reset_ "..NewExtraPlayers, Player)
 		else
-			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers, Player)
+			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers, Player)
 		end
 	end
 end

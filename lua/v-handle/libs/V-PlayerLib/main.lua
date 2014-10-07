@@ -119,13 +119,13 @@ end
 
 local PlrSetPos = Registry.Entity.SetPos
 
-function Registry.Entity:SetPos(pos)
+function Registry.Player:SetPos(pos)
 	self.PLLastPos = self:GetPos()
 	self:ExitVehicle()
 	PlrSetPos(self, pos)
 end
 
-function Registry.Entity:Teleport(Player)
+function Registry.Player:Teleport(Player)
 	--Todo, check for closest available spot
 	self:SetPos(Player:GetPos() + Player:GetForward() * 45)
 end
