@@ -73,11 +73,11 @@ _V.CommandLib.ArgTypes = {
 		local Player = _V.CommandLib.PlayerFromString(Args[1])
 		table.remove(Args, 1)
 		if Player == nil then
-			return
+			return nil, "No player was found!"
 		end
 		
-		if self.requireTarget and not Player:PLCanTarget(Sender) then
-			return
+		if self.requireTarget and Player.PLCanTarget and not Player:PLCanTarget(Sender) then
+			return nil, "No targetable player was found!"
 		end
 		return Player
 	end, Name = "Player", requireTarget = true}, -- A player ( If canTarget then the sender must be able to target the player )
@@ -107,14 +107,18 @@ _V.CommandLib.ArgTypes = {
 		
 		local Targets = {}
 		for a, b in ipairs(Players) do
-			if self.requireTarget and not b:PLCanTarget(Sender) then
+			if self.requireTarget and b.PLCanTarget and not b:PLCanTarget(Sender) then
 				continue
 			end
 			table.insert(Targets, b)
 		end
 		
 		if #Targets == 0 then
-			return
+			if self.requireTarget then
+				return nil, "No targetable players were found!"
+			else
+				return nil, "No players were found!"
+			end
 		end
 		
 		return Targets
@@ -131,6 +135,7 @@ _V.CommandLib.ArgTypes = {
 			end
 			return Player:SteamID()
 		end
+		return nil, "No Steam ID was found!"
 	end, Name = "SteamID"}, -- A steamID of a player (From string or player name or IP)
 	IPAddress = {Parser = function(self, Args, Sender)
 		local String = Args[1]
@@ -144,6 +149,7 @@ _V.CommandLib.ArgTypes = {
 			end
 			return Player:IPAddress()
 		end
+		return nil, "No IP Address was found!"
 	end, Name = "IPAddress"}, -- An IP Address of a player (From string or player name or SteamID)
 	String = {Parser = function(self, Args)
 		local Amount = self.argAmount or #Args
@@ -156,7 +162,7 @@ _V.CommandLib.ArgTypes = {
 	Number = {Parser = function(self, Args)
 		local String = Args[1]
 		table.remove(Args, 1)
-		return tonumber(String)
+		return tonumber(String), "No number found!"
 	end, Name = "Number"}, -- A number
 	Boolean = {Parser = function(self, Args)
 		local String = Args[1]
@@ -166,6 +172,7 @@ _V.CommandLib.ArgTypes = {
 		elseif stable.HasValue(_V.CommandLib.BoolFalse, string.lower(String)) then
 			return false
 		end
+		return nil, "No boolean found!"
 	end, Name = "Boolean"}, -- Check if the string is contained in either the Yes or No table
 }
 
@@ -250,9 +257,9 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
 		if Args[1] and string.lower(Args[1]) != "nil" then
-			local Arg = nil
+			local Arg, Reason = nil
 			for c, d in ipairs(b) do
-				Arg = d:Parser(Args, Sender)
+				Arg, Reason = d:Parser(Args, Sender)
 				if Arg then
 					break
 				end
@@ -261,17 +268,18 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 			if Arg != nil then
 				table.insert(FinalArgs, Arg)
 			else
-				return "Argument " .. a .. " was incorrect! " .. "Usage: " .. self:getUsage()
+				Reason = Reason or "Argument " .. a .. " was incorrect!"
+				return Reason .. "\nUsage: " .. self:getUsage()
 			end
 		elseif b.required then
-			return "Argument " .. a .. " was missing! " .. "Usage: " .. self:getUsage()
+			return "Argument " .. a .. " was missing!\nUsage: " .. self:getUsage()
 		else
 			table.insert(FinalArgs, "nil")
 		end
 	end
 	
 	if #Args != 0 then
-		return "Too many arguments given! " .. "Usage: " .. self:getUsage()
+		return "Too many arguments given!\nUsage: " .. self:getUsage()
 	end
 	
 	-- Run the commands callback
@@ -282,16 +290,16 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 	-- Returns the usage of the command or the type of a specific arguement
 	-- Alias specifies the alias to be used and ArgPos specifies the arguement type to use
 	if ArgPos then
-		return self.Args[ArgPos]
+		return self.Args[ArgPos][1]
 	else
 		local Alias = Alias or self.Alias[1]
 		local Usage = Alias
 		
 		for a, b in ipairs(self.Args) do
-			if b.required then
-				Usage = Usage .. " " .. b.Name
+			if b[1].required then
+				Usage = Usage .. " " .. b[1].Name
 			else
-				Usage = Usage .. " [" .. b.Name .. "]"
+				Usage = Usage .. " [" .. b[1].Name .. "]"
 			end
 		end
 		
