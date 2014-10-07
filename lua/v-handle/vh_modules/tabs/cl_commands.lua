@@ -1,7 +1,3 @@
-local Module = {}
-Module.Name = "CommandsTab"
-Module.Description = "Tab containing all commands"
-
 function RenderCall(Frame, Table)
 	--Table.PlayerList = vgui.Create("VH_PlayerList", Frame)
 	--Table.PlayerList:SetSize(Frame:GetWide(), Frame:GetTall())
@@ -88,5 +84,3 @@ function OpenCommandView(Frame, Table, Command)
 end
 
 local CommandsTab = _V.MenuLib.VTab:new("Commands", RenderCall, Color(70, 140, 80), "commands", 1)
-
-vh.RegisterModule(Module)

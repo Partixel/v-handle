@@ -1,11 +1,7 @@
-local Module = {}
-Module.Name = "Autocomplete"
-Module.Description = "Shows a UI with viable auto-completions below chat box"
-
 local chatOpen = false
 local Suggestions = {}
 
-function ChatPaint()
+hook.Add("HUDPaint", "HUDPaint", function()
 	if chatOpen then
 		local x, y = chat.GetChatBoxPos()
 		x = x + ScrW() * 0.03875
@@ -24,9 +20,9 @@ function ChatPaint()
 			end
 		end
 	end
-end
+end)
 
-function TextChanged(Text)
+hook.Add("ChatTextChanged", "DoAutoComplete", function(Text)
 	Suggestions = {}
 	if #Text == 0 then return end
 	local AliasLength = #string.Explode(" ", Text)[1]
@@ -43,28 +39,18 @@ function TextChanged(Text)
 		end
 	end
 	table.SortByMember(Suggestions, "name", function( a, b ) return a < b end)
-end
+end)
 
-function ChatTab(Text)
+hook.Add("OnChatTab", "ChatTab", function(Text)
 	if ( string.match(Text, "^[/!][^ ]*$" ) and #Suggestions > 0 ) then
 		return Suggestions[1].name .. " "
 	end
-end
+end)
 
-function ChatBegin()
+hook.Add("StartChat", "ChatOpen", function()
 	chatOpen = true
-end
+end)
 
-function ChatEnd()
+hook.Add("FinishChat", "ChatClose", function()
 	chatOpen = false
-end
-
-Module.Hooks = {
-	{Type = "HUDPaint", Run = ChatPaint},
-	{Type = "ChatTextChanged", Run = TextChanged},
-	{Type = "OnChatTab", Run = ChatTab},
-	{Type = "StartChat", Run = ChatBegin},
-	{Type = "FinishChat", Run = ChatEnd}
-}
-
-vh.RegisterModule(Module)
+end)
