@@ -117,12 +117,17 @@ function Registry.Player:PLLock(State)
 	end
 end
 
-local PlrSetPos = Registry.Player.SetPos
+local PlrSetPos = Registry.Entity.SetPos
 
-function Registry.Player:SetPos(pos)
+function Registry.Entity:SetPos(pos)
 	self.PLLastPos = self:GetPos()
 	self:ExitVehicle()
 	PlrSetPos(self, pos)
+end
+
+function Registry.Entity:Teleport(Player)
+	--Todo, check for closest available spot
+	self:SetPos(Player:GetPos() + Player:GetForward() * 45)
 end
 
 function Registry.Player:PLGetLastPos()
@@ -147,7 +152,7 @@ end
 
 hook.Add("PlayerSay", "PLChatMuted", function(Player, Message, TeamChat)
 	if Player:PLGetChatMuted() then
-		return true
+		return ""
 	end
 end)
 

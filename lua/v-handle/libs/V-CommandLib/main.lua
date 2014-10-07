@@ -36,14 +36,19 @@ function _V.CommandLib.PlayersToString(Caller, Player, Players)
 	return table.concat(_V.CommandLib.FormatList(Names))
 end
 
-function _V.CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlayers)
+function _V.CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlayers, ExtraPlayers)
 	for _, Player in ipairs(player.GetAll()) do
 		local NewCaller = Caller:Nick()
 		if Caller == Player then
 			NewCaller = "You"
 		end
 		local NewPlayers = _V.CommandLib.PlayersToString(Caller, Player, Players)
-		vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers, Player)
+		if ExtraPlayers then
+			local NewExtraPlayers = _V.CommandLib.PlayersToString(Caller, Player, ExtraPlayers)
+			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers.." _reset_ "..ExtraPlayers, Player)
+		else
+			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_"..PostPlayers, Player)
+		end
 	end
 end
 
