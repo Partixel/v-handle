@@ -14,5 +14,11 @@ Command.Callback = function(Sender, Alias, Targets)
 		end
 	end
 	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled freeze on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "froze" or "thawed"), Targets, "")
+	end
+	
 	return ""
 end

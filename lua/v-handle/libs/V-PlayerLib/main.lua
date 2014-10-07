@@ -117,6 +117,7 @@ function Registry.Player:PLLock(State)
 	end
 end
 
+<<<<<<< HEAD
 function Registry.Player:ForceMoveable()
 	self:ExitVehicle()
 	if not self:Alive() then
@@ -127,6 +128,9 @@ function Registry.Player:ForceMoveable()
 end
 
 local PlrSetPos = Registry.Player.SetPos
+=======
+local PlrSetPos = Registry.Entity.SetPos
+>>>>>>> origin/master
 
 function Registry.Player:SetPos(Pos)
 	self.PLLastPos = self:GetPos()
@@ -143,6 +147,11 @@ function Registry.Player:PLSafeTeleport(Pos)
 	local SafePos = Pos
 	-- Do checks here
 	self:SetPos(SafePos)
+end
+
+function Registry.Player:Teleport(Player)
+	--Todo, check for closest available spot
+	self:SetPos(Player:GetPos() + Player:GetForward() * 45)
 end
 
 function Registry.Player:PLGetLastPos()
@@ -166,13 +175,13 @@ function Registry.Player:PLGetMicMuted()
 end
 
 hook.Add("PlayerSay", "PLChatMuted", function(Player, Message, TeamChat)
-	if Player:GetChatMuted() then
-		return true
+	if Player:PLGetChatMuted() then
+		return ""
 	end
 end)
 
 hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
-	if Player:GetMicMuted() then
+	if Player:PLGetMicMuted() then
 		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 	end
 end)
@@ -238,6 +247,8 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 			return
 		end
 	end
+	
+	if not Data then return end
 	
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
 	return false, "You have been banned by " .. Data.Banner .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason

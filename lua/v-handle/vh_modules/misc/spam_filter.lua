@@ -1,7 +1,3 @@
-local Module = {}
-Module.Name = "Chat Blacklist"
-Module.Description = "Allows for a list of blacklists and filters them out of chat"
-
 local Blacklist = _V.ConfigLib.ConfigValue:new("ChatBlacklist", "SpamFilter", {"PutBlacklistWordsHere", "LikeTheseWords"}, "Add words you want blacklisted into the table, requires a comma at end.")
 local MaxWordLength = _V.ConfigLib.ConfigValue:new("MaxWordLength", "SpamFilter", 15, "Maximum length of words.")
 local CapsPercentage = _V.ConfigLib.ConfigValue:new("CapsPercentage", "SpamFilter", 70, "Maximum percentage of capitals per word.")
@@ -38,7 +34,7 @@ local function WordSimilar(WordA, WordB)
 	return false
 end
 
-local function PlayerSay(Player, Message, TeamChat)
+hook.Add("PlayerSay", "PlayerTalk", function(Player, Message, TeamChat)
 	if string.StartWith(Message, "!") then return end
 	local Return = Message
 	local BlacklistTable = Blacklist:Get()
@@ -88,10 +84,4 @@ local function PlayerSay(Player, Message, TeamChat)
 		return ""
 	end
 	return Return
-end
-
-Module.Hooks = {
-	{Type = "PlayerSay", Run = PlayerSay}
-}
-
-vh.RegisterModule(Module)
+end)

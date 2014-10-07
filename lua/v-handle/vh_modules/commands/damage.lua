@@ -10,5 +10,7 @@ Command.Callback = function(Sender, Alias, Targets, Amount)
 		ply:TakeDamage(Amount, Sender, Sender)
 	end
 	
+	_V.CommandLib.SendCommandMessage(Sender, "damaged", Targets, "with _reset_ "..Amount.. " _white_ damage")
+	
 	return ""
 end

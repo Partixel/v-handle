@@ -14,5 +14,11 @@ Command.Callback = function(Sender, Alias, Targets)
 		end
 	end
 	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled god mode on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "" or "un").."godded", Targets, "")
+	end
+	
 	return ""
 end

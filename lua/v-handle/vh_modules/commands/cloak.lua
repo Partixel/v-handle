@@ -14,5 +14,11 @@ Command.Callback = function(Sender, Alias, Targets)
 		end
 	end
 	
+	if Toggle then
+		_V.CommandLib.SendCommandMessage(Sender, "toggled cloak on", Targets, "")
+	else
+		_V.CommandLib.SendCommandMessage(Sender, (Success and "" or "un").."cloaked", Targets, "")
+	end
+	
 	return ""
 end
