@@ -146,13 +146,13 @@ function Registry.Player:PLGetMicMuted()
 end
 
 hook.Add("PlayerSay", "PLChatMuted", function(Player, Message, TeamChat)
-	if Player and Player:GetChatMuted() then
+	if Player:PLGetChatMuted() then
 		return true
 	end
 end)
 
 hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
-	if Player:GetMicMuted() then
+	if Player:PLGetMicMuted() then
 		Player:SendLua("LocalPlayer():ConCommand(\"-voicerecord\")")
 	end
 end)
