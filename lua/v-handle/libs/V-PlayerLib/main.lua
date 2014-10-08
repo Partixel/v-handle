@@ -183,7 +183,7 @@ hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
 end)
 
 function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
-	_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = os.time(), BanLength = Length, Banner = Banner, Reason = Reason})
+	_V.DataLib.setData(SID, "PLBan", {Start = os.time(), BanLength = Length, Banner = Banner, Reason = Reason})
 	for a, b in ipairs(player.GetAll()) do
 		if b:SteamID() == SID then
 			b:Kick("\nYou have been banned by " .. Banner .. " for " .. Length .. " second(s):\n" .. Reason)
@@ -192,7 +192,7 @@ function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
 end
 
 function _V.PlayerLib.PLUpdateBan(SID)
-	local Data = _V.DataLib.getPlayerData(SID, "PLBan")
+	local Data = _V.DataLib.getData(SID, "PLBan")
 	if Data then
 		if Data.Start and Data.BanLength and Data.Reason then
 			if Data.Start + Data.BanLength <= os.time() then
