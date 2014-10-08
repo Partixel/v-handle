@@ -10,10 +10,10 @@ Command.Callback = function(Sender, Alias, Targets, Amount)
 		ply:SetHealth(Amount or ply:GetMaxHealth())
 	end
 	
-	if Amount or Amount == 100 then
+	if not Amount or Amount == 100 then
 		_V.CommandLib.SendCommandMessage(Sender, "healed", Targets, "")
 	else
-		_V.CommandLib.SendCommandMessage(Sender, "set the health of", Targets, "to _reset_ "..Amount)
+		_V.CommandLib.SendCommandMessage(Sender, "set the health of", Targets, "to _reset_ "..(Amount or 100))
 	end
 	
 	return ""
