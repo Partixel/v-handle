@@ -13,7 +13,7 @@ _V.DataLib.DataTable = {}
 
 if SERVER then
 	
-	util.AddNetworkString("DataLib-Update")
+	util.AddNetworkString("_V-DataLib-Update")
 	
 	hook.Add("PlayerInitialSpawn", "_V-DataLib-Initial", function(Player)
 		_V.DataLib.sendData(Player:SteamID())
