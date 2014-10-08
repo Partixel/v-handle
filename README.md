@@ -16,3 +16,8 @@ When typing a command keep these few tips in mind:
 ##Core Files
 ##Credits
 This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to handle serialising data<br>
+
+
+##Todo
+Readd concommand access to commands, along with a autocomplete for them
+Work on command argument formatting, Players argtype doesnt allow more then one player atm, also having two optional arguments makes the first one required, make it skip it if its optional
