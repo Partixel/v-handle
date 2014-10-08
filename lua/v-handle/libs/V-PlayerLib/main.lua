@@ -183,6 +183,7 @@ hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
 end)
 
 function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
+	print(Banner)
 	_V.DataLib.setData(SID, "PLBan", {Start = os.time(), BanLength = Length, Banner = Banner, Reason = Reason})
 	for a, b in ipairs(player.GetAll()) do
 		if b:SteamID() == SID then
