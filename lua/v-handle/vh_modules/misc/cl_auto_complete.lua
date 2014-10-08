@@ -32,7 +32,7 @@ hook.Add("ChatTextChanged", "DoAutoComplete", function(Text)
 				if #Alias >= AliasLength then
 					table.insert(Suggestions, {
 						name = Alias,
-						usage = "test" --Command:getUsage(Alias)
+						usage = Command:getUsage(Alias)
 					})
 				end
 			end
