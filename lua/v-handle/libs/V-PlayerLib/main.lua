@@ -126,7 +126,7 @@ function Registry.Player:ForceMoveable()
 	self:Freeze(false)
 end
 
-local PlrSetPos = Registry.Player.SetPos
+local PlrSetPos = Registry.Entity.SetPos
 
 function Registry.Player:SetPos(Pos)
 	self.PLLastPos = self:GetPos()
