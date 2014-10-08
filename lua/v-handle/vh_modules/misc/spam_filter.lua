@@ -3,11 +3,28 @@ local MaxWordLength = _V.ConfigLib.ConfigValue:new("MaxWordLength", "SpamFilter"
 local CapsPercentage = _V.ConfigLib.ConfigValue:new("CapsPercentage", "SpamFilter", 70, "Maximum percentage of capitals per word.")
 local CensorPercentage = _V.ConfigLib.ConfigValue:new("CensorPercentage", "SpamFilter", 70, "Maximum percentage of censoring per word.")
 local LetterDragging = _V.ConfigLib.ConfigValue:new("LetterDragging", "SpamFilter", 3, "Maximum letters in a row.")
-local AdvancedFiltering = _V.ConfigLib.ConfigValue:new("AdvancedFiltering", "SpamFilter", true, "Enable advanced filtering, checks for common letter changes to bypass filters, e.g using @ instead of a.")
+local AdvancedFiltering = _V.ConfigLib.ConfigValue:new("AdvancedFiltering", "SpamFilter", true, "Checks for common letter changes to bypass filters, e.g using @ instead of a.")
+local ExtremeFiltering = _V.ConfigLib.ConfigValue:new("ExtremeFiltering", "SpamFilter", true, "Checks for similarities in words that bypass filters, allows 1 difference per 4 letters compared to blacklisted words.")
 
 local CapitalLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
 local AdvancedFilters = {{"a", "@", "2"}, {"3", "#"}, {"s", "$", "4"}, {"5", "%"}, {"6", "^"}, {"7", "&"}, {"8", "*"}, {"9", "("}, {"0", ")"}, {"i", "1", "!", "|"}, {"o", "0"}, {"ate", "8"}, {"e", "3"}, {"l", "|"}}
+
+local function WordDifferences(WordA, WordB)
+	local Differences = 0
+	local ShortestWord = (#WordA < #WordB) and WordA or WordB
+	local LongestWord = (#WordA < #WordB) and WordB or WordA
+	if #ShortestWord ~= #LongestWord then
+		Differences = Differences + #LongestWord - #ShortestWord
+	end
+	local LongTable = string.ToTable(LongestWord)
+	for i, v in pairs(string.ToTable(ShortestWord)) do
+		if v ~= LongTable[i] then
+			Differences = Differences + 1
+		end
+	end
+	return Differences
+end
 
 local function WordSimilar(WordA, WordB)
 	local WordA = string.lower(WordA)
@@ -31,10 +48,16 @@ local function WordSimilar(WordA, WordB)
 			end
 		end
 	end
+	if ExtremeFiltering:Get() then
+		local Differences = WordDifferences(WordA, WordB)
+		if Differences <= #WordA/4 then
+			return true
+		end
+	end
 	return false
 end
 
-hook.Add("PlayerSay", "PlayerTalk", function(Player, Message, TeamChat)
+function PlayerTalk(Player, Message, TeamChat)
 	if string.StartWith(Message, "!") then return end
 	local Return = Message
 	local BlacklistTable = Blacklist:Get()
@@ -42,8 +65,7 @@ hook.Add("PlayerSay", "PlayerTalk", function(Player, Message, TeamChat)
 	local TotalCensored = 0
 	for i, word in pairs(Explode) do
 		if string.len(word) > MaxWordLength:Get() then
-			Return = string.Replace(Return, word, "****")
-			TotalCensored = TotalCensored + string.len(word)
+			Return = string.Replace(Return, word, string.sub(word, 1, MaxWordLength:Get() - 2).."..")
 		else
 			local Caps = 0
 			local Repeats = 0
@@ -80,8 +102,9 @@ hook.Add("PlayerSay", "PlayerTalk", function(Player, Message, TeamChat)
 	end
 	local Percent = math.Round((TotalCensored / string.len(Message)) * 100);
 	if Percent >= CensorPercentage:Get() then
-		WarnPlayer(Player)
 		return ""
 	end
 	return Return
-end)
+end
+
+hook.Add("PlayerSay", "PlayerTalk", PlayerTalk)
