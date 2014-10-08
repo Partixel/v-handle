@@ -39,7 +39,7 @@ if SERVER then
 	function _V.DataLib.sendData(Container)
 		local Player = _V.DataLib.PlayerFromSID(Container)
 		if Player then
-			local Data = Player:getDataTable()
+			local Data = _V.DataLib.getDataTable(Player:SteamID())
 			net.Start("_V-DataLib-Update")
 				net.WriteTable(Data)
 			net.Send(Player)

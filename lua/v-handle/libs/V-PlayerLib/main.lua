@@ -192,7 +192,7 @@ function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
 end
 
 function _V.PlayerLib.PLUpdateBan(SID)
-	local Data = _V.PlayerDataLib.getPlayerData(SID, "PLBan")
+	local Data = _V.DataLib.getPlayerData(SID, "PLBan")
 	if Data then
 		if Data.Start and Data.BanLength and Data.Reason then
 			if Data.Start + Data.BanLength <= os.time() then
@@ -210,7 +210,7 @@ function _V.PlayerLib.PLUpdateBan(SID)
 end
 
 function _V.PlayerLib.PLEditBan(SID, Length, Banner, Reason)
-	local Data = _V.PlayerDataLib.getPlayerData(SID, "PLBan")
+	local Data = _V.DataLib.getData(SID, "PLBan")
 	if Data then
 		local Start = Data.Start
 		if Start + Length <= os.time() then
@@ -219,14 +219,14 @@ function _V.PlayerLib.PLEditBan(SID, Length, Banner, Reason)
 		else
 			local Edits = Data.Edits or {}
 			table.insert(Edits, Banner)
-			_V.PlayerDataLib.setPlayerData(SID, "PLBan", {Start = Start, Banner = Data.Banner, Edits = Edits, BanLength = Length, Reason = Reason})
+			_V.DataLib.setData(SID, "PLBan", {Start = Start, Banner = Data.Banner, Edits = Edits, BanLength = Length, Reason = Reason})
 			return false
 		end
 	end
 end
 
 function _V.PlayerLib.PLUnBan(SID)
-	_V.PlayerDataLib.setPlayerData(SID, "PLBan", nil)
+	_V.DataLib.setData(SID, "PLBan", nil)
 end
 
 function Registry.Player:PLBan(Length, Banner, Reason)
