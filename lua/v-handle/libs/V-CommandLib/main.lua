@@ -4,6 +4,7 @@ _V.CommandLib = {}
 
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
+_V.CommandLib.TimeEnds = {S = 1, M = 60, H = 3600, D = 86400, W = 604800}
 
 function _V.CommandLib.FormatList(List)
 	for i, v in ipairs(List) do
@@ -127,7 +128,7 @@ _V.CommandLib.ArgTypes = {
 			return nil, "No targetable player was found!"
 		end
 		return Player
-	end, Name = "Player", requireTarget = true}, -- A player ( If canTarget then the sender must be able to target the player )
+	end, Name = "Player", requireTarget = true}, -- A player ( If requireTarget then the sender must be able to target the player )
 	Players = {Parser = function(self, Args, Sender)
 		local Players = {}
 		if Args[1] == "*" then
@@ -146,6 +147,9 @@ _V.CommandLib.ArgTypes = {
 					table.insert(Players, b)
 				end
 			end
+			table.remove(Args, 1)
+		elseif Args[1] == "#" then
+			table.insert(Players, player.GetAll()[math.random(1, #player.GetAll())])
 			table.remove(Args, 1)
 		else
 			Players = {_V.CommandLib.PlayerFromString(Args[1])}
@@ -169,7 +173,7 @@ _V.CommandLib.ArgTypes = {
 		end
 		
 		return Targets
-	end, Name = "Players", requireTarget = true}, -- A table of players ( If canTarget then the sender must be able to target the players )
+	end, Name = "Players", requireTarget = true}, -- A table of players ( If requireTarget then the sender must be able to target the players )
 	SteamID = {Parser = function(self, Args, Sender)
 		local String = Args[1]
 		table.remove(Args, 1)
@@ -221,6 +225,14 @@ _V.CommandLib.ArgTypes = {
 		end
 		return nil, "No boolean found!"
 	end, Name = "Boolean"}, -- Check if the string is contained in either the Yes or No table
+	Time = {Parser = function(self, Args)
+		local String = Args[1]
+		table.remove(Args, 1)
+		if table.HasValue(table.GetKeys(_V.CommandLib.TimeEnds), string.sub(String, #String, #String)) then
+			return tonumber(string.sub(String, 1, #String - 1)) * _V.CommandLib.TimeEnds[string.sub(String, #String, #String)], "No time found!"
+		end
+		return nil, "No time found!"
+	end, Name = "Time"}, -- A time value, formatted as Number-TimeFrame, e.g 2D, 20M
 }
 
 -- Command handling --
