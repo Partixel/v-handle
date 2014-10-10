@@ -88,6 +88,12 @@ hook.Add("CanDrive", "PLLock_CanDrive", function(Player, Trace, Tool)
 	end
 end)
 
+hook.Add("PlayerBindPress", "PLLock_BindPress", function(Player, Bind, Pressed)
+	if Player.PLLocked then
+		return true
+	end
+end)
+
 local PlrLock = Registry.Player.Lock
 local PlrUnLock = Registry.Player.UnLock
 
@@ -182,8 +188,15 @@ hook.Add("PlayerStartVoice", "PLMicMuted", function(Player)
 	end
 end)
 
+hook.Add("PlayerInitialSpawn", "PlayerNick", function(Player)
+	Player:setPlayerData("SavedNick", Player:Nick())
+end)
+
+hook.Add("PlayerDisconnected", "PlayerNick", function(Player)
+	Player:setPlayerData("SavedNick", Player:Nick())
+end)
+
 function _V.PlayerLib.PLBan(SID, Length, Banner, Reason)
-	print(Banner)
 	_V.DataLib.setData(SID, "PLBan", {Start = os.time(), BanLength = Length, Banner = Banner, Reason = Reason})
 	for a, b in ipairs(player.GetAll()) do
 		if b:SteamID() == SID then
@@ -246,5 +259,5 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 	end
 	
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
-	return false, "You have been banned by " .. Data.Banner .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason
+	return false, "You have been banned by " .. Data.BannerN .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason
 end)

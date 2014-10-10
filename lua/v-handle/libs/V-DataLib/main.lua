@@ -94,6 +94,7 @@ function _V.DataLib.PlayerFromSID(String)
 end
 
 function _V.DataLib.getData(Container, Key)
+	print(Container, Key)
 	local Data = _V.DataLib.getDataTable(Container)
 	return Data[Key]
 end

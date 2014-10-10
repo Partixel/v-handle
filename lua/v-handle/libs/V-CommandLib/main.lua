@@ -24,6 +24,8 @@ function _V.CommandLib.FormatPlayer(Caller, Receiver, Player)
 		return "Themselves"
 	elseif Receiver == Player then
 		return "You"
+	elseif type(Player) == "string" then
+		return _V.DataLib.getData(Player, "SavedNick") or Player
 	else
 		return Player:Nick()
 	end
@@ -46,9 +48,9 @@ function _V.CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlaye
 		local NewPlayers = _V.CommandLib.PlayersToString(Caller, Player, Players)
 		if ExtraPlayers then
 			local NewExtraPlayers = _V.CommandLib.PlayersToString(Caller, Player, ExtraPlayers)
-			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers.." _reset_ "..NewExtraPlayers, Player)
+			--vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers.." _reset_ "..NewExtraPlayers, Player)
 		else
-			vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers, Player)
+			--vh.ChatUtil.SendMessage("_lime_ "..NewCaller.." _white_ "..PrePlayers.." _reset_ "..NewPlayers.." _white_ "..PostPlayers, Player)
 		end
 	end
 end
@@ -246,6 +248,7 @@ _V.CommandLib.Command = {
 	Category = "", -- The category to list this command under
 	Desc = "", -- Brief description of the command
 	Alias = {}, -- A list of aliases the command uses
+	ConAlias = {}, -- A list of concommand aliases the command uses
 	Args = {}, -- A list of arguements the command requires
 }
 
@@ -266,6 +269,18 @@ function _V.CommandLib.Command:addAlias(...)
 	for a, b in ipairs({...}) do
 		if not table.HasValue(self.Alias, b) then
 			table.insert(self.Alias, b)
+		end
+	end
+	
+	return self
+end
+
+function _V.CommandLib.Command:addConAlias(...)
+	-- Adds the specified concommand alias ( or aliases if multiple are supplied ) to the command
+	
+	for a, b in ipairs({...}) do
+		if not table.HasValue(self.ConAlias, b) then
+			table.insert(self.ConAlias, b)
 		end
 	end
 	
@@ -380,18 +395,33 @@ function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	return Object
 end
 
-function _V.CommandLib.PlayerSay(Sender, Message, teamChat)
-	local Args = string.Explode(" ", Message)
+function _V.CommandLib.PlayerSay(Sender, Message, teamChat, Command)
+	local Args = nil
+	if type(Message) == "table" then
+		Args = Message
+	else
+		Args = string.Explode(" ", Message)
+	end
+	
 	local Alias = string.lower(Args[1])
 	table.remove(Args, 1)
 	
 	for a, b in ipairs(_V.CommandLib.Commands) do
 		local Found = false
 		
-		for a, b in ipairs(b.Alias) do
-			if Alias == string.lower(b) then
-				Found = true
-				break
+		if Command then
+			for a, b in ipairs(b.ConAlias) do
+				if Alias == string.lower(b) then
+					Found = true
+					break
+				end
+			end
+		else
+			for a, b in ipairs(b.Alias) do
+				if Alias == string.lower(b) then
+					Found = true
+					break
+				end
 			end
 		end
 		
@@ -402,3 +432,30 @@ function _V.CommandLib.PlayerSay(Sender, Message, teamChat)
 end
 
 hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
+
+concommand.Add("vh", function(Player, Command, Args)
+	if #Args == 0 then return end
+	
+	if SERVER then
+		local Outcome = _V.CommandLib.PlayerSay(Player, Args, false, true)
+		if Outcome and Outcome != "" then
+			print(Outcome)
+		end
+	else
+		net.Start("VH_ClientCCmd")
+			net.WriteString(von.serialize({Player = Player, Args = Args}))
+		net.SendToServer()
+	end
+end)
+
+if SERVER then
+	util.AddNetworkString("VH_ClientCCmd")
+	
+	net.Receive( "VH_ClientCCmd", function( Length )
+		local Vars = von.deserialize(net.ReadString())
+		local Outcome = _V.CommandLib.PlayerSay(Vars.Player, Vars.Args, false, true)
+		if Outcome and Outcome != "" then
+			--vh.ChatUtil.SendMessage(Outcome, Vars.Player)
+		end
+	end)
+end
