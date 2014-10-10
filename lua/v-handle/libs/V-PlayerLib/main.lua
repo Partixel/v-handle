@@ -259,5 +259,8 @@ hook.Add("CheckPassword", "PLBan", function(SID, IP, svPass, clPass, Name)
 	end
 	
 	local TimeLeft = (Data.Start + Data.BanLength) - os.time()
+	
+	hook.Run("PLBan_Joining", Data)
+	
 	return false, "You have been banned by " .. Data.BannerN .. " for " .. TimeLeft .. " second(s):\n" .. Data.Reason
 end)
