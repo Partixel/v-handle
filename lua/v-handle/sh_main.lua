@@ -4,15 +4,12 @@ _V.FileLib.IncludeDir("external")
 -- Load libs --
 _V.FileLib.IncludeDir("libs")
 
--- Loading core files --
-_V.FileLib.IncludeDir("vh_core")
-
 _V.LogLib.Log("Hia", _V.LogLib.Type.SEVERE)
 _V.LogLib.Log("Hia", _V.LogLib.Type.WARNING)
 _V.LogLib.Log("Hia", _V.LogLib.Type.INFO)
 _V.LogLib.Log("Hia", _V.LogLib.Type.DEBUG)
 _V.LogLib.Log("Hia", _V.LogLib.Type.CONFIG)
-vh.ConsoleMessage("_lcore_")
+--vh.ConsoleMessage("_lcore_")
 
 hook.Run( "_V-PreModule" )
 
@@ -22,7 +19,7 @@ vh.Modules = {}
 
 function vh.RegisterModule( Module )
 	if Module.Disabled then
-		vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled")
+		--vh.ConsoleMessage("Module _red_ " .. Module.Name .. " _white_ is _red_ disabled")
 		return
 	end
 	for a, b in pairs (vh.Modules) do
@@ -58,10 +55,10 @@ function vh.RegisterModule( Module )
 	end
 	if Module["PrecacheStrings"] then
 		for a, b in pairs(Module.PrecacheStrings) do
-			vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(string.Explode(" ", b))
+			--vh.ChatUtil.Precached[a] = vh.ChatUtil.ParseColors(string.Explode(" ", b))
 		end
 	end
-	vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
+	--vh.ConsoleMessage("Loaded _lime_ " .. Module.Name .. " _white_ as a Module")
 end
 
 _V.FileLib.IncludeDir("vh_modules")
