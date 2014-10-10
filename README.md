@@ -2,22 +2,11 @@
 This project aims at making a new gmod moderation addon that features simplistic addon systems and a broad range of applications
 
 **DEVELOPERS** <br>
-When editting or creating new content for this project please avoid changing any of the _main.lua files, autorun/v-handle.lua file or any of the files in the core folder ( You may however add files to the core folder if it needs to be loaded before the modules )
+When making any additions or changes to this project please avoid directly editting any of the libraries, externals or the sh_main.lua so that any code your write remains compatable. If you want something added or changed please leave a pull request here and we'll sort it.
 
-If you want something changed within the aforementioned files please make a pull request and I'll look into it
 ##Commands
-When typing a command keep these few tips in mind:
-* You do not need to type the players full name
-* Typing a players steam ID works too
-* if you want to target several players put / either side and seperate the names/ids with commas (NOT SPACES) e.g. /Partixel,Code/
-
 ##Modules
 ##Framework
 ##Core Files
 ##Credits
 This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to handle serialising data<br>
-
-
-##Todo
-Readd concommand access to commands, along with a autocomplete for them
-Work on command argument formatting, Players argtype doesnt allow more then one player atm, also having two optional arguments makes the first one required, make it skip it if its optional
