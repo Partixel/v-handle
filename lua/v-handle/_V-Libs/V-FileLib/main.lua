@@ -55,3 +55,15 @@ function _V.FileLib.IncludeDir(Dir)
 		_V.FileLib.IncludeDir(Dir .. "/" .. b)
 	end
 end
+
+function _V.FileLib.AddResourceDir(Dir)
+	local Files, Dirs = file.Find("v-handle/" .. Dir .. "/*", "LUA")
+
+	for a, b in ipairs(Files) do
+		resource.AddFile(Dir .. "/" .. b)
+	end
+
+	for a, b in ipairs(Dirs) do
+		_V.FileLib.AddResourceDir(Dir .. "/" .. b)
+	end
+end
