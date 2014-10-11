@@ -206,8 +206,6 @@ function _V.ConfigLib.Get(Key, ConKey, Default, ConfigValue)
 	end
 end
 
-hook.Run( "_V-PostConfig" )
-
 hook.Add( "_V-PostModule", "_V-ConfigInitialisation", function( )
 	for a, b in pairs(_V.ConfigLib.ConfigValues) do
 		b:Get()

@@ -2,6 +2,17 @@ _V = _V or {}
 
 _V.CommandLib = {}
 
+if not table.HasValue(_V.FileLib.Loaded, "_v-libs/v-hooklib.lua") then
+	if SERVER then
+		table.insert(_V.FileLib.Loaded, "_v-libs/v-hooklib.lua")
+		include("v-hooklib.lua")
+		AddCSLuaFile("v-hooklib.lua")
+	else
+		table.insert(_V.FileLib.Loaded, "_v-libs/v-hooklib.lua")
+		include("v-hooklib.lua")
+	end
+end
+
 _V.CommandLib.BoolTrue = {"true", "y", "yes", "1"}
 _V.CommandLib.BoolFalse = {"false", "n", "no", "0"}
 _V.CommandLib.TimeEnds = {S = 1, M = 60, H = 3600, D = 86400, W = 604800}
@@ -395,7 +406,7 @@ function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	return Object
 end
 
-function _V.CommandLib.PlayerSay(Sender, Message, teamChat, Command)
+function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Command)
 	local Args = nil
 	if type(Message) == "table" then
 		Args = Message
@@ -427,11 +438,16 @@ function _V.CommandLib.PlayerSay(Sender, Message, teamChat, Command)
 		
 		if not Found then continue end
 		
-		return b:preCall(Sender, Alias, Args, teamChat)
+		local Outcome = b:preCall(Sender, Alias, Args, teamChat)
+		if Outcome and Outcome == "" then
+			HookInfo.Disabled = true
+		else
+			HookInfo.ReturnValue = Outcome
+		end
 	end
 end
 
-hook.Add("PlayerSay", "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
+_V.HookLib.addHook("PlayerSay", _V.HookLib.HookPriority.Lowest, "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
 
 concommand.Add("vh", function(Player, Command, Args)
 	if #Args == 0 then return end

@@ -62,10 +62,3 @@ function _V.LogLib.Log(Message, Type)
 		return
 	end
 end
-
--- DEBUG MESSAGES
-
-_V.LogLib.Log(_V.LogLib.LogLocation:Get(), _V.LogLib.Type.CONFIG)
-_V.LogLib.Log(_V.LogLib.LogFile:Get(), _V.LogLib.Type.CONFIG)
-_V.LogLib.Log(_V.LogLib.MessageLevel:Get(), _V.LogLib.Type.CONFIG)
-_V.LogLib.Log(_V.LogLib.LogLevel:Get(), _V.LogLib.Type.CONFIG)

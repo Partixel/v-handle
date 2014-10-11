@@ -14,24 +14,25 @@ _V.HookLib.HookPriority = { -- Lowest is first, Highest is last -- If you are pl
 
 _V.HookLib.HookInfo = {
 	Disabled = false,
-	ReturnValue = nil,
-	Args = {}
+	ReturnValue = nil
 }
 
 _V.HookLib.Hooks = {}
 
-function _V.HookLib.runHook(HookType, Args)
+function _V.HookLib.runHook(HookType, ...)
 
 	if not _V.HookLib.Hooks[HookType] then return end
 	
 	local HookInfo = table.Copy(_V.HookLib.HookInfo)
-	HookInfo.Args = Args
 	
 	for a, b in pairs(_V.HookLib.HookPriority) do
-		for c, d in pairs(_V.HookLib.Hooks[HookType][b]) do
-			d(HookInfo)
-			if HookInfo.Disabled then break break end
+		if _V.HookLib.Hooks[HookType][b] then
+			for c, d in pairs(_V.HookLib.Hooks[HookType][b]) do
+				d(HookInfo, ...)
+				if HookInfo.Disabled then break end
+			end
 		end
+		if HookInfo.Disabled then break end
 	end
 	
 	return HookInfo.ReturnValue, HookInfo.Disabled
@@ -54,7 +55,7 @@ end
 local Registry = debug.getregistry()
 
 hook.Add("PlayerSay", "HookLib_PlayerSay", function(...)
-	local ReturnValue, Disabled = _V.HookLib.runHook("PlayerSay", {...})
+	local ReturnValue, Disabled = _V.HookLib.runHook("PlayerSay", ...)
 	if Disabled then
 		return ""
 	else

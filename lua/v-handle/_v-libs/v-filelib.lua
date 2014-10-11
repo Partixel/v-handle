@@ -8,24 +8,34 @@ _V.FileLib.Side = {
 	Shared = 2
 }
 
+_V.FileLib.Loaded = {"_v-libs/v-filelib.lua"}
+
 function _V.FileLib.IncludeFile(Location, Side)
 	local File = file.Find(Location, "LUA")
 	if File then
+		if table.HasValue(_V.FileLib.Loaded, Location) then
+			return
+		end
+		
 		if Side == _V.FileLib.Side.Client then
 			if SERVER then
 				AddCSLuaFile(Location)
 			else
+				table.insert(_V.FileLib.Loaded, Location)
 				include(Location)
 			end
 		elseif Side == _V.FileLib.Side.Server then
 			if SERVER then
+				table.insert(_V.FileLib.Loaded, Location)
 				include(Location)
 			end
 		elseif Side == _V.FileLib.Side.Shared then
 			if SERVER then
+				table.insert(_V.FileLib.Loaded, Location)
 				AddCSLuaFile(Location)
 				include(Location)
 			else
+				table.insert(_V.FileLib.Loaded, Location)
 				include(Location)
 			end
 		else
