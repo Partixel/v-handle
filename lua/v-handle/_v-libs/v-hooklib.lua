@@ -34,7 +34,7 @@ function _V.HookLib.runHook(HookType, Args)
 		end
 	end
 	
-	return HookInfo.ReturnValue
+	return HookInfo.ReturnValue, HookInfo.Disabled
 end
 
 function _V.HookLib.removeHook(HookType, Priority, Key)
@@ -49,5 +49,15 @@ function _V.HookLib.addHook(HookType, Priority, Key, Callback)
 	_V.HookLib.Hooks[HookType][Priority][Key] = Callback
 end
 
+-- Convert default hooks --
+
 local Registry = debug.getregistry()
 
+hook.Add("PlayerSay", "HookLib_PlayerSay", function(...)
+	local ReturnValue, Disabled = _V.HookLib.runHook("PlayerSay", {...})
+	if Disabled then
+		return ""
+	else
+		return ReturnValue
+	end
+end)
