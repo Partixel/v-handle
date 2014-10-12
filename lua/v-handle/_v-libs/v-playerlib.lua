@@ -1,12 +1,10 @@
-if CLIENT then return end
-
 _V = _V or {}
 
 _V.PlayerLib = {}
 
 local Registry = debug.getregistry()
 
--- Makes HasGodMode work client side -- 
+--[[ Makes HasGodMode work client side -- 
 
 local PlrGodEnable = Player.GodEnable
 local PlrGodDisable = Player.GodDisable
@@ -53,7 +51,7 @@ end
 
 function Registry.Player:PLPreventSuicide(State)
 	self.PLPreventSuicide = State
-end
+end]]
 
 function Registry.Player:PLGetPreventSuicide()
 	return self.PL.PreventSuicide or false
