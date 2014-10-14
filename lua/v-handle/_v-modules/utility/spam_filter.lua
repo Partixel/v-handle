@@ -1,11 +1,3 @@
-local Blacklist = _V.ConfigLib.ConfigValue:new("ChatBlacklist", "SpamFilter", {"PutBlacklistWordsHere", "LikeTheseWords"}, "Add words you want blacklisted into the table, requires a comma at end.")
-local MaxWordLength = _V.ConfigLib.ConfigValue:new("MaxWordLength", "SpamFilter", 15, "Maximum length of words.")
-local CapsPercentage = _V.ConfigLib.ConfigValue:new("CapsPercentage", "SpamFilter", 70, "Maximum percentage of capitals per word.")
-local CensorPercentage = _V.ConfigLib.ConfigValue:new("CensorPercentage", "SpamFilter", 70, "Maximum percentage of censoring per word.")
-local LetterDragging = _V.ConfigLib.ConfigValue:new("LetterDragging", "SpamFilter", 3, "Maximum letters in a row.")
-local AdvancedFiltering = _V.ConfigLib.ConfigValue:new("AdvancedFiltering", "SpamFilter", true, "Checks for common letter changes to bypass filters, e.g using @ instead of a.")
-local ExtremeFiltering = _V.ConfigLib.ConfigValue:new("ExtremeFiltering", "SpamFilter", true, "Checks for similarities in words that bypass filters, allows 1 difference per 4 letters compared to blacklisted words.")
-
 local CapitalLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
 local AdvancedFilters = {{"a", "@", "2"}, {"3", "#"}, {"s", "$", "4"}, {"5", "%"}, {"6", "^"}, {"7", "&"}, {"8", "*"}, {"9", "("}, {"0", ")"}, {"i", "1", "!", "|"}, {"o", "0"}, {"ate", "8"}, {"e", "3"}, {"l", "|"}}
@@ -32,7 +24,7 @@ local function WordSimilar(WordA, WordB)
 	if WordA == WordB then
 		return true
 	end
-	if AdvancedFiltering:Get() then
+	if _V.Config.SpamFilter.AdvancedFiltering then
 		if string.len(WordA) == string.len(WordB) then
 			local NewWordA = WordA
 			local NewWordB = WordB
@@ -48,7 +40,7 @@ local function WordSimilar(WordA, WordB)
 			end
 		end
 	end
-	if ExtremeFiltering:Get() then
+	if _V.Config.SpamFilter.ExtremeFiltering then
 		local Differences = WordDifferences(WordA, WordB)
 		if Differences <= #WordA/4 then
 			return true
@@ -60,12 +52,12 @@ end
 function PlayerTalk(Player, Message, TeamChat)
 	if string.StartWith(Message, "!") then return end
 	local Return = Message
-	local BlacklistTable = Blacklist:Get()
+	local BlacklistTable = _V.Config.SpamFilter.Blacklist
 	local Explode = string.Explode(" ", Return)
 	local TotalCensored = 0
 	for i, word in pairs(Explode) do
-		if string.len(word) > MaxWordLength:Get() then
-			Return = string.Replace(Return, word, string.sub(word, 1, MaxWordLength:Get() - 2).."..")
+		if string.len(word) > _V.Config.SpamFilter.MaxWordLength then
+			Return = string.Replace(Return, word, string.sub(word, 1, _V.Config.SpamFilter.MaxWordLength - 2).."..")
 		else
 			local Caps = 0
 			local Repeats = 0
@@ -77,7 +69,7 @@ function PlayerTalk(Player, Message, TeamChat)
 				end
 				if v == LastLetter then
 					Repeats = Repeats + 1
-					if Repeats < LetterDragging:Get() then
+					if Repeats < _V.Config.SpamFilter.LetterDragging then
 						NewWord = NewWord..v
 					end
 				else
@@ -89,7 +81,7 @@ function PlayerTalk(Player, Message, TeamChat)
 			Return = string.Replace(Return, word, NewWord)
 			
 			local Percent = math.Round((Caps / string.len(word)) * 100)
-			if Percent >= CapsPercentage:Get() and string.len(word) > 2 then
+			if Percent >= _V.Config.SpamFilter.CapsPercentage and string.len(word) > 2 then
 				Return = string.Replace(Return, word, string.lower(word))
 			end
 			for _, v in pairs(BlacklistTable) do
@@ -101,10 +93,10 @@ function PlayerTalk(Player, Message, TeamChat)
 		end
 	end
 	local Percent = math.Round((TotalCensored / string.len(Message)) * 100);
-	if Percent >= CensorPercentage:Get() then
+	if Percent >= _V.Config.SpamFilter.CensorPercentage then
 		return ""
 	end
 	return Return
 end
 
-hook.Add("PlayerSay", "PlayerTalk", PlayerTalk)
+_V.HookLib.addHook("PlayerSay", _V.HookLib.HookPriority.Normal, "VH-SpamFilter", PlayerTalk)

@@ -490,7 +490,7 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Con)
 	end
 end
 
-_V.HookLib.addHook("PlayerSay", _V.HookLib.HookPriority.Lowest, "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
+_V.HookLib.addHook("PlayerSay", _V.HookLib.HookPriority.Normal, "_V-CommandLib-PlayerSay", _V.CommandLib.PlayerSay)
 
 concommand.Add("vh", function(Player, Command, Args)
 	if #Args == 0 then return end

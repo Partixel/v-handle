@@ -1,8 +1,11 @@
--- Add resources --
+--- Add resources --
 _V.FileLib.AddResourceDir("materials/vhandle/")
 
 -- Loading external files --
 _V.FileLib.IncludeDir("_v-external")
+
+-- Load configs --
+_V.FileLib.IncludeDir("_v-config")
 
 -- Load libs --
 _V.FileLib.IncludeDir("_v-libs")

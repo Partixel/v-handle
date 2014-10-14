@@ -6,7 +6,7 @@ if SERVER then
 else
 	net.Receive("vh-clearragdolls", function(Plr, Length)
 		game.RemoveRagdolls()
-	end
+	end)
 end
 
 Command.Callback = function(Sender, Alias, Targets)
