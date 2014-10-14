@@ -1,11 +1,9 @@
 local Command = _V.CommandLib.Command:new("Lock", _V.CommandLib.UserTypes.Admin, "Lock or unlock the player(s).", "")
-Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
-Command:addAlias("!lock", "!unlock", "!tlock")
-Command:addConAlias("lock", "unlock", "tlock")
+Command:addArg(_V.CommandLib.ArgTypes.Players, {required = true})
+Command:addAlias({Prefix = "!", Alias = {"lock", "unlock", "tlock"}})
 
 Command.Callback = function(Sender, Alias, Targets)
-	local Targets = Targets or {Sender}
-	local Success, Toggle = _V.CommandLib.DoToggleableCommand(Alias, {"!lock", "lock"}, {"!unlock", "unlock"}, {"!tlock", "tlock"})
+	local Success, Toggle = _V.CommandLib.DoToggleableCommand(Alias, {"lock"}, {"unlock"}, {"tlock"})
 	
 	for _, ply in ipairs(Targets) do
 		if Toggle then

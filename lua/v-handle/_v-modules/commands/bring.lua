@@ -4,7 +4,7 @@ Command:addAlias({Prefix = "!", Alias = {"bring", "bringfreeze"}})
 
 Command.Callback = function(Sender, Alias, Targets)
 	for _, ply in ipairs(Targets) do
-		ply:Teleport(Sender)
+		ply:PLForceTeleport(Sender)
 		if Alias == "bringfreeze" then
 			ply:PLLock(true)
 		end

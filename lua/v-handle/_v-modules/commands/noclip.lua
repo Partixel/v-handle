@@ -1,11 +1,9 @@
 local Command = _V.CommandLib.Command:new("Noclip", _V.CommandLib.UserTypes.Admin, "Noclip or clip the player(s).", "")
-Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
-Command:addAlias("!noclip", "!clip", "!tnoclip")
-Command:addConAlias("noclip", "clip", "tnoclip")
+Command:addArg(_V.CommandLib.ArgTypes.Players, {required = true})
+Command:addAlias({Prefix = "!", Alias = {"noclip", "clip", "tnoclip"}})
 
 Command.Callback = function(Sender, Alias, Targets)
-	local Targets = Targets or {Sender}
-	local Success, Toggle = _V.CommandLib.DoToggleableCommand(Alias, {"!noclip", "noclip"}, {"!clip", "clip"}, {"!tnoclip", "tnoclip"})
+	local Success, Toggle = _V.CommandLib.DoToggleableCommand(Alias, {"noclip"}, {"clip"}, {"tnoclip"})
 	
 	for _, ply in ipairs(Targets) do
 		if Toggle then

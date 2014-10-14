@@ -3,7 +3,7 @@ Command:addArg(_V.CommandLib.ArgTypes.Player, {required = true, notSelf = true})
 Command:addAlias({Prefix = "!", Alias = {"goto", "gotofreeze"}})
 
 Command.Callback = function(Sender, Alias, Target)
-	Sender:Teleport(Target)
+	Sender:PLForceTeleport(Target)
 	if Alias == "gotofreeze" then
 		Target:PLLock(true)
 	end
