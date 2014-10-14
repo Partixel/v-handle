@@ -47,11 +47,11 @@ function Registry.Player:PLGod(State)
 	else
 		self:GodDisable()
 	end
-end
+end]]
 
 function Registry.Player:PLPreventSuicide(State)
 	self.PLPreventSuicide = State
-end]]
+end
 
 function Registry.Player:PLGetPreventSuicide()
 	return self.PL.PreventSuicide or false

@@ -84,9 +84,12 @@ _V.MenuLib.VTab = {
 }
 
 function _V.MenuLib.VTab:new(Name, RenderCall, Colour, Icon, Position)
-	local Object = {Name = Name, RenderCall = RenderCall, Colour = Colour, Icon = Icon, Position = Position}
-	setmetatable(Object, self)
-	self.__index = self
+	local Object = table.Copy(self)
+	Object.Name = Name
+	Object.RenderCall = RenderCall
+	Object.Colour = Colour
+	Object.Icon = Icon
+	Object.Position = Position
 	_V.MenuLib.RegisterTab(Object)
 	return Object
 end
