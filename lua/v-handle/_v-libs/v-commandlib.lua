@@ -172,7 +172,7 @@ _V.CommandLib.ArgTypes = {
 			table.insert(Players, player.GetAll()[math.random(1, #player.GetAll())])
 			table.remove(Args, 1)
 		else
-			if (Args[1] == "" or Args[1] == nil) and self.notSelf then
+			if (Args[1] == "" or Args[1] == nil) and not self.notSelf then
 				Players = {Sender}
 			else
 				Players = {_V.CommandLib.PlayerFromString(Args[1])}
