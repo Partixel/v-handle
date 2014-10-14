@@ -77,6 +77,9 @@ function _V.CommandLib.DoToggleableCommand(Command, On, Off, Toggle)
 end
 
 function _V.CommandLib.PlayerFromSID(String)
+	if String == nil then
+		return nil
+	end
 	if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 		for a, b in pairs(player.GetAll()) do
 			if b:SteamID() == String then
@@ -88,6 +91,9 @@ function _V.CommandLib.PlayerFromSID(String)
 end
 
 function _V.CommandLib.PlayerFromIP(String)
+	if String == nil then
+		return nil
+	end
 	if string.match(String, "(%d+)%.(%d+)%.(%d+)%.(%d+)") then
 		for a, b in pairs(player.GetAll()) do
 			if b:IPAddress() == String then
@@ -99,6 +105,10 @@ function _V.CommandLib.PlayerFromIP(String)
 end
 
 function _V.CommandLib.PlayerFromString(String)
+	if String == nil then
+		return nil
+	end
+
 	local PlrSpec = _V.CommandLib.PlayerFromSID(String)
 	if PlrSpec then
 		return PlrSpec
@@ -132,7 +142,7 @@ _V.CommandLib.UserTypes = {
 _V.CommandLib.ArgTypes = {
 	Player = {Parser = function(self, Args, Sender)
 		local Player = nil
-		if (Args[1] == "" or Args[1] == nil) and not self.notSelf then
+		if (Args[1] == "" or Args[1] == nil) and not self.notSelf and type(Sender) == "Player" then
 			Player = Sender
 		else
 			Player = _V.CommandLib.PlayerFromString(Args[1])
@@ -172,7 +182,7 @@ _V.CommandLib.ArgTypes = {
 			table.insert(Players, player.GetAll()[math.random(1, #player.GetAll())])
 			table.remove(Args, 1)
 		else
-			if (Args[1] == "" or Args[1] == nil) and not self.notSelf then
+			if (Args[1] == "" or Args[1] == nil) and not self.notSelf and type(Sender) == "Player" then
 				Players = {Sender}
 			else
 				Players = {_V.CommandLib.PlayerFromString(Args[1])}
@@ -264,7 +274,7 @@ _V.CommandLib.ArgTypes = {
 
 -- Command handling --
 
-_V.CommandLib.Commands = {}
+_V.CommandLib.Commands = _V.CommandLib.Commands or {}
 
 _V.CommandLib.Command = {
 	Key = "", -- Key of the command ( Must be unique ) ( Recommended to be the name of the command )
@@ -310,20 +320,16 @@ function _V.CommandLib.Command:addArg(ArgType, CustomTable, Position)
 	end
 	
 	if Position then
-		if self.Args[Position] then
-			table.insert(self.Args[Position], Arg)
-		else
-			table.insert(self.Args, Position, {Arg})
-		end
+		table.insert(self.Args, Position, Arg)
 	else
-		table.insert(self.Args, {Arg})
+		table.insert(self.Args, Arg)
 	end
 	
 	return self, Arg
 end
 
 function _V.CommandLib.Command:canUse(Sender)
-	return self.UserType(Sender)
+	return type(Sender) == "Entity" or self.UserType(Sender)
 end
 
 function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
@@ -342,15 +348,9 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 	-- Convert the args into the correct types
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
-		local Arg, Reason = nil
-		for c, d in ipairs(b) do
-			Arg, Reason = d:Parser(Args, Sender)
-			if Arg then
-				break
-			end
-		end
+		local Arg, Reason = b:Parser(Args, Sender)
 		
-		if Arg != nil then
+		if Arg then
 			table.insert(FinalArgs, Arg)
 		elseif b.required then
 			Reason = Reason or "Argument " .. a .. " was incorrect!"
@@ -388,10 +388,10 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 		local Usage = Alias
 		
 		for a, b in ipairs(self.Args) do
-			if b[1].required then
-				Usage = Usage .. " " .. b[1].Name
+			if b.required then
+				Usage = Usage .. " " .. b.Name
 			else
-				Usage = Usage .. " [" .. b[1].Name .. "]"
+				Usage = Usage .. " [" .. b.Name .. "]"
 			end
 		end
 		
@@ -413,12 +413,14 @@ function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	return Object
 end
 
-function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Con)
-	local Args = nil
+function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
+	local Args = {}
 	if type(Message) == "table" then
 		Args = Message
-	else
+	elseif type(Message) == "string" then
 		Args = string.Explode(" ", Message)
+	else
+		_V.LogLib.Log("Incorrectly called CommandLib-PlayerSay - Message type", _V.LogLib.Type.WARNING)
 	end
 	
 	local Alias = string.lower(Args[1])
@@ -426,8 +428,7 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Con)
 	
 	for a, b in ipairs(_V.CommandLib.Commands) do
 		local Found = false
-		
-		if Con then
+		if Console then
 			for a, b in ipairs(b.Alias) do
 				if type(b) == "string" then
 					if Alias == string.lower(b) then
@@ -435,18 +436,16 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Con)
 						break
 					end
 				elseif type(b) == "table" then
-					if b.PlrOnly then continue end
+					if b.ChatOnly then continue end
 					if b.Prefix and b.Alias then
 						if type(b.Alias) == "table" then
 							for c, d in ipairs(b.Alias) do
-								if Alias == string.lower(b.Prefix .. d) then
-									Alias = string.sub(Alias, #b.Prefix + 1)
+								if Alias == string.lower(d) then
 									Found = true
 									break
 								end
 							end
-						elseif Alias == string.lower(b.Prefix .. b.Alias) then
-							Alias = string.sub(Alias, #b.Prefix + 1)
+						elseif Alias == string.lower(b.Alias) then
 							Found = true
 							break
 						end
@@ -496,9 +495,10 @@ concommand.Add("vh", function(Player, Command, Args)
 	if #Args == 0 then return end
 	
 	if SERVER then
-		local Outcome = _V.CommandLib.PlayerSay(Player, Args, false, true)
-		if Outcome and Outcome != "" then
-			print(Outcome)
+		local Outcome = {}
+		_V.CommandLib.PlayerSay(Outcome, Player, Args, false, true)
+		if Outcome and Outcome.ReturnValue then
+			print(Outcome.ReturnValue)
 		end
 	else
 		net.Start("VH_ClientCCmd")
@@ -512,9 +512,10 @@ if SERVER then
 	
 	net.Receive( "VH_ClientCCmd", function( Length )
 		local Vars = von.deserialize(net.ReadString())
-		local Outcome = _V.CommandLib.PlayerSay(Vars.Player, Vars.Args, false, true)
-		if Outcome and Outcome != "" then
-			--vh.ChatUtil.SendMessage(Outcome, Vars.Player)
+		local Outcome = {}
+		_V.CommandLib.PlayerSay(Outcome, Vars.Player, Vars.Args, false, true)
+		if Outcome and Outcome.ReturnValue then
+			print(Outcome.ReturnValue)
 		end
 	end)
 end
