@@ -1,11 +1,16 @@
 local Command = _V.CommandLib.Command:new("Clean", _V.CommandLib.UserTypes.Admin, "Commands for cleaning props, decals and freeze props.", "")
-Command:addAlias("!cleanup", "!cleardecals", "!freezeprops")
+Command:addAlias({Prefix = "!", Alias = {"cleanup", "cleardecals", "clearragdolls", "freezeprops"}})
 
 Command.Callback = function(Sender, Alias, Targets)
-	if Alias == "!cleanup" then
+	if Alias == "cleanup" then
 		game.CleanUpMap()
 		_V.CommandLib.SendCommandMessage(Sender, "cleaned up the map", {}, "")
-	elseif Alias == "!cleardecals" then
+	elseif Alias == "cleardecals" then
+		for _, Player in ipairs(player.GetAll()) do
+			Player:ConCommand("r_cleardecals")
+		end
+		_V.CommandLib.SendCommandMessage(Sender, "cleaned up all decals", {}, "")
+	elseif Alias == "clearragdolls" then -- COME BACK TO
 		for _, Player in ipairs(player.GetAll()) do
 			Player:ConCommand("r_cleardecals")
 		end

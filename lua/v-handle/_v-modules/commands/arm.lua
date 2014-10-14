@@ -1,6 +1,6 @@
 local Command = _V.CommandLib.Command:new("Arm", _V.CommandLib.UserTypes.Admin, "Gives the player(s) the default loadout.", "")
 Command:addArg(_V.CommandLib.ArgTypes.Players, {required = false})
-Command:addAlias("!arm")
+Command:addAlias({Prefix = "!", Alias = "arm"})
 
 Command.Callback = function(Sender, Alias, Targets)
 	local Targets = Targets or {Sender}

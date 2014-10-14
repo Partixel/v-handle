@@ -131,8 +131,14 @@ _V.CommandLib.UserTypes = {
 
 _V.CommandLib.ArgTypes = {
 	Player = {Parser = function(self, Args, Sender)
-		local Player = _V.CommandLib.PlayerFromString(Args[1])
-		table.remove(Args, 1)
+		local Player = nil
+		if (Args[1] == "" or Args[1] == nil) and not self.notSelf then
+			Player = Sender
+		else
+			Player = _V.CommandLib.PlayerFromString(Args[1])
+			table.remove(Args, 1)
+		end
+		
 		if Player == nil then
 			return nil, "No player was found!"
 		end
@@ -142,6 +148,7 @@ _V.CommandLib.ArgTypes = {
 		end
 		return Player
 	end, Name = "Player", requireTarget = true}, -- A player ( If requireTarget then the sender must be able to target the player )
+												 -- ( If notSelf then target must not be sender )
 	Players = {Parser = function(self, Args, Sender)
 		local Players = {}
 		if Args[1] == "*" then
@@ -165,13 +172,20 @@ _V.CommandLib.ArgTypes = {
 			table.insert(Players, player.GetAll()[math.random(1, #player.GetAll())])
 			table.remove(Args, 1)
 		else
-			Players = {_V.CommandLib.PlayerFromString(Args[1])}
-			table.remove(Args, 1)
+			if (Args[1] == "" or Args[1] == nil) and self.notSelf then
+				Players = {Sender}
+			else
+				Players = {_V.CommandLib.PlayerFromString(Args[1])}
+				table.remove(Args, 1)
+			end
 		end
 		
 		local Targets = {}
 		for a, b in ipairs(Players) do
 			if self.requireTarget and b.PLCanTarget and not b:PLCanTarget(Sender) then
+				continue
+			end
+			if self.notSelf and b == Sender then
 				continue
 			end
 			table.insert(Targets, b)
@@ -259,7 +273,6 @@ _V.CommandLib.Command = {
 	Category = "", -- The category to list this command under
 	Desc = "", -- Brief description of the command
 	Alias = {}, -- A list of aliases the command uses
-	ConAlias = {}, -- A list of concommand aliases the command uses
 	Args = {}, -- A list of arguements the command requires
 }
 
@@ -280,18 +293,6 @@ function _V.CommandLib.Command:addAlias(...)
 	for a, b in ipairs({...}) do
 		if not table.HasValue(self.Alias, b) then
 			table.insert(self.Alias, b)
-		end
-	end
-	
-	return self
-end
-
-function _V.CommandLib.Command:addConAlias(...)
-	-- Adds the specified concommand alias ( or aliases if multiple are supplied ) to the command
-	
-	for a, b in ipairs({...}) do
-		if not table.HasValue(self.ConAlias, b) then
-			table.insert(self.ConAlias, b)
 		end
 	end
 	
@@ -341,23 +342,19 @@ function _V.CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
 	-- Convert the args into the correct types
 	local FinalArgs = {}
 	for a, b in ipairs(self.Args) do
-		if Args[1] and string.lower(Args[1]) != "nil" then
-			local Arg, Reason = nil
-			for c, d in ipairs(b) do
-				Arg, Reason = d:Parser(Args, Sender)
-				if Arg then
-					break
-				end
+		local Arg, Reason = nil
+		for c, d in ipairs(b) do
+			Arg, Reason = d:Parser(Args, Sender)
+			if Arg then
+				break
 			end
-			
-			if Arg != nil then
-				table.insert(FinalArgs, Arg)
-			else
-				Reason = Reason or "Argument " .. a .. " was incorrect!"
-				return Reason .. "\nUsage: " .. self:getUsage()
-			end
+		end
+		
+		if Arg != nil then
+			table.insert(FinalArgs, Arg)
 		elseif b.required then
-			return "Argument " .. a .. " was missing!\nUsage: " .. self:getUsage()
+			Reason = Reason or "Argument " .. a .. " was incorrect!"
+			return Reason .. "\nUsage: " .. self:getUsage()
 		else
 			table.insert(FinalArgs, "nil")
 		end
@@ -378,6 +375,16 @@ function _V.CommandLib.Command:getUsage(Alias, ArgPos)
 		return self.Args[ArgPos][1]
 	else
 		local Alias = Alias or self.Alias[1]
+		if type(Alias) == "table" then
+			if Alias.Prefix and Alias.Alias then
+				if type(Alias.Alias) == "table" then
+					Alias = Alias.Alias[1]
+				else
+					Alias = Alias.Alias
+				end
+			end
+		end
+		
 		local Usage = Alias
 		
 		for a, b in ipairs(self.Args) do
@@ -406,7 +413,7 @@ function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	return Object
 end
 
-function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Command)
+function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Con)
 	local Args = nil
 	if type(Message) == "table" then
 		Args = Message
@@ -420,18 +427,54 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Command)
 	for a, b in ipairs(_V.CommandLib.Commands) do
 		local Found = false
 		
-		if Command then
-			for a, b in ipairs(b.ConAlias) do
-				if Alias == string.lower(b) then
-					Found = true
-					break
+		if Con then
+			for a, b in ipairs(b.Alias) do
+				if type(b) == "string" then
+					if Alias == string.lower(b) then
+						Found = true
+						break
+					end
+				elseif type(b) == "table" then
+					if b.PlrOnly then continue end
+					if b.Prefix and b.Alias then
+						if type(b.Alias) == "table" then
+							for c, d in ipairs(b.Alias) do
+								if Alias == string.lower(b.Prefix .. d) then
+									Alias = string.sub(Alias, #b.Prefix + 1)
+									Found = true
+									break
+								end
+							end
+						elseif Alias == string.lower(b.Prefix .. b.Alias) then
+							Alias = string.sub(Alias, #b.Prefix + 1)
+							Found = true
+							break
+						end
+					else
+						_V.LogLib.Log("Incorrectly setup command" .. b, _V.LogLib.Type.WARNING)
+					end
 				end
 			end
 		else
 			for a, b in ipairs(b.Alias) do
-				if Alias == string.lower(b) then
-					Found = true
-					break
+				if type(b) == "table" then
+					if b.Prefix and b.Alias then
+						if type(b.Alias) == "table" then
+							for c, d in ipairs(b.Alias) do
+								if Alias == string.lower(b.Prefix .. d) then
+									Alias = string.sub(Alias, #b.Prefix + 1)
+									Found = true
+									break
+								end
+							end
+						elseif Alias == string.lower(b.Prefix .. b.Alias) then
+							Alias = string.sub(Alias, #b.Prefix + 1)
+							Found = true
+							break
+						end
+					else
+						_V.LogLib.Log("Incorrectly setup command" .. b, _V.LogLib.Type.WARNING)
+					end
 				end
 			end
 		end
