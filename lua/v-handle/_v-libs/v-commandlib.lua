@@ -414,6 +414,11 @@ function _V.CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 end
 
 function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
+	if type(Sender) == "Entity" and self.noConsole then
+		HookInfo.ReturnValue = "Console cannot run this command"
+		return
+	end
+	
 	local Args = {}
 	if type(Message) == "table" then
 		Args = Message
@@ -485,6 +490,7 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
 			HookInfo.Disabled = true
 		else
 			HookInfo.ReturnValue = Outcome
+			return
 		end
 	end
 end
