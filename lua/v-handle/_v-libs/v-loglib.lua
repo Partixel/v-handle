@@ -1,4 +1,4 @@
-V-LogLib = {}
+V-LogLib = V-LogLib or {}
 
 V-LogLib.Type = {
 	INFO = 0, -- Used for informational messages
