@@ -490,7 +490,6 @@ function _V.CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
 			HookInfo.Disabled = true
 		else
 			HookInfo.ReturnValue = Outcome
-			return
 		end
 	end
 end
