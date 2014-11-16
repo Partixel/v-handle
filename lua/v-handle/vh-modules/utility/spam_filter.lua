@@ -82,7 +82,7 @@ end
 
 function PlayerTalk(HookInfo, Player, Message, TeamChat)
 	if string.StartWith(Message, "!") then return end
-	local Return = Message
+	local Return = string.Trim(Message)
 	local BlacklistTable = VH_SpamFilter.ChatBlacklist
 	local Explode = string.Explode(" ", Return)
 	local TotalCensored = 0
