@@ -1,16 +1,16 @@
 --- Add resources --
-_V.FileLib.AddResourceDir("materials/vhandle/")
+VH_FileLib.AddResourceDir("materials/v-handle/")
 
 -- Loading external files --
-_V.FileLib.IncludeDir("_v-external")
+VH_FileLib.IncludeDir("vh-external")
 
 -- Load configs --
-_V.FileLib.IncludeDir("_v-config")
+VH_FileLib.IncludeDir("vh-config")
 
 -- Load libs --
-_V.FileLib.IncludeDir("_v-libs")
+VH_FileLib.IncludeDir("vh-libs")
 
 -- Load modules --
-_V.FileLib.IncludeDir("_v-modules")
+VH_FileLib.IncludeDir("vh-modules")
 
-hook.Run("_V-PostModule")
+hook.Run("VH-PostModule")
