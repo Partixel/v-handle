@@ -2,50 +2,13 @@ VH_PlayerLib = {}
 
 local Registry = debug.getregistry()
 
---[[ Makes HasGodMode work client side -- 
-
-local PlrGodEnable = Player.GodEnable
-local PlrGodDisable = Player.GodDisable
-
-if SERVER then
-	util.AddNetworkString("PLPlayerGod")
-else
-	net.Receive("PLPlayerGod", function(Plr, Length)
-		local State = net.ReadBit()
-		local Entity = net.ReadEntity()
-		Entity.isGod = State
-	end)
-end
-
-function Registry.Player:GodEnable()
-	PlrGodEnable(self)
-	self.isGod = true
-	net.Start("PLPlayerGod")
-		net.WriteBit(true)
-		net.WriteEntity(self)
-	net.Broadcast()
-end
-
-function Registry.Player:GodDisable()
-	PlrGodDisable(self)
-	self.isGod = false
-	net.Start("PLPlayerGod")
-		net.WriteBit(false)
-		net.WriteEntity(self)
-	net.Broadcast()
-end
-
-function Registry.Player:HasGodMode()
-	return self.isGod
-end
-
 function Registry.Player:PLGod(State)
 	if State then
 		self:GodEnable()
 	else
 		self:GodDisable()
 	end
-end]]
+end
 
 function Registry.Player:PLPreventSuicide(State)
 	self.PLPreventSuicide = State
