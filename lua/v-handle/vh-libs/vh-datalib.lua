@@ -20,7 +20,7 @@ if SERVER then
 	function VH_DataLib.loadData()
 		local Data = file.Read(VH_DataLib.DataLocation .. "/VH-DataLib.txt")
 		if Data and Data != "" then
-			VH_DataLib.DataTable = von.deserialize(util.Decompress(Data))
+			RunStringEx(Data, "VH_DataLib")
 		end
 	end
 	
@@ -30,7 +30,11 @@ if SERVER then
 				VH_DataLib.DataTable[a] = nil
 			end
 		end
-		file.Write(VH_DataLib.DataLocation .. "/VH-DataLib.txt", util.Compress(von.serialize(VH_DataLib.DataTable)))
+		local DataString = ""
+		for a, b in pairs(VH_DataLib.DataTable) do
+			DataString = DataString .. table.ToString(b, "VH_DataLib.DataTable['" .. a .. "']", true) .. "\n"
+		end
+		file.Write(VH_DataLib.DataLocation .. "/VH-DataLib.txt", DataString)
 	end
 	
 	-- If the data belongs to a player, send it to them for use client-side

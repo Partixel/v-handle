@@ -1,9 +1,6 @@
 --- Add resources --
 VH_FileLib.AddResourceDir("materials/v-handle/")
 
--- Loading external files --
-VH_FileLib.IncludeDir("vh-external")
-
 -- Load configs --
 VH_FileLib.IncludeDir("vh-config")
 

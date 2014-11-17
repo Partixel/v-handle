@@ -8,5 +8,3 @@ When making any additions or changes to this project please avoid directly editt
 ##Modules
 ##Framework
 ##Core Files
-##Credits
-This project uses [vON](http://www.facepunch.com/showthread.php?t=1194008) to handle serialising data<br>
