@@ -10,8 +10,8 @@ function CreateHollowCircle(x, y, innerRadius, outerRadius, oldStartAngle, oldRo
 		angA = startAngle + i * mul
 		angB = angA + mul
 		if angB - startAngle > rotation then angB = startAngle + rotation end
-		sinA, cosA = math.sin(angA), math.cos(angA)
-		sinB, cosB = math.sin(angB), math.cos(angB)
+		local sinA, cosA = math.sin(angA), math.cos(angA)
+		local sinB, cosB = math.sin(angB), math.cos(angB)
 		verts[i + 1] = {
 			{ x = x + cosA * innerRadius, y = y + sinA * innerRadius },
 			{ x = x + cosA * outerRadius, y = y + sinA * outerRadius },

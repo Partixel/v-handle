@@ -1,19 +1,19 @@
-local Ranks = {
-	20 = "Diamond",
-	15 = "Gold",
-	10 = "Silver",
-	5 = "Bronze",
-	1 = "Copper"
+local DonatorRanks = {
+	Diamond = 20,
+	Gold = 15,
+	Silver = 10,
+	Bronze = 5,
+	Copper = 1
 }
 
 Registry = debug.getregistry()
 
 function Registry.Player:getDonatorRank()
 	local Amount = self:getDonatorAmount()
-	if Amount == nil then return "None" end
-	for i, v in pairs(Table) do
-		if i <= Amount then
-			return v
+	if Amount == 0 then return "None" end
+	for a, b in pairs(DonatorRanks) do
+		if Amount >= b then
+			return a
 		end
 	end
 end

@@ -16,7 +16,7 @@ function RenderCall(Frame, Table)
 				draw.SimpleText(i, "VHUIFontSmall", Table[i]:GetWide()/2, Table[i]:GetTall()/2 - 4, _V.MenuLib.GetSettings().Colors.Textw, 1, 1)
 			end
 			Table[i].DoClick = function()
-				CommandOpen = v
+				local CommandOpen = v
 				OpenCommandView(Frame, Table, v)
 			end
 			CurrentCommands = CurrentCommands + 1
