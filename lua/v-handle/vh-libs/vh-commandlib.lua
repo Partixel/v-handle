@@ -93,6 +93,14 @@ function VH_CommandLib.PlayerFromIP(String)
 	end
 end
 
+function VH_CommandLib.SIDFromString(String)
+	for a, b in pairs(VH_DataLib.DataTable) do
+		if b.SavedNick and string.find(string.lower(b.SavedNick), string.lower(String)) then
+			return a
+		end
+	end
+end
+
 function VH_CommandLib.PlayerFromString(String)
 	if String == nil then
 		return nil
@@ -112,7 +120,7 @@ function VH_CommandLib.PlayerFromString(String)
 	for a, b in ipairs(player.GetAll()) do
 		if string.lower(b:Nick()) == string.lower(String) then
 			return b
-		elseif string.sub(string.lower(b:Nick()), 1, string.len(String)) == string.lower(String) then
+		elseif string.find(string.lower(b:Nick()), string.lower(String)) then
 			table.insert(Found, b)
 		end
 	end
@@ -207,8 +215,10 @@ VH_CommandLib.ArgTypes = {
 			return String
 		else
 			local Player = VH_CommandLib.PlayerFromString(String)
-			if Player == nil then
-				return
+			if Player then
+				return Player:SteamID()
+			else
+				return VH_CommandLib.SIDFromString(String), "No Steam ID was found!"
 			end
 			return Player:SteamID()
 		end
@@ -403,7 +413,7 @@ function VH_CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 end
 
 function VH_CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
-	if type(Sender) == "Entity" and self.noConsole then
+	if Sender == nil and self.noConsole then
 		HookInfo.ReturnValue = "Console cannot run this command"
 		return
 	end
