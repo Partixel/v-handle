@@ -9,82 +9,98 @@ Registry = debug.getregistry()
 
 VH_DataLib.DataTable = {}
 
+function VH_DataLib.toString()
+	local DataString = ""
+	for a, b in pairs(VH_DataLib.DataTable) do
+		if b == nil then continue end
+		DataString = DataString .. table.ToString(b, "VH_DataLib.DataTable['" .. a .. "']", true) .. "\n"
+	end
+	return DataString
+end
+
+function VH_DataLib.fromString(String)
+	RunStringEx(String, "VH-DataLib")
+end
+
 if SERVER then
 	
 	util.AddNetworkString("VH-DataLib-Update")
+	util.AddNetworkString("VH-DataLib-Initial")
 	
-	hook.Add("PlayerInitialSpawn", "VH-DataLib-Initial", function(Player)
-		VH_DataLib.sendData(Player:SteamID())
+	hook.Add("PlayerInitialSpawn", "VH-DataLib-Initial", function(Plr)
+		net.Start("VH-DataLib-Initial")
+			net.WriteString(VH_DataLib.toString())
+		net.Send(Plr)
 	end)
 	
 	function VH_DataLib.loadData()
 		local Data = file.Read(VH_DataLib.DataLocation .. "/VH-DataLib.txt")
 		if Data and Data != "" then
-			RunStringEx(Data, "VH_DataLib")
+			VH_DataLib.fromString(Data)
 		end
 	end
 	
 	function VH_DataLib.saveData()
-		for a, b in pairs(VH_DataLib.DataTable) do
-			if b == {} then
-				VH_DataLib.DataTable[a] = nil
-			end
-		end
-		local DataString = ""
-		for a, b in pairs(VH_DataLib.DataTable) do
-			DataString = DataString .. table.ToString(b, "VH_DataLib.DataTable['" .. a .. "']", true) .. "\n"
-		end
-		file.Write(VH_DataLib.DataLocation .. "/VH-DataLib.txt", DataString)
+		file.Write(VH_DataLib.DataLocation .. "/VH-DataLib.txt", VH_DataLib.toString())
 	end
 	
-	-- If the data belongs to a player, send it to them for use client-side
-	function VH_DataLib.sendData(Container)
-		local Player = VH_DataLib.PlayerFromSID(Container)
-		if Player then
-			local Data = VH_DataLib.getDataTable(Player:SteamID())
-			net.Start("VH-DataLib-Update")
-				net.WriteTable(Data)
-			net.Send(Player)
-		end
-	end
-	
+	-- Will send changed data to clients
 	function VH_DataLib.setData(Container, Key, Value)
+		VH_DataLib.setServerData(Container, Key, Value)
+		local Data = table.ToString({Value})
+		Data = string.sub(Data, 2, string.len(Data) - 2)
+		if Data == "" then
+			Data = "nil"
+		end
+		net.Start("VH-DataLib-Update")
+			net.WriteString(Container)
+			net.WriteString(Key)
+			net.WriteString("VH_TempData = " .. Data)
+		net.Broadcast()
+	end
+	
+	-- Will not send changed data to clients
+	function VH_DataLib.setServerData(Container, Key, Value)
 		local Data = VH_DataLib.getDataTable(Container)
 		Data[Key] = Value
 		VH_DataLib.saveData()
-		VH_DataLib.sendData(Container)
+	end
+	
+	function Registry.Player:setServerPlayerData(Key, Value)
+		local Data = VH_DataLib.setServerData(self:SteamID(), Key, Value)
 	end
 
 	function Registry.Player:setPlayerData(Key, Value)
 		local Data = VH_DataLib.setData(self:SteamID(), Key, Value)
 	end
 	
-	-- Server stores all data
-	function VH_DataLib.getDataTable(Container)
-		local Data = VH_DataLib.DataTable[Container]
-		if Data == nil then
-			VH_DataLib.DataTable[Container] = {}
-			Data = VH_DataLib.DataTable[Container]
-		end
-		return Data
-	end
-	
 	VH_DataLib.loadData()
 	
 else
 	
-	-- Client only stores data related to the client
-	function VH_DataLib.getDataTable(Container)
-		return VH_DataLib.DataTable or {}
-	end
-	
 	net.Receive("VH-DataLib-Update", function(Length, Client)
-		local NewData = net.ReadTable()
-		if NewData then
-			VH_DataLib.DataTable = NewData
+		local Container = net.ReadString()
+		local Key = net.ReadString()
+		local Data = net.ReadString()
+		if Container and Key then
+			RunStringEx(Data, "VH-DataLib")
+			VH_DataLib.DataTable[Container] = VH_DataLib.DataTable[Container] or {}
+			VH_DataLib.DataTable[Container][Key] = VH_TempData
 		end
 	end)
 	
+	net.Receive("VH-DataLib-Initial", function(Length, Client)
+		local Data = net.ReadString()
+		if Data then
+			VH_DataLib.fromString(Data)
+		end
+	end)
+	
+end
+
+function VH_DataLib.getDataTable(Container)
+	local Data = VH_DataLib.DataTable[Container] or {}
+	return Data
 end
 
 function VH_DataLib.PlayerFromSID(String)
