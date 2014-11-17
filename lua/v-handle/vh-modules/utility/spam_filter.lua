@@ -99,7 +99,7 @@ function PlayerTalk(HookInfo, Player, Message, TeamChat)
 		local LastLetter = ""
 		local NewWord = ""
 		for _, v in pairs(string.ToTable(word)) do
-			if string.lower(v) == v then
+			if string.lower(v) ~= v then
 				Caps = Caps + 1
 			end
 			if v == LastLetter then
