@@ -38,8 +38,6 @@ VH_SpamFilter.MatchingChars = VH_SpamFilter.MatchingChars or {
 	{"ae", "Æ", "æ"}
 }
 
-local CapitalLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-
 local LastSaid = {}
 
 local function WordDifferences(WordA, WordB)
@@ -101,7 +99,7 @@ function PlayerTalk(HookInfo, Player, Message, TeamChat)
 		local LastLetter = ""
 		local NewWord = ""
 		for _, v in pairs(string.ToTable(word)) do
-			if table.HasValue(CapitalLetters, v) then
+			if string.lower(v) == v then
 				Caps = Caps + 1
 			end
 			if v == LastLetter then
