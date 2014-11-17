@@ -3,8 +3,8 @@ VH_SpamFilter = VH_SpamFilter or {}
 VH_SpamFilter.ChatBlacklist = {
 	"Retard",
 	"Faggot",
-	"Fag",
-	"Disabled"
+	"Fagget",
+	"Fag"
 }
 -- Add words you want blacklisted into the table, requires a comma at end
 VH_SpamFilter.MaxWordLength = 15
@@ -20,20 +20,36 @@ VH_SpamFilter.AdvancedFiltering = true
 VH_SpamFilter.SoftFiltering = true
 -- Checks for similarities in words that bypass filters, allows 1 difference per 4 letters compared to blacklisted words
 VH_SpamFilter.MatchingChars = {
-	{"a", "@", "2"},
-	{"3", "#"},
-	{"s", "5", "$", "4"},
-	{"5", "%"},
-	{"6", "^"},
-	{"7", "&"},
-	{"8", "*"},
-	{"9", "("},
-	{"0", ")"},
-	{"i", "1", "!", "|"},
-	{"o", "0"},
+	{"a", "@", "2", "ª", "À", "Á", "Â", "Ã", "Ä", "Å", "à", "á", "â", "ã", "ä", "å"},
+	{"b", "þ", "ß", "Þ"},
+	{"c", "¢", "©", "Ç", "ç"},
+	{"d", "Ð"},
+	{"e", "3", "€", "È", "É", "Ë", "Ê", "è", "é", "ê", "ë"},
+	{"f", "ƒ"},
+	{"g"},
+	{"h"},
+	{"i", "1", "!", "|", "¡", "Ì", "Í", "Î", "Ï", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
+	{"j"},
+	{"k"},
+	{"l", "|"},
+	{"m"},
+	{"n", "ñ", "Ñ"},
+	{"o", "0", "°", "º", "Ò", "Ó", "Ô", "Õ", "Ö", "Ø", "ò", "ó", "ô", "õ", "ö", "ø", "ð"},
+	{"p", "Þ"},
+	{"q", "¶"},
+	{"r"},
+	{"s", "Š", "š", "$", "5", "$"},
+	{"t", "†"},
+	{"u", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
+	{"v"},
+	{"w", "vv"},
+	{"x", "×"},
+	{"y", "ý", "ÿ", "Ÿ", "¥", "Ý"},
+	{"z", "Ž"},
 	{"ate", "8"},
-	{"e", "3"},
-	{"l", "|"}
+	{"tm", "™"},
+	{"oe", "Œ", "œ"},
+	{"ae", "Æ", "æ"}
 }
 -- Characters that may be used in place of other characters
 -- e.g. 1 instead of I

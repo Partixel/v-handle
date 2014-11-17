@@ -3,8 +3,8 @@ VH_SpamFilter = VH_SpamFilter or {}
 VH_SpamFilter.ChatBlacklist = VH_SpamFilter.ChatBlacklist or {
 	"Retard",
 	"Faggot",
-	"Fag",
-	"Disabled"
+	"Fagget",
+	"Fag"
 }
 VH_SpamFilter.MaxWordLength = VH_SpamFilter.MaxWordLength or 15
 VH_SpamFilter.CapsPercentage = VH_SpamFilter.CapsPercentage or 70
@@ -13,20 +13,36 @@ VH_SpamFilter.LetterDragging = VH_SpamFilter.LetterDragging or 3
 VH_SpamFilter.AdvancedFiltering = VH_SpamFilter.AdvancedFiltering or true
 VH_SpamFilter.SoftFiltering = VH_SpamFilter.SoftFiltering or true
 VH_SpamFilter.MatchingChars = VH_SpamFilter.MatchingChars or {
-	{"a", "@", "2"},
-	{"3", "#"},
-	{"s", "5", "$", "4"},
-	{"5", "%"},
-	{"6", "^"},
-	{"7", "&"},
-	{"8", "*"},
-	{"9", "("},
-	{"0", ")"},
-	{"i", "1", "!", "|"},
-	{"o", "0"},
+	{"a", "@", "2", "ª", "À", "Á", "Â", "Ã", "Ä", "Å", "à", "á", "â", "ã", "ä", "å"},
+	{"b", "þ", "ß", "Þ"},
+	{"c", "¢", "©", "Ç", "ç"},
+	{"d", "Ð"},
+	{"e", "3", "€", "È", "É", "Ë", "Ê", "è", "é", "ê", "ë"},
+	{"f", "ƒ"},
+	{"g"},
+	{"h"},
+	{"i", "1", "!", "|", "¡", "Ì", "Í", "Î", "Ï", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
+	{"j"},
+	{"k"},
+	{"l", "|"},
+	{"m"},
+	{"n", "ñ", "Ñ"},
+	{"o", "0", "°", "º", "Ò", "Ó", "Ô", "Õ", "Ö", "Ø", "ò", "ó", "ô", "õ", "ö", "ø", "ð"},
+	{"p", "Þ"},
+	{"q", "¶"},
+	{"r"},
+	{"s", "Š", "š", "$", "5", "$"},
+	{"t", "†"},
+	{"u", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
+	{"v"},
+	{"w", "vv"},
+	{"x", "×"},
+	{"y", "ý", "ÿ", "Ÿ", "¥", "Ý"},
+	{"z", "Ž"},
 	{"ate", "8"},
-	{"e", "3"},
-	{"l", "|"}
+	{"tm", "™"},
+	{"oe", "Œ", "œ"},
+	{"ae", "Æ", "æ"}
 }
 
 local CapitalLetters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
