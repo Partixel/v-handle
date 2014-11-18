@@ -1,9 +1,11 @@
 ---- SpamFilter Config ----
 VH_SpamFilter = VH_SpamFilter or {}
 VH_SpamFilter.ChatBlacklist = {
-	"Retard",
-	"Faggot",
-	"Fag"
+	"retard",
+	"faggot",
+	"fag",
+	"gay",
+	"homo"
 }
 -- Add words you want blacklisted into the table, requires a comma at end
 VH_SpamFilter.MaxWordLength = 15
