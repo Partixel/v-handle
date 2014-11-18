@@ -3,7 +3,6 @@ VH_SpamFilter = VH_SpamFilter or {}
 VH_SpamFilter.ChatBlacklist = {
 	"Retard",
 	"Faggot",
-	"Fagget",
 	"Fag"
 }
 -- Add words you want blacklisted into the table, requires a comma at end
@@ -15,6 +14,10 @@ VH_SpamFilter.CensorPercentage = 70
 -- Maximum percentage of censoring per word
 VH_SpamFilter.LetterDragging = 3
 -- Maximum letters in a row
+VH_SpamFilter.ChatSpam = 0.5
+-- The minimum time between each message
+VH_SpamFilter.DuplicateFiltering = true
+-- Checks if the player previously said the same message and blocks it, e.g. Player says "Hi" then "Hi" again
 VH_SpamFilter.AdvancedFiltering = true
 -- Checks for common letter changes to bypass filters, e.g using @ instead of a
 VH_SpamFilter.SoftFiltering = true
