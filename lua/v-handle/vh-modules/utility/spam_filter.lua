@@ -3,13 +3,14 @@ VH_SpamFilter = VH_SpamFilter or {}
 VH_SpamFilter.ChatBlacklist = VH_SpamFilter.ChatBlacklist or {
 	"Retard",
 	"Faggot",
-	"Fagget",
 	"Fag"
 }
 VH_SpamFilter.MaxWordLength = VH_SpamFilter.MaxWordLength or 15
 VH_SpamFilter.CapsPercentage = VH_SpamFilter.CapsPercentage or 70
 VH_SpamFilter.CensorPercentage = VH_SpamFilter.CensorPercentage or 70
 VH_SpamFilter.LetterDragging = VH_SpamFilter.LetterDragging or 3
+VH_SpamFilter.ChatSpam = VH_SpamFilter.ChatSpam or 0.5
+VH_SpamFilter.DuplicateFiltering = VH_SpamFilter.DuplicateFiltering or true
 VH_SpamFilter.AdvancedFiltering = VH_SpamFilter.AdvancedFiltering or true
 VH_SpamFilter.SoftFiltering = VH_SpamFilter.SoftFiltering or true
 VH_SpamFilter.MatchingChars = VH_SpamFilter.MatchingChars or {
@@ -39,6 +40,7 @@ VH_SpamFilter.MatchingChars = VH_SpamFilter.MatchingChars or {
 }
 
 local LastSaid = {}
+local LastSaidTime = {}
 
 local function WordDifferences(WordA, WordB)
 	local Differences = 0
@@ -137,13 +139,23 @@ function PlayerTalk(HookInfo, Player, Message, TeamChat)
 		HookInfo.Disabled = true
 		return
 	end
-	if LastSaid[Player:SteamID()] then
-		if WordSimilar(Return, LastSaid[Player:SteamID()]) then
+	
+	local SID = Player:SteamID()
+	
+	if LastSaid[SID] and VH_SpamFilter.DuplicateFiltering then
+		if WordSimilar(Return, LastSaid[SID]) then
 			HookInfo.Disabled = true
 			return
 		end
 	end
-	LastSaid[Player:SteamID()] = Return
+	
+	if LastSaidTime[SID] and VH_SpamFilter.ChatSpam ~= -1 and (os.time() - LastSaidTime[SID]) < VH_SpamFilter.ChatSpam then
+		HookInfo.Disabled = true
+		return
+	end
+	
+	LastSaid[SID] = Return
+	LastSaidTime[SID] = os.time()
 	HookInfo.ReturnValue = Return
 end
 
