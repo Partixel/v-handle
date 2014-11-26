@@ -12,7 +12,7 @@ VH_DataLib.DataTable = {}
 function VH_DataLib.toString()
 	local DataString = ""
 	for a, b in pairs(VH_DataLib.DataTable) do
-		if b == nil then continue end
+		if b == nil or #b == 0 then continue end
 		DataString = DataString .. table.ToString(b, "VH_DataLib.DataTable['" .. a .. "']", true) .. "\n"
 	end
 	return DataString
