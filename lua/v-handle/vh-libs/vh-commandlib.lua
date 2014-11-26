@@ -403,11 +403,11 @@ function VH_CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	-- Requires key to be valid
 	local Object = table.Copy(self)
 	Object.Key = Key
-	Object.UserType = UserType
-	Object.Desc = Desc
-	Object.Category = Category
+	Object.UserType = UserType or VH_CommandLib.UserTypes.Admin
+	Object.Desc = Desc or ""
+	Object.Category = Category or ""
 	Object.Callback = Callback
-	table.insert(VH_CommandLib.Commands, Object)
+	VH_CommandLib.Commands[Object.Key] = Object
 	
 	return Object
 end
@@ -430,7 +430,7 @@ function VH_CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
 	local Alias = string.lower(Args[1])
 	table.remove(Args, 1)
 	
-	for a, b in ipairs(VH_CommandLib.Commands) do
+	for a, b in pairs(VH_CommandLib.Commands) do
 		local Found = false
 		if Console then
 			for a, b in ipairs(b.Alias) do
