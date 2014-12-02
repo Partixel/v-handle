@@ -6,12 +6,18 @@ VH_FileLib.Side = {
 	Shared = 2
 }
 
-VH_FileLib.Loaded = {"vh-libs/vh-filelib.lua"}
+VH_FileLib.Loaded = {"vh-filelib.lua"}
 
+/**
+  *Every file name included using this function must be unique
+  *as a list of loaded files are saved using only the file name ( not path )
+  *to prevent loading a file multiple times
+**/
 function VH_FileLib.IncludeFile(Location, Side)
 	local File = file.Find(Location, "LUA")
 	if File then
-		if table.HasValue(VH_FileLib.Loaded, Location) then
+		local FName = string.GetFileFromFilename(Location)
+		if table.HasValue(VH_FileLib.Loaded, FName) then
 			return
 		end
 		
@@ -19,21 +25,21 @@ function VH_FileLib.IncludeFile(Location, Side)
 			if SERVER then
 				AddCSLuaFile(Location)
 			else
-				table.insert(VH_FileLib.Loaded, Location)
+				table.insert(VH_FileLib.Loaded, FName)
 				include(Location)
 			end
 		elseif Side == VH_FileLib.Side.Server then
 			if SERVER then
-				table.insert(VH_FileLib.Loaded, Location)
+				table.insert(VH_FileLib.Loaded, FName)
 				include(Location)
 			end
 		elseif Side == VH_FileLib.Side.Shared then
 			if SERVER then
-				table.insert(VH_FileLib.Loaded, Location)
+				table.insert(VH_FileLib.Loaded, FName)
 				AddCSLuaFile(Location)
 				include(Location)
 			else
-				table.insert(VH_FileLib.Loaded, Location)
+				table.insert(VH_FileLib.Loaded, FName)
 				include(Location)
 			end
 		else

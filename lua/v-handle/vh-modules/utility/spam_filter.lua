@@ -1,44 +1,3 @@
----- SpamFilter Config ----
-VH_SpamFilter = VH_SpamFilter or {}
-VH_SpamFilter.ChatBlacklist = VH_SpamFilter.ChatBlacklist or {
-	"Retard",
-	"Faggot",
-	"Fag"
-}
-VH_SpamFilter.MaxWordLength = VH_SpamFilter.MaxWordLength or 15
-VH_SpamFilter.CapsPercentage = VH_SpamFilter.CapsPercentage or 70
-VH_SpamFilter.CensorPercentage = VH_SpamFilter.CensorPercentage or 70
-VH_SpamFilter.LetterDragging = VH_SpamFilter.LetterDragging or 3
-VH_SpamFilter.ChatSpam = VH_SpamFilter.ChatSpam or 0.5
-VH_SpamFilter.DuplicateFiltering = VH_SpamFilter.DuplicateFiltering or true
-VH_SpamFilter.AdvancedFiltering = VH_SpamFilter.AdvancedFiltering or true
-VH_SpamFilter.SoftFiltering = VH_SpamFilter.SoftFiltering or true
-VH_SpamFilter.MatchingChars = VH_SpamFilter.MatchingChars or {
-	{"a", "@", "ª", "À", "Á", "Â", "Ã", "Ä", "Å", "à", "á", "â", "ã", "ä", "å"},
-	{"b", "þ", "ß", "Þ"},
-	{"c", "¢", "©", "Ç", "ç"},
-	{"d", "Ð"},
-	{"e", "3", "€", "È", "É", "Ë", "Ê", "è", "é", "ê", "ë"},
-	{"f", "ƒ"},
-	{"i", "1", "!", "|", "¡", "Ì", "Í", "Î", "Ï", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
-	{"l", "|"},
-	{"n", "ñ", "Ñ"},
-	{"o", "0", "°", "º", "Ò", "Ó", "Ô", "Õ", "Ö", "Ø", "ò", "ó", "ô", "õ", "ö", "ø", "ð"},
-	{"p", "Þ"},
-	{"q", "¶"},
-	{"s", "Š", "š", "$", "5", "$"},
-	{"t", "†"},
-	{"u", "Ù", "Ú", "Û", "Ü", "ù", "ú", "û", "ü"},
-	{"w", "vv"},
-	{"x", "×"},
-	{"y", "ý", "ÿ", "Ÿ", "¥", "Ý"},
-	{"z", "Ž"},
-	{"ate", "8"},
-	{"tm", "™"},
-	{"oe", "Œ", "œ"},
-	{"ae", "Æ", "æ"}
-}
-
 local LastSaid = {}
 local LastSaidTime = {}
 
@@ -89,7 +48,7 @@ local function WordSimilar(WordA, WordB)
 	return false
 end
 
-function PlayerTalk(HookInfo, Player, Message, TeamChat)
+function PlayerTalk(Player, Message, TeamChat)
 	if string.StartWith(Message, "!") then return end
 	local Return = string.Trim(Message)
 	local BlacklistTable = VH_SpamFilter.ChatBlacklist
@@ -144,19 +103,18 @@ function PlayerTalk(HookInfo, Player, Message, TeamChat)
 	
 	if LastSaid[SID] and VH_SpamFilter.DuplicateFiltering then
 		if WordSimilar(Return, LastSaid[SID]) then
-			HookInfo.Disabled = true
-			return
+			return nil, true
 		end
 	end
 	
-	if LastSaidTime[SID] and VH_SpamFilter.ChatSpam ~= -1 and (os.time() - LastSaidTime[SID]) < VH_SpamFilter.ChatSpam then
-		HookInfo.Disabled = true
-		return
+	local Time = RealTime()
+	if LastSaidTime[SID] and VH_SpamFilter.ChatSpam ~= -1 and (Time - LastSaidTime[SID]) < VH_SpamFilter.ChatSpam then
+		return nil, true
 	end
 	
 	LastSaid[SID] = Return
-	LastSaidTime[SID] = os.time()
-	HookInfo.ReturnValue = Return
+	LastSaidTime[SID] = Time
+	return Return
 end
 
 VH_HookLib.addHook("PlayerSay", VH_HookLib.HookPriority.Lowest, "VH_SpamFilter", PlayerTalk)

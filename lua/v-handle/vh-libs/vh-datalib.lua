@@ -27,9 +27,9 @@ if SERVER then
 	util.AddNetworkString("VH-DataLib-Update")
 	util.AddNetworkString("VH-DataLib-Initial")
 	
-	hook.Add("PlayerInitialSpawn", "VH-DataLib-Initial", function(Plr)
+	VH_HookLib.addHook("PlayerInitialSpawn", "VH-DataLib-Initial", function(Plr)
 		net.Start("VH-DataLib-Initial")
-			net.WriteString(VH_DataLib.toString())
+			net.WriteString(util.Compress(VH_DataLib.toString()))
 		net.Send(Plr)
 	end)
 	
@@ -53,9 +53,9 @@ if SERVER then
 			Data = "nil"
 		end
 		net.Start("VH-DataLib-Update")
-			net.WriteString(Container)
-			net.WriteString(Key)
-			net.WriteString("VH_TempData = " .. Data)
+			net.WriteString(util.Compress(Container))
+			net.WriteString(util.Compress(Key))
+			net.WriteString(util.Compress("VH_TempData = " .. Data))
 		net.Broadcast()
 	end
 	
@@ -79,9 +79,9 @@ if SERVER then
 else
 	
 	net.Receive("VH-DataLib-Update", function(Length, Client)
-		local Container = net.ReadString()
-		local Key = net.ReadString()
-		local Data = net.ReadString()
+		local Container = util.Decompress(net.ReadString())
+		local Key = util.Decompress(net.ReadString())
+		local Data = util.Decompress(net.ReadString())
 		if Container and Key then
 			RunStringEx(Data, "VH-DataLib")
 			VH_DataLib.DataTable[Container] = VH_DataLib.DataTable[Container] or {}
@@ -90,7 +90,7 @@ else
 	end)
 	
 	net.Receive("VH-DataLib-Initial", function(Length, Client)
-		local Data = net.ReadString()
+		local Data = util.Decompress(net.ReadString())
 		if Data then
 			VH_DataLib.fromString(Data)
 		end

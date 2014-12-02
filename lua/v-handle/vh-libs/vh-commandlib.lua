@@ -274,9 +274,9 @@ VH_CommandLib.ArgTypes = {
 -- Command handling --
 
 VH_CommandLib.Commands = VH_CommandLib.Commands or {}
+VH_CommandLib.CommandKeys = VH_CommandLib.CommandKeys or {}
 
 VH_CommandLib.Command = {
-	Key = "", -- Key of the command ( Must be unique ) ( Recommended to be the name of the command )
 	Callback = function(Sender, Alias, ...) end, -- The function to run when command is ran ( Overide this )
 	UserType = function() end, -- The type of user that can use the command
 	Category = "", -- The category to list this command under
@@ -402,93 +402,90 @@ function VH_CommandLib.Command:new(Key, UserType, Desc, Category, Callback)
 	-- Creates a new command object and adds it to the command list
 	-- Requires key to be valid
 	local Object = table.Copy(self)
-	Object.Key = Key
 	Object.UserType = UserType or VH_CommandLib.UserTypes.Admin
 	Object.Desc = Desc or ""
 	Object.Category = Category or ""
 	Object.Callback = Callback
-	VH_CommandLib.Commands[Object.Key] = Object
+	VH_CommandLib.Commands[Key] = Object
+	VH_CommandLib.CommandKeys = table.GetKeys(VH_CommandLib.Commands)
 	
 	return Object
 end
 
-function VH_CommandLib.PlayerSay(HookInfo, Sender, Message, teamChat, Console)
-	if Sender == nil and self.noConsole then
-		HookInfo.ReturnValue = "Console cannot run this command"
-		return
-	end
-	
-	local Args = {}
-	if type(Message) == "table" then
-		Args = Message
-	elseif type(Message) == "string" then
-		Args = string.Explode(" ", Message)
-	else
-		VH_LogLib.Log("Incorrectly called CommandLib-PlayerSay - Message type", VH_LogLib.Type.WARNING)
-	end
+function VH_CommandLib.PlayerSay(Sender, Message, teamChat, Console)
+	local Args = (type(Message) == "table") and Message or string.Explode(" ", Message)
 	
 	local Alias = string.lower(Args[1])
 	table.remove(Args, 1)
 	
-	for a, b in pairs(VH_CommandLib.Commands) do
-		local Found = false
-		if Console then
-			for a, b in ipairs(b.Alias) do
-				if type(b) == "string" then
-					if Alias == string.lower(b) then
-						Found = true
-						break
-					end
-				elseif type(b) == "table" then
-					if b.ChatOnly then continue end
-					if b.Prefix and b.Alias then
-						if type(b.Alias) == "table" then
-							for c, d in ipairs(b.Alias) do
-								if Alias == string.lower(d) then
-									Found = true
-									break
-								end
-							end
-						elseif Alias == string.lower(b.Alias) then
-							Found = true
-							break
-						end
-					else
-						VH_LogLib.Log("Incorrectly setup command" .. b, VH_LogLib.Type.WARNING)
-					end
+	local MatchingCmds = {}
+	local TempCmds = VH_CommandLib.CommandKeys
+	
+	-- First filter out any commands that can't be ran
+	for a, b in ipairs(TempCmds) do
+		local Cmd = VH_CommandLib.Commands[b]
+		if Console and not Cmd.ChatOnly then
+			table.insert(MatchingCmds, b)
+			continue
+		end
+		if not Console and not Cmd.ConsoleOnly then
+			table.insert(MatchingCmds, b)
+			continue
+		end
+	end
+	
+	local CmdKey = nil
+	
+	-- Next filter out any commands that don't match the alias
+	for a, b in ipairs(MatchingCmds) do
+		local Cmd = VH_CommandLib.Commands[b]
+		for c, d in ipairs(Cmd.Alias) do
+			-- String alias may only be used by console
+			if type(d) == "string" and Console then
+				if string.lower(d) == Alias then
+					CmdKey = b
+					break
 				end
 			end
-		else
-			for a, b in ipairs(b.Alias) do
-				if type(b) == "table" then
-					if b.Prefix and b.Alias then
-						if type(b.Alias) == "table" then
-							for c, d in ipairs(b.Alias) do
-								if Alias == string.lower(b.Prefix .. d) then
-									Alias = string.sub(Alias, #b.Prefix + 1)
-									Found = true
-									break
-								end
+			
+			if type(d) == "table" then
+				-- Check the user is correct type for the alias
+				if d.ConsoleOnly and not Console then continue end
+				if d.ChatOnly and Console then continue end
+				
+				-- Check the alias matches with/out the prefix
+				if Console or string.StartWith(Alias, string.lower(d.Prefix)) then
+					local ActAlias = (Console) and Alias or string.sub(Alias, string.len(d.Prefix) + 1)
+					
+					if type(d.Alias) == "table" then
+						for e, f in ipairs(d.Alias) do
+							if string.lower(f) == ActAlias then
+								CmdKey = b
+								Alias = ActAlias
+								break
 							end
-						elseif Alias == string.lower(b.Prefix .. b.Alias) then
-							Alias = string.sub(Alias, #b.Prefix + 1)
-							Found = true
-							break
 						end
-					else
-						VH_LogLib.Log("Incorrectly setup command" .. b, VH_LogLib.Type.WARNING)
+					elseif string.lower(d.Alias) == ActAlias then
+						CmdKey = b
+						Alias = ActAlias
+						break
 					end
 				end
 			end
 		end
+		if CmdKey then break end
+	end
+	
+	-- If the command was found 
+	if CmdKey then
+		local Cmd = VH_CommandLib.Commands[CmdKey]
 		
-		if not Found then continue end
+		local Outcome = Cmd:preCall(Sender, Alias, Args, teamChat)
 		
-		local Outcome = b:preCall(Sender, Alias, Args, teamChat)
 		if Outcome and Outcome == "" then
-			HookInfo.Disabled = true
+			return nil, true
 		else
-			HookInfo.ReturnValue = Outcome
+			return Outcome, true
 		end
 	end
 end
@@ -499,14 +496,13 @@ concommand.Add("vh", function(Player, Command, Args)
 	if #Args == 0 then return end
 	
 	if SERVER then
-		local Outcome = {}
-		VH_CommandLib.PlayerSay(Outcome, Player, Args, false, true)
-		if Outcome and Outcome.ReturnValue then
-			print(Outcome.ReturnValue)
+		local ReturnValue = VH_CommandLib.PlayerSay(Player, Args, false, true)
+		if ReturnValue then
+			print(ReturnValue)
 		end
 	else
 		net.Start("VH_ClientCCmd")
-			net.WriteString(von.serialize({Player = Player, Args = Args}))
+			net.WriteTable({Player = Player, Args = Args})
 		net.SendToServer()
 	end
 end)
@@ -515,10 +511,9 @@ if SERVER then
 	util.AddNetworkString("VH_ClientCCmd")
 	
 	net.Receive( "VH_ClientCCmd", function( Length )
-		local Vars = von.deserialize(net.ReadString())
-		local Outcome = {}
-		VH_CommandLib.PlayerSay(Outcome, Vars.Player, Vars.Args, false, true)
-		if Outcome and Outcome.ReturnValue then
+		local Vars = net.ReadTable()
+		ReturnValue = VH_CommandLib.PlayerSay(Vars.Player, Vars.Args, false, true)
+		if ReturnValue then
 			print(Outcome.ReturnValue)
 		end
 	end)

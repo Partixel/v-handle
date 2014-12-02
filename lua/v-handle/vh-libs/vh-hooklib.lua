@@ -16,19 +16,24 @@ function VH_HookLib.runHook(HookType, ...)
 
 	if not VH_HookLib.Hooks[HookType] then return end
 	
-	local HookInfo = {Disabled = false, ReturnValue = nil}
+	local ReturnValue, Disabled = nil
 	
 	for a, b in pairs(VH_HookLib.HookPriority) do
 		if VH_HookLib.Hooks[HookType][b] then
 			for c, d in pairs(VH_HookLib.Hooks[HookType][b]) do
-				d(HookInfo, ...)
-				if HookInfo.Disabled then break end
+				local TValue, TDisabled = d(...)
+				if TempReturnValue ~= nil then
+					ReturnValue = TValue
+				end
+				if TDisabled ~= nil then
+					Disabled = TDisabled
+				end
+				if Disabled then break end
 			end
 		end
-		if HookInfo.Disabled then break end
 	end
 	
-	return HookInfo.ReturnValue, HookInfo.Disabled
+	return ReturnValue, Disabled
 end
 
 function VH_HookLib.removeHook(HookType, Priority, Key)
@@ -52,6 +57,10 @@ local DefHooks = {
 	{
 	Key = "PlayerSay",
 	Disable = ""
+	},
+	{
+	Key = "PlayerInitialSpawn",
+	Disable = nil
 	}
 }
 
