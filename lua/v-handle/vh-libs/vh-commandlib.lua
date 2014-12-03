@@ -262,10 +262,11 @@ VH_CommandLib.ArgTypes = {
 		return nil, "No boolean found!"
 	end, Name = "Boolean"}, -- Check if the string is contained in either the Yes or No table
 	Time = {Parser = function(self, Args)
-		local String = Args[1]
+		local String = string.lower(Args[1])
 		table.remove(Args, 1)
-		if table.HasValue(table.GetKeys(VH_CommandLib.TimeEnds), string.sub(String, #String, #String)) then
-			return tonumber(string.sub(String, 1, #String - 1)) * VH_CommandLib.TimeEnds[string.sub(String, #String, #String)], "No time found!"
+		local Time, End = tonumber(string.Left(String, #String -1)), String.GetChar(String, #String)
+		if Time and VH_CommandLib.TimeEnds[End] then
+			return Time * VH_CommandLib.TimeEnds[End], "No time found!"
 		end
 		return nil, "No time found!"
 	end, Name = "Time"}, -- A time value, formatted as Number-TimeFrame, e.g 2D, 20M
@@ -328,7 +329,7 @@ function VH_CommandLib.Command:addArg(ArgType, CustomTable, Position)
 end
 
 function VH_CommandLib.Command:canUse(Sender)
-	return type(Sender) == "Entity" or self.UserType(Sender)
+	return Sender == nil or self.UserType(Sender)
 end
 
 function VH_CommandLib.Command:preCall(Sender, Alias, Args, teamChat)
