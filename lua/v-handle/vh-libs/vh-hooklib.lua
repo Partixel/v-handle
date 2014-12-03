@@ -12,14 +12,18 @@ VH_HookLib.HookPriority = { -- Lowest is first, Highest is last -- If you are pl
 
 VH_HookLib.Hooks = {}
 
-function VH_HookLib.runHook(HookType, ...)
+function VH_HookLib.runHook(HookType, CanDisable, ...)
 
-	if not VH_HookLib.Hooks[HookType] then return end
+	if not VH_HookLib.Hooks[HookType] then
+		hook.Run(HookType, ...)
+		return
+	end
 	
 	local ReturnValue, Disabled = nil
 	
 	for a, b in pairs(VH_HookLib.HookPriority) do
 		if VH_HookLib.Hooks[HookType][b] then
+			if Disabled and CanDisable then break end
 			for c, d in pairs(VH_HookLib.Hooks[HookType][b]) do
 				local TValue, TDisabled = d(...)
 				if TempReturnValue ~= nil then
@@ -28,7 +32,7 @@ function VH_HookLib.runHook(HookType, ...)
 				if TDisabled ~= nil then
 					Disabled = TDisabled
 				end
-				if Disabled then break end
+				if Disabled and CanDisable then break end
 			end
 		end
 	end
@@ -56,21 +60,39 @@ end
 local DefHooks = {
 	{
 	Key = "PlayerSay",
+	CanDisable = true,
 	Disable = ""
 	},
 	{
-	Key = "PlayerInitialSpawn",
-	Disable = nil
+	Key = "PlayerInitialSpawn"
 	}
 }
 
+local HookAdd = hook.Add
+function hook.Add(HookType, Key, Callback, HookLib)
+	if VH_HookLib.Hooks[HookType] and not HookLib then
+		debug.Trace()
+		print("VH_HookLib.addHook(" .. HookType .. ", " .. Key .. ", CALLBACK)")
+		VH_HookLib.addHook(HookType, Key, Callback)
+	else
+		HookAdd(HookType, Key, Callback)
+	end
+end
+
+local HookTable = hook.GetTable()
 for a, b in ipairs(DefHooks) do
+	if HookTable[b.Key] then
+		for c, d in pairs(HookTable[b.Key]) do
+			VH_HookLib.addHook(b.Key, c, d)
+			hook.Remove(b.Key, c)
+		end
+	end
 	hook.Add(b.Key, "HookLib_" .. b.Key, function(...)
-		local ReturnValue, Disabled = VH_HookLib.runHook(b.Key, ...)
+		local ReturnValue, Disabled = VH_HookLib.runHook(b.Key, b.CanDisable, ...)
 		if Disabled then
 			return b.Disable
 		else
 			return ReturnValue
 		end
-	end)
+	end, true)
 end
