@@ -515,7 +515,7 @@ if SERVER then
 		local Vars = net.ReadTable()
 		ReturnValue = VH_CommandLib.PlayerSay(Vars.Player, Vars.Args, false, true)
 		if ReturnValue then
-			print(Outcome.ReturnValue)
+			print(ReturnValue)
 		end
 	end)
 end
