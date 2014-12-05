@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("God", VH_CommandLib.UserTypes.Admin, "Set the godmode of the player(s).", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"god", "ungod", "tgod"}})
 
 Command.Callback = function(Sender, Alias, Targets)

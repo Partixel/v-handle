@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Armor", VH_CommandLib.UserTypes.Admin, "Sets the player(s) armor to specified amount or 100.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addArg(VH_CommandLib.ArgTypes.Number, {required = false})
 Command:addAlias({Prefix = "!", Alias = "armor"})
 

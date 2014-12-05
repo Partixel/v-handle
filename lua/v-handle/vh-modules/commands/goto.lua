@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Goto", VH_CommandLib.UserTypes.Admin, "Teleport yourself to the player.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Player, {required = true, notSelf = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plr, {required = true, notSelf = true})
 Command:addAlias({Prefix = "!", Alias = {"goto", "gotofreeze"}})
 
 Command.Callback = function(Sender, Alias, Target)

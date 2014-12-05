@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Noclip", VH_CommandLib.UserTypes.Admin, "Noclip or clip the player(s).", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"noclip", "clip", "tnoclip"}})
 
 Command.Callback = function(Sender, Alias, Targets)

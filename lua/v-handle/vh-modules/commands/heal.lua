@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Heal", VH_CommandLib.UserTypes.Admin, "Heal the player(s) or sets player(s) health to amount specified.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addArg(VH_CommandLib.ArgTypes.Number, {required = false})
 Command:addAlias({Prefix = "!", Alias = "heal"})
 

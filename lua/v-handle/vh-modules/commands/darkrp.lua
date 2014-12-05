@@ -1,6 +1,6 @@
 if DarkRP then
 	local Command = VH_CommandLib.Command:new("Job", VH_CommandLib.UserTypes.Admin, "Set the job of or demote the player(s).", "")
-	Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+	Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 	Command:addArg(VH_CommandLib.ArgTypes.String, {required = false})
 	Command:addAlias({Prefix = "!", Alias = {"setjob", "demote"}})
 
@@ -23,7 +23,7 @@ if DarkRP then
 	end
 
 	local Command = VH_CommandLib.Command:new("Arrest", VH_CommandLib.UserTypes.Admin, "Arrest or unarrest the player(s).", "")
-	Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+	Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 	Command:addAlias({Prefix = "!", Alias = {"arrest", "unarrest"}})
 
 	Command.Callback = function(Sender, Alias, Targets)
@@ -43,7 +43,7 @@ if DarkRP then
 	end
 
 	local Command = VH_CommandLib.Command:new("Money", VH_CommandLib.UserTypes.Admin, "Add or set the players money.", "")
-	Command:addArg(VH_CommandLib.ArgTypes.Player, {required = true})
+	Command:addArg(VH_CommandLib.ArgTypes.Plr, {required = true})
 	Command:addArg(VH_CommandLib.ArgTypes.Number, {required = true})
 	Command:addAlias({Prefix = "!", Alias = {"setmoney", "addmoney"}})
 

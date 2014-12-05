@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("MuteMic", VH_CommandLib.UserTypes.Admin, "Mute or unmute the player(s) microphone.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"mutemic", "unmutemic", "tmutemic"}})
 
 Command.Callback = function(Sender, Alias, Targets)
@@ -23,7 +23,7 @@ Command.Callback = function(Sender, Alias, Targets)
 end
 
 local Command = VH_CommandLib.Command:new("MuteChat", VH_CommandLib.UserTypes.Admin, "Mute or unmute the player(s) chat.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"mutechat", "unmutechat", "tmutechat"}})
 
 Command.Callback = function(Sender, Alias, Targets)
@@ -47,7 +47,7 @@ Command.Callback = function(Sender, Alias, Targets)
 end
 
 local Command = VH_CommandLib.Command:new("Mute", VH_CommandLib.UserTypes.Admin, "Mute or unmute the player(s) chat and and microphone.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"mute", "unmute", "tmute"}})
 
 Command.Callback = function(Sender, Alias, Targets)

@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Strip", VH_CommandLib.UserTypes.Admin, "Strips the player(s) weapons.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = "strip"})
 
 Command.Callback = function(Sender, Alias, Targets)

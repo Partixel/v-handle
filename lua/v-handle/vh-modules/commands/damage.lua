@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Damage", VH_CommandLib.UserTypes.Admin, "Damages the player(s) by amount specified.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addArg(VH_CommandLib.ArgTypes.Number, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"damage", "slap"}})
 

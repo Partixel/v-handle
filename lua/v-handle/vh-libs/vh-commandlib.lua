@@ -17,31 +17,31 @@ function VH_CommandLib.FormatList(List)
 	return List
 end
 
-function VH_CommandLib.FormatPlayer(Caller, Receiver, Player)
-	if Caller == Receiver and Caller == Player then
+function VH_CommandLib.FormatPlayer(Caller, Receiver, Plr)
+	if Caller == Receiver and Caller == Plr then
 		return "Yourself"
-	elseif Caller == Player then
+	elseif Caller == Plr then
 		return "Themselves"
-	elseif Receiver == Player then
+	elseif Receiver == Plr then
 		return "You"
-	elseif type(Player) == "string" then
-		return VH_DataLib.getData(Player, "SavedNick") or Player
+	elseif type(Plr) == "string" then
+		return VH_DataLib.getData(Plr, "SavedNick") or Plr
 	else
-		return Player:Nick()
+		return Plr:Nick()
 	end
 end
 
-function VH_CommandLib.PlayersToString(Caller, Player, Players)
+function VH_CommandLib.PlayersToString(Caller, Plr, Plrs)
 	local Names = {}
-	for _, v in ipairs(Players) do
-		table.insert(Names, VH_CommandLib.FormatPlayer(Caller, Player, v))
+	for _, v in ipairs(Plrs) do
+		table.insert(Names, VH_CommandLib.FormatPlayer(Caller, Plr, v))
 	end
 	return table.concat(VH_CommandLib.FormatList(Names))
 end
 
 function VH_CommandLib.SendCommandMessage(Caller, PrePlayers, Players, PostPlayers, ExtraPlayers)
 	for _, Player in ipairs(player.GetAll()) do
-		local NewCaller = Caller:Nick()
+		local NewCaller = (Caller.Nick) and Caller:Nick() or "Console"
 		if Caller == Player then
 			NewCaller = "You"
 		end
@@ -131,64 +131,64 @@ function VH_CommandLib.PlayerFromString(String)
 end
 
 VH_CommandLib.UserTypes = {
-	User = function(Player) return true end,
-	Admin = function(Player) return Player:IsAdmin() or Player:IsSuperAdmin() end,
-	SuperAdmin = function(Player) return Player:IsSuperAdmin() end,
+	User = function(Plr) return true end,
+	Admin = function(Plr) return type(Plr) ~= "Player" or Plr:IsAdmin() or Plr:IsSuperAdmin() end,
+	SuperAdmin = function(Plr) return type(Plr) ~= "Player" or Plr:IsSuperAdmin() end,
 }
 
 VH_CommandLib.ArgTypes = {
-	Player = {Parser = function(self, Args, Sender)
-		local Player = nil
+	Plr = {Parser = function(self, Args, Sender)
+		local Plr = nil
 		if (Args[1] == "" or Args[1] == nil) and not self.notSelf and type(Sender) == "Player" then
-			Player = Sender
+			Plr = Sender
 		else
-			Player = VH_CommandLib.PlayerFromString(Args[1])
+			Plr = VH_CommandLib.PlayerFromString(Args[1])
 			table.remove(Args, 1)
 		end
 		
-		if Player == nil then
+		if Plr == nil then
 			return nil, "No player was found!"
 		end
 		
-		if self.requireTarget and Player.PLCanTarget and not Player:PLCanTarget(Sender) then
+		if self.requireTarget and Plr.PLCanTarget and not Plr:PLCanTarget(Sender) then
 			return nil, "No targetable player was found!"
 		end
-		return Player
+		return Plr
 	end, Name = "Player", requireTarget = true}, -- A player ( If requireTarget then the sender must be able to target the player )
 												 -- ( If notSelf then target must not be sender )
-	Players = {Parser = function(self, Args, Sender)
-		local Players = {}
+	Plrs = {Parser = function(self, Args, Sender)
+		local Plrs = {}
 		if Args[1] == "*" then
-			Players = player.GetAll()
+			Plrs = player.GetAll()
 			table.remove(Args, 1)
 		elseif Args[1] == "@" then
 			for a, b in ipairs(player.GetAll()) do
 				if b:IsAdmin() then
-					table.insert(Players, b)
+					table.insert(Plrs, b)
 				end
 			end
 			table.remove(Args, 1)
 		elseif Args[1] == "!@" then
 			for a, b in ipairs(player.GetAll()) do
 				if not b:IsAdmin() then
-					table.insert(Players, b)
+					table.insert(Plrs, b)
 				end
 			end
 			table.remove(Args, 1)
 		elseif Args[1] == "#" then
-			table.insert(Players, player.GetAll()[math.random(1, #player.GetAll())])
+			table.insert(Plrs, player.GetAll()[math.random(1, #player.GetAll())])
 			table.remove(Args, 1)
 		else
 			if (Args[1] == "" or Args[1] == nil) and not self.notSelf and type(Sender) == "Player" then
-				Players = {Sender}
+				Plrs = {Sender}
 			else
-				Players = {VH_CommandLib.PlayerFromString(Args[1])}
+				Plrs = {VH_CommandLib.PlayerFromString(Args[1])}
 				table.remove(Args, 1)
 			end
 		end
 		
 		local Targets = {}
-		for a, b in ipairs(Players) do
+		for a, b in ipairs(Plrs) do
 			if self.requireTarget and b.PLCanTarget and not b:PLCanTarget(Sender) then
 				continue
 			end
@@ -214,13 +214,13 @@ VH_CommandLib.ArgTypes = {
 		if string.match(String, "STEAM_[0-5]:[0-9]:[0-9]+") then
 			return String
 		else
-			local Player = VH_CommandLib.PlayerFromString(String)
-			if Player then
-				return Player:SteamID()
+			local Plr = VH_CommandLib.PlayerFromString(String)
+			if Plr then
+				return Plr:SteamID()
 			else
 				return VH_CommandLib.SIDFromString(String), "No Steam ID was found!"
 			end
-			return Player:SteamID()
+			return Plr:SteamID()
 		end
 		return nil, "No Steam ID was found!"
 	end, Name = "SteamID"}, -- A steamID of a player (From string or player name or IP)
@@ -230,11 +230,11 @@ VH_CommandLib.ArgTypes = {
 		if string.match(String, "(%d+)%.(%d+)%.(%d+)%.(%d+)") then
 			return String
 		else
-			local Player = VH_CommandLib.PlayerFromString(String)
-			if Player == nil then
+			local Plr = VH_CommandLib.PlayerFromString(String)
+			if Plr == nil then
 				return
 			end
-			return Player:IPAddress()
+			return Plr:IPAddress()
 		end
 		return nil, "No IP Address was found!"
 	end, Name = "IPAddress"}, -- An IP Address of a player (From string or player name or SteamID)
@@ -493,17 +493,17 @@ end
 
 VH_HookLib.addHook("PlayerSay", VH_HookLib.HookPriority.Low, "VH-CommandLib-PlayerSay", VH_CommandLib.PlayerSay)
 
-concommand.Add("vh", function(Player, Command, Args)
+concommand.Add("vh", function(Plr, Command, Args)
 	if #Args == 0 then return end
 	
 	if SERVER then
-		local ReturnValue = VH_CommandLib.PlayerSay(Player, Args, false, true)
+		local ReturnValue = VH_CommandLib.PlayerSay(Plr, Args, false, true)
 		if ReturnValue then
 			print(ReturnValue)
 		end
 	else
 		net.Start("VH_ClientCCmd")
-			net.WriteTable({Player = Player, Args = Args})
+			net.WriteTable({Plr = Plr, Args = Args})
 		net.SendToServer()
 	end
 end)
@@ -513,7 +513,7 @@ if SERVER then
 	
 	net.Receive( "VH_ClientCCmd", function( Length )
 		local Vars = net.ReadTable()
-		ReturnValue = VH_CommandLib.PlayerSay(Vars.Player, Vars.Args, false, true)
+		ReturnValue = VH_CommandLib.PlayerSay(Vars.Plr, Vars.Args, false, true)
 		if ReturnValue then
 			print(ReturnValue)
 		end

@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Lock", VH_CommandLib.UserTypes.Admin, "Lock or unlock the player(s).", "")
-Command:addArg(VH_CommandLib.ArgTypes.Players, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plrs, {required = true})
 Command:addAlias({Prefix = "!", Alias = {"lock", "unlock", "tlock"}})
 
 Command.Callback = function(Sender, Alias, Targets)

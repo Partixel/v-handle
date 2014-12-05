@@ -1,5 +1,5 @@
 local Command = VH_CommandLib.Command:new("Punish", VH_CommandLib.UserTypes.Admin, "Punish the player according to the reason.", "")
-Command:addArg(VH_CommandLib.ArgTypes.Player, {required = true})
+Command:addArg(VH_CommandLib.ArgTypes.Plr, {required = true})
 Command:addArg(VH_CommandLib.ArgTypes.String, {required = true})
 Command:addAlias({Prefix = "!", Alias = "punish"})
 
