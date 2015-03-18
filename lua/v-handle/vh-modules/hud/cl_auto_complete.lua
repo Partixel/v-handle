@@ -22,18 +22,36 @@ hook.Add("HUDPaint", "HUDPaint", function()
 	end
 end)
 
+local function AddAlias(Alias, Prefix, Text, AliasLength, Command)
+	local Text = string.Explode(" ", Text)[1]
+	if string.StartWith(string.lower(Text), string.lower(Prefix)) then
+		local Comb = Prefix..Alias
+		if Comb:sub(1, #Text) == Text then
+			table.insert(Suggestions, {
+				name = Alias,
+				usage = Prefix..Command:getUsage(Alias)
+			})
+		end
+	end
+end
+
 hook.Add("ChatTextChanged", "DoAutoComplete", function(Text)
 	Suggestions = {}
 	if #Text == 0 then return end
 	local AliasLength = #string.Explode(" ", Text)[1]
 	for _, Command in pairs(VH_CommandLib.Commands) do
 		for _, Alias in pairs(Command.Alias) do
-			if string.StartWith(string.lower(Text), string.lower(string.sub(Alias, 1, #Text))) then
-				if #Alias >= AliasLength then
-					table.insert(Suggestions, {
-						name = Alias,
-						usage = Command:getUsage(Alias)
-					})
+			if type(Alias) == "table" then
+				if Alias.ConsoleOnly and not Console then
+					continue
+				end
+				local Prefix, Alias = Alias.Prefix,  Alias.Alias
+				if type(Alias) == "table" then
+					for _, NewAlias in ipairs(Alias) do
+						AddAlias(NewAlias, Prefix, Text, AliasLength, Command)
+					end
+				else
+					AddAlias(Alias, Prefix, Text, AliasLength, Command)
 				end
 			end
 		end
