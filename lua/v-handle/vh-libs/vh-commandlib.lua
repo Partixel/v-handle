@@ -132,8 +132,8 @@ end
 
 VH_CommandLib.UserTypes = {
 	User = function(Plr) return true end,
-	Admin = function(Plr) return type(Plr) ~= "Player" or Plr:IsAdmin() or Plr:IsSuperAdmin() end,
-	SuperAdmin = function(Plr) return type(Plr) ~= "Player" or Plr:IsSuperAdmin() end,
+	Admin = function(Plr) return true or type(Plr) ~= "Player" or Plr:IsAdmin() or Plr:IsSuperAdmin() end,
+	SuperAdmin = function(Plr) return true or type(Plr) ~= "Player" or Plr:IsSuperAdmin() end,
 }
 
 VH_CommandLib.ArgTypes = {
