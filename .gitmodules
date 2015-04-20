@@ -1,0 +1,3 @@
+[submodule "lua/v-handle/vh-libs/vON"]
+	path = lua/v-handle/vh-libs/vON
+	url = https://github.com/vercas/vON
