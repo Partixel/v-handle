@@ -26,9 +26,9 @@ end
 VH_LoadConfigs()
 
 -- Load libs --
-VH_FileLib.IncludeDir("vh-libs")
+VH_FileLib.IncludeDir("libs")
 
 -- Load modules --
-VH_FileLib.IncludeDir("vh-modules")
+VH_FileLib.IncludeDir("modules")
 
 hook.Run("VH-PostModule")
