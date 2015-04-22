@@ -25,6 +25,8 @@ end
 
 VH_LoadConfigs()
 
+VH_FileLib.IncludeFile("libs/von/von.lua", VH_FileLib.Side.Shared)
+
 -- Load libs --
 VH_FileLib.IncludeDir("libs")
 
